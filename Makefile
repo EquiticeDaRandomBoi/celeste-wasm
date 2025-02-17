@@ -1,4 +1,4 @@
-STATICS_RELEASE=8c5676a2-fbc3-45e2-ae45-36dbe4ca8da7
+STATICS_RELEASE=043bcb60-fed3-4525-b55b-39a8098405ee
 
 statics:
 	mkdir statics
@@ -17,16 +17,12 @@ build: statics
 	rm -rv public/_framework bin/Release/net9.0/publish/wwwroot/_framework || true
 #
 	NUGET_PACKAGES="$(realpath .)/nuget" dotnet restore
-	unzip -o statics/dotnet.zip -d nuget/microsoft.netcore.app.runtime.mono.multithread.browser-wasm/9.0.1/
+	unzip -o statics/dotnet.zip -d nuget/microsoft.netcore.app.runtime.mono.multithread.browser-wasm/9.?.?/
 	NUGET_PACKAGES="$(realpath .)/nuget" dotnet publish -c Release -v diag
 #
 	cp -rv bin/Release/net9.0/publish/wwwroot/_framework public/
-	# microsoft messed up
-	sed -i 's/FS_createPath("\/","usr\/share",!0,!0)/FS_createPath("\/usr","share",!0,!0)/' public/_framework/dotnet.runtime.*.js
-	# sdl messed up
-	sed -i 's/!window.matchMedia/!self.matchMedia/' public/_framework/dotnet.native.*.js
 	# emscripten sucks
-	sed -i 's/var offscreenCanvases={};/var offscreenCanvases={};if(globalThis.window\&\&!window.TRANSFERRED_CANVAS){transferredCanvasNames=[".canvas"];window.TRANSFERRED_CANVAS=true;}/' public/_framework/dotnet.native.*.js
+	sed -i 's/var offscreenCanvases \?= \?{};/var offscreenCanvases={};if(globalThis.window\&\&!window.TRANSFERRED_CANVAS){transferredCanvasNames=[".canvas"];window.TRANSFERRED_CANVAS=true;}/' public/_framework/dotnet.native.*.js
 
 serve: build
 	pnpm dev
