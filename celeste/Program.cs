@@ -46,10 +46,14 @@ partial class Program
 
                 File.CreateSymbolicLink("/Content", "/libsdl/Content");
 
+                if (!Directory.Exists("/libsdl/Everest"))
+                    Directory.CreateDirectory("/libsdl/Everest");
                 // everest saves to /Saves instead of opfs
                 if (!Directory.Exists("/libsdl/Saves"))
                     Directory.CreateDirectory("/libsdl/Saves");
                 File.CreateSymbolicLink("/Saves", "/libsdl/Saves");
+                // mono.cecil searches in /bin for some dlls
+                File.CreateSymbolicLink("/bin", "/libsdl/Everest");
                 Console.WriteLine("created symlinks");
             }
             catch (Exception e)
@@ -84,6 +88,18 @@ partial class Program
                 Console.WriteLine($"Loading native lib \"{name}\"");
                 if (name == "SDL2") name = "SDL3";
                 return NativeLibrary.Load(name, assembly, null);
+            };
+            AssemblyLoadContext.Default.Resolving += (ctx, name) =>
+            {
+                Console.WriteLine($"Loading assembly \"{name.Name}\" \"{name}\"");
+                try
+                {
+                    return ctx.LoadFromAssemblyPath($"/libsdl/Everest/{name.Name}.dll");
+                }
+                catch
+                {
+                    return null;
+                }
             };
 
             var Celeste = celeste.GetType("Celeste.Celeste");
