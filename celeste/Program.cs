@@ -45,6 +45,12 @@ partial class Program
                 }
 
                 File.CreateSymbolicLink("/Content", "/libsdl/Content");
+
+                // everest saves to /Saves instead of opfs
+                if (!Directory.Exists("/libsdl/Saves"))
+                    Directory.CreateDirectory("/libsdl/Saves");
+                File.CreateSymbolicLink("/Saves", "/libsdl/Saves");
+                Console.WriteLine("created symlinks");
             }
             catch (Exception e)
             {
@@ -115,7 +121,7 @@ partial class Program
             {
                 Console.WriteLine($"EVEREST DETECTED: ", Everest);
                 var ParseArgs = Everest.GetMethod("ParseArgs", BindingFlags.Static | BindingFlags.NonPublic);
-                ParseArgs.Invoke(null, [new string[] {}]);
+                ParseArgs.Invoke(null, [new string[] { }]);
             }
 
             game = (Game)GameConstructor.Invoke([]);
