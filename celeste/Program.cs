@@ -20,6 +20,9 @@ partial class Program
     [DllImport("Emscripten")]
     public extern static int mount_opfs();
     [DllImport("Emscripten")]
+    public extern static int mount_fetch(string path);
+
+    [DllImport("Emscripten")]
     public extern static void wasm_func_viil(Int32 x, Int32 y, Int64 l);
 
     internal static void CallPinvokeFixers()
@@ -28,7 +31,7 @@ partial class Program
     }
 
     [JSExport]
-    internal static Task PreInit()
+    internal static Task PreInit(String[] dlls)
     {
         return Task.Run(() =>
         {
@@ -46,15 +49,35 @@ partial class Program
 
                 File.CreateSymbolicLink("/Content", "/libsdl/Content");
 
-                if (!Directory.Exists("/libsdl/Everest"))
-                    Directory.CreateDirectory("/libsdl/Everest");
                 // everest saves to /Saves instead of opfs
-                if (!Directory.Exists("/libsdl/Saves"))
-                    Directory.CreateDirectory("/libsdl/Saves");
-                File.CreateSymbolicLink("/Saves", "/libsdl/Saves");
+                if (!Directory.Exists("/libsdl/Celeste/Saves"))
+                    Directory.CreateDirectory("/libsdl/Celeste/Saves");
+                File.CreateSymbolicLink("/Saves", "/libsdl/Celeste/Saves");
+
+                if (!Directory.Exists("/libsdl/Celeste/Everest"))
+                    Directory.CreateDirectory("/libsdl/Celeste/Everest");
+
                 // mono.cecil searches in /bin for some dlls
-                File.CreateSymbolicLink("/bin", "/libsdl/Everest");
+                Directory.CreateDirectory("/bin");
+                Directory.CreateDirectory("/dlls");
+                Parallel.ForEach(dlls, (dll) =>
+                {
+                    Console.WriteLine($"Mounting {dll}");
+                    int fetchret = mount_fetch("/dlls/" + dll);
+                    if (ret != 0)
+                    {
+                        throw new Exception($"Failed to mount {dll}");
+                    }
+                    File.CreateSymbolicLink("/bin/" + dll, "/dlls/" + dll);
+                });
                 Console.WriteLine("created symlinks");
+
+                if (File.Exists("/libsdl/Celeste.exe") && !File.Exists("/libsdl/CustomCeleste.dll"))
+                {
+                    Console.WriteLine("netcorefiering celeste");
+                    NETCoreifier.Coreifier.ConvertToNetCore("/libsdl/Celeste.exe", "/libsdl/CustomCeleste.dll");
+                    Console.WriteLine("netcorefiered celeste");
+                }
             }
             catch (Exception e)
             {
@@ -94,10 +117,12 @@ partial class Program
                 Console.WriteLine($"Loading assembly \"{name.Name}\" \"{name}\"");
                 try
                 {
-                    return ctx.LoadFromAssemblyPath($"/libsdl/Everest/{name.Name}.dll");
+                    return ctx.LoadFromAssemblyPath($"/libsdl/Celeste/Everest/{name.Name}.dll");
                 }
-                catch
+                catch (Exception err)
                 {
+                    Console.WriteLine("Failed");
+                    Console.WriteLine(err);
                     return null;
                 }
             };

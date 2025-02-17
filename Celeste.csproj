@@ -60,7 +60,12 @@
 	<ItemGroup>
 		<ProjectReference Include="..\FNA\FNA.Core.csproj" />
 		<Compile Remove="celeste\Decompiled\**\*" />
+		<Compile Remove="corefier\**\*" />
+		<Compile Remove="Steamworks\**\*" />
 		<Compile Remove="nuget\**\*" />
+
+		<ProjectReference Include="corefier\NETCoreifier.csproj" />
+		<ProjectReference Include="Steamworks\Steamworks.NET.csproj" />
 
 		<!-- MonoMod -->
 		<ProjectReference Include="..\MonoMod\src\MonoMod.RuntimeDetour\MonoMod.RuntimeDetour.csproj" />

@@ -1,15 +1,24 @@
-#include <emscripten/console.h>
 #include <emscripten/wasmfs.h>
 #include <emscripten/proxying.h>
 #include <emscripten/threading.h>
 #include <assert.h>
+#include <stdio.h>
 
 int mount_opfs() {
-	emscripten_console_log("mount_opfs: starting");
+	printf("mount_opfs: starting\n");
 	backend_t opfs = wasmfs_create_opfs_backend();
-	emscripten_console_log("mount_opfs: created opfs backend");
+	printf("mount_opfs: created opfs backend\n");
 	int ret = wasmfs_create_directory("/libsdl", 0777, opfs);
-	emscripten_console_log("mount_opfs: mounted opfs");
+	printf("mount_opfs: mounted opfs\n");
+	return ret;
+}
+
+int mount_fetch(char *path) {
+	backend_t fetch = wasmfs_create_fetch_backend(path);
+	printf("mount_fetch: created fetch backend for \"%s\"\n", path);
+	int ret = wasmfs_create_file(path, 0777, fetch);
+	printf("mount_fetch: mounted fetch backend for \"%s\"\n", path);
+
 	return ret;
 }
 

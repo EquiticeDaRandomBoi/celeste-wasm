@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<AssemblyName>Steamworks.NET</AssemblyName>
+		<RootNamespace>Steamworks</RootNamespace>
+		<LangVersion>11</LangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+	</ItemGroup>
+</Project>

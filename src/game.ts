@@ -1,4 +1,5 @@
 import { RingBuffer } from "ring-buffer-ts";
+import { DotnetHostBuilder } from "./dotnet";
 
 export type Log = { color: string, log: string };
 export const TIMEBUF_SIZE = 120;
@@ -70,8 +71,26 @@ function hookfmod() {
 hookfmod();
 
 const wasm = await eval(`import("/_framework/dotnet.js")`);
-const dotnet = wasm.dotnet;
+const dotnet: DotnetHostBuilder = wasm.dotnet;
 let exports: any;
+
+export async function getDlls(): Promise<string[]> {
+	console.debug("registering dllsw");
+	await navigator.serviceWorker.register("/dllsw.js");
+	console.debug("registered dllsw");
+
+	/*
+	const resources: any = await fetch("/_framework/blazor.boot.json").then(r => r.json());
+	return Object.values(resources.resources.fingerprinting);
+	*/
+   	return [
+		"mscorlib.dll",
+		"System.Private.CoreLib.dll",
+		"NETCoreifier.dll",
+		"FNA.dll",
+		"Celeste.dll",
+	];
+}
 
 export async function preInit() {
 	console.debug("initializing dotnet");
@@ -80,19 +99,21 @@ export async function preInit() {
 	}).create();
 
 	const config = runtime.getConfig();
-	exports = await runtime.getAssemblyExports(config.mainAssemblyName);
+	exports = await runtime.getAssemblyExports(config.mainAssemblyName!);
 
 	(self as any).wasm = {
-		Module: dotnet.instance.Module,
+		Module: runtime.Module,
 		dotnet,
 		runtime,
 		config,
 		exports,
 	};
 
+	const dlls = await getDlls();
+
 	console.debug("PreInit...");
 	await runtime.runMain();
-	await exports.Program.PreInit();
+	await exports.Program.PreInit(dlls);
 	console.debug("dotnet initialized");
 
 	gameState.ready = true;
