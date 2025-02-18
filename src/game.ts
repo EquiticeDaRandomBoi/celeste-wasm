@@ -156,7 +156,7 @@ export async function preInit() {
 
 	console.log("loading libcurl");
 	// TODO: replace with epoxy
-	await libcurl.load_wasm("https://cdn.jsdelivr.net/npm/libcurl.js@0.6.20/libcurl.wasm");
+	await libcurl.load_wasm("https://cdn.jsdelivr.net/npm/libcurl.js@0.7.0/libcurl.wasm");
 	libcurl.set_websocket(wisp_url);
 
 	window.WebSocket = new Proxy(WebSocket, {
