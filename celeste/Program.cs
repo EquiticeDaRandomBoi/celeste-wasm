@@ -8,14 +8,15 @@ using System.Reflection;
 using System.Runtime.Loader;
 using Microsoft.Xna.Framework;
 using System.Text.RegularExpressions;
-using SteamKit2;
-using SteamKit2.CDN;
 using System.Collections.Generic;
 using System.Linq;
+
+/*
 using QRCoder;
+using SteamKit2;
+using SteamKit2.CDN;
 using DepotDownloader;
-
-
+*/
 
 [assembly: System.Runtime.Versioning.SupportedOSPlatform("browser")]
 
@@ -92,7 +93,7 @@ partial class Program
                 if (File.Exists("/libsdl/Celeste.exe") && !File.Exists("/libsdl/CustomCeleste.dll"))
                 {
                     Console.WriteLine("netcorefiering celeste");
-                    NETCoreifier.Coreifier.ConvertToNetCore("/libsdl/Celeste.exe", "/libsdl/CustomCeleste.dll");
+                    AotPatcher.AutoPatch("/libsdl/Celeste.exe", "/libsdl/CustomCeleste.dll");
                     Console.WriteLine("netcorefiered celeste");
                 }
             }
@@ -194,6 +195,7 @@ partial class Program
         return Task.Delay(0);
     }
 
+    /*
     [JSExport]
     internal static async Task<int> InitSteamSaved()
     {
@@ -278,6 +280,7 @@ partial class Program
         }
     }
 
+	*/
 
     [JSExport]
     internal static Task Cleanup()

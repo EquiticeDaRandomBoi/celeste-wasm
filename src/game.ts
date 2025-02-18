@@ -86,10 +86,23 @@ export async function getDlls(): Promise<string[]> {
 	*/
 	return [
 		"mscorlib.dll",
+		"System.Collections.Concurrent.dll",
+		"System.Memory.dll",
 		"System.Private.CoreLib.dll",
+		"System.Private.Uri.dll",
+		"System.Runtime.dll",
+		"System.Runtime.InteropServices.dll",
+
 		"NETCoreifier.dll",
 		"FNA.dll",
 		"Celeste.dll",
+		"Celeste.Wasm.mm.dll",
+
+		"MonoMod.Patcher.dll",
+		"MonoMod.ILHelpers.dll",
+		"MonoMod.Backports.dll",
+		"MonoMod.Utils.dll",
+		"Mono.Cecil.dll",
 	];
 }
 
@@ -213,9 +226,11 @@ export async function preInit() {
 	await exports.Program.PreInit(dlls);
 	console.debug("dotnet initialized");
 
+	/*
 	if (await exports.Program.InitSteamSaved() == 0) {
 		console.log("Steam saved login success");
 	}
+	*/
 
 	gameState.ready = true;
 };
