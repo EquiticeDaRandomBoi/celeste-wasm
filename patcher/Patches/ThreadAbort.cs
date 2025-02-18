@@ -2,7 +2,7 @@ using MonoMod;
 using System.Collections.Concurrent;
 using System.Threading;
 
-namespace NETCoreifier {
+namespace CelestePatcher {
     // No code shouldn't be using Thread.Abort anyway, but some does ._.
     // So we at least have to try to restore its functionality
     public static class ThreadAbortShims {

@@ -60,11 +60,11 @@
 	<ItemGroup>
 		<ProjectReference Include="..\FNA\FNA.Core.csproj" />
 		<Compile Remove="celeste\Decompiled\**\*" />
-		<Compile Remove="corefier\**\*" />
+		<Compile Remove="patcher\**\*" />
 		<Compile Remove="Steamworks\**\*" />
 		<Compile Remove="nuget\**\*" />
 
-		<ProjectReference Include="corefier\NETCoreifier.csproj" />
+		<ProjectReference Include="patcher\CelestePatcher.csproj" />
 		<ProjectReference Include="Steamworks\Steamworks.NET.csproj" />
 
 		<!-- MonoMod -->

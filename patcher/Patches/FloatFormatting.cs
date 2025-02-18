@@ -2,7 +2,7 @@ using MonoMod;
 using System;
 using System.Globalization;
 
-namespace NETCoreifier {
+namespace CelestePatcher {
     // The float formatting behavior was changed for .NET Core 3.0+
     // This causes some CelesteTAS jank to break, but maybe other mods as well, so patch it
     // (see https://devblogs.microsoft.com/dotnet/floating-point-parsing-and-formatting-improvements-in-net-core-3-0/)
