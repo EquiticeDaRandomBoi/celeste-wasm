@@ -19,7 +19,7 @@ fi
 rm -r "celeste/Patches/$1" || true
 
 DECOMPDIR="celeste/Decompiled/"
-find "$DECOMPDIR"{Celeste,Celeste.Editor,Celeste.Pico8,Monocle,FMOD,FMOD.Studio} -type f -name "*.cs" | while read -r file; do
+find "$DECOMPDIR"{FMOD,FMOD.Studio} -type f -name "*.cs" | while read -r file; do
 	file="${file#${DECOMPDIR}}"
 	patch="celeste/Patches/$1/$file.patch"
 

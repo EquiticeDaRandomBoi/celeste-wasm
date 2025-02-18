@@ -9,7 +9,7 @@
 		<PackageReference Include="Mono.Cecil" Version="0.11.6" />
 		<ProjectReference Include="..\..\MonoMod\src\MonoMod.Patcher\MonoMod.Patcher.csproj" />
 		<Reference Include="Celeste">
-			<HintPath>Celeste.exe</HintPath>
+			<HintPath>..\Celeste-stripped.exe</HintPath>
 			<Private>False</Private>
 		</Reference>
 	</ItemGroup>
