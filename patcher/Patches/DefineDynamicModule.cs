@@ -2,7 +2,7 @@ using MonoMod;
 using System;
 using System.Reflection.Emit;
 
-namespace NETCoreifier {
+namespace CelestePatcher {
     public static class AssemblyBuilderShims {
 
         private const string AssemblyBuilderFName = "System.Reflection.Emit.AssemblyBuilder";

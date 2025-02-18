@@ -1,12 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
-		<AssemblyName>NETCoreifier</AssemblyName>
-		<RootNamespace>NETCoreifier</RootNamespace>
+		<AssemblyName>CelestePatcher</AssemblyName>
+		<RootNamespace>CelestePatcher</RootNamespace>
 		<LangVersion>11</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\MonoMod\src\MonoMod.Patcher\MonoMod.Patcher.csproj" />
+		<PackageReference Include="Mono.Cecil" Version="0.11.5" />
+
+		<Reference Include="Celeste">
+			<HintPath>Celeste.exe</HintPath>
+			<Private>False</Private>
+		</Reference>
 	</ItemGroup>
 </Project>

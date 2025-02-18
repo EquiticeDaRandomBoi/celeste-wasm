@@ -92,7 +92,7 @@ partial class Program
                 if (File.Exists("/libsdl/Celeste.exe") && !File.Exists("/libsdl/CustomCeleste.dll"))
                 {
                     Console.WriteLine("netcorefiering celeste");
-                    NETCoreifier.Coreifier.ConvertToNetCore("/libsdl/Celeste.exe", "/libsdl/CustomCeleste.dll");
+                    CelestePatcher.Patcher.Patch("/libsdl/Celeste.exe", "/libsdl/CustomCeleste.dll");
                     Console.WriteLine("netcorefiered celeste");
                 }
             }

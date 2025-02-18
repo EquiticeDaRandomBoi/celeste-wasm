@@ -4,7 +4,7 @@ using System.IO.MemoryMappedFiles;
 using System.Runtime.Versioning;
 using System.Security;
 
-namespace NETCoreifier {
+namespace CelestePatcher {
     // I'm 100% sure only CelesteTas will ever run into this breaking change between net452 and net5.0+ .-.
     public static class MemoryMappedFileShims {
         private const string FileStreamFName = "System.IO.FileStream", HandleInheritabilityFName = "System.IO.HandleInheritability";

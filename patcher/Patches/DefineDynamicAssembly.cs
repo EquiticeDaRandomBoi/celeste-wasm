@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.Loader;
 
-namespace NETCoreifier {
+namespace CelestePatcher {
     // Only relink the non-deprecated methods
     public static class AppDomainShims {
 
