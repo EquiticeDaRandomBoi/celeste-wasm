@@ -87,8 +87,9 @@ export async function getDlls(): Promise<string[]> {
 	return [
 		"mscorlib.dll",
 		"System.Private.CoreLib.dll",
-		"CelestePatcher.dll",
+		"NETCoreifier.dll",
 		"FNA.dll",
+		"Celeste.dll",
 	];
 }
 
@@ -212,11 +213,9 @@ export async function preInit() {
 	await exports.Program.PreInit(dlls);
 	console.debug("dotnet initialized");
 
-	/*
 	if (await exports.Program.InitSteamSaved() == 0) {
 		console.log("Steam saved login success");
 	}
-	*/
 
 	gameState.ready = true;
 };

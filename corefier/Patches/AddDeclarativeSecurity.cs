@@ -3,7 +3,7 @@ using System.Reflection.Emit;
 using System.Security;
 using System.Security.Permissions;
 
-namespace CelestePatcher {
+namespace NETCoreifier {
 #pragma warning disable SYSLIB0003 // Code security is no longer honored
     public static class DeclarativeSecurityShims {
 

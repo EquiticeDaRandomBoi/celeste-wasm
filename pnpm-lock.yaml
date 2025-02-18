@@ -17,9 +17,6 @@ importers:
       events:
         specifier: ^3.3.0
         version: 3.3.0
-      libcurl.js:
-        specifier: ^0.7.0
-        version: 0.7.0
       ring-buffer-ts:
         specifier: ^1.2.0
         version: 1.2.0
@@ -346,9 +343,6 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
 
-  libcurl.js@0.7.0:
-    resolution: {integrity: sha512-lhwNH8GbLDy6ss3DOkEOlkV7i3TUHNmb7s8lBMzDUfN4Z5DuKEk7KBN1bqp4Riw+iZSYWgMTCzU8uoF5jYBITA==}
-
   magic-string@0.25.9:
     resolution: {integrity: sha512-RmF0AsMzgt25qzqqLc1+MbHmhdx0ojF2Fvs4XnOqz2ZOBXzzkEwc/dJQZCYHAn7v1jbVOjAZfK8msRn4BxO4VQ==}
 
@@ -651,8 +645,6 @@ snapshots:
 
   fsevents@2.3.3:
     optional: true
-
-  libcurl.js@0.7.0: {}
 
   magic-string@0.25.9:
     dependencies:

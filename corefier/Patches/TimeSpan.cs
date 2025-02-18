@@ -1,7 +1,7 @@
 using MonoMod;
 using System;
 
-namespace CelestePatcher {
+namespace NETCoreifier {
     // TimeSpan.FromXYZ is "broken" on .NET Framework, in the sense that it rounds the value given to it to the nearest ms
     // (even though TimeSpans have a much higher internal precision)
     // .NET Core seems to do this conversion properly now, so we have to shim these methods as otherwise e.g. the speedrun timer desyncs
