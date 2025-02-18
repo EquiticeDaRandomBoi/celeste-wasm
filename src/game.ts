@@ -1,5 +1,6 @@
 import { RingBuffer } from "ring-buffer-ts";
 import { DotnetHostBuilder } from "./dotnet";
+import { libcurl } from "libcurl.js";
 
 export type Log = { color: string, log: string };
 export const TIMEBUF_SIZE = 120;
@@ -83,7 +84,7 @@ export async function getDlls(): Promise<string[]> {
 	const resources: any = await fetch("/_framework/blazor.boot.json").then(r => r.json());
 	return Object.values(resources.resources.fingerprinting);
 	*/
-   	return [
+	return [
 		"mscorlib.dll",
 		"System.Private.CoreLib.dll",
 		"NETCoreifier.dll",
@@ -92,14 +93,110 @@ export async function getDlls(): Promise<string[]> {
 	];
 }
 
+const wisp_url = "wss://anura.pro/wisp/";
+
+// the funny custom rsa
+// https://github.com/MercuryWorkshop/wispcraft/blob/main/src/connection/crypto.ts
+function encryptRSA(data: Uint8Array, n: bigint, e: bigint): Uint8Array {
+	const modExp = (base: bigint, exp: bigint, mod: bigint) => {
+		let result = 1n;
+		base = base % mod;
+		while (exp > 0n) {
+			if (exp % 2n === 1n) {
+				result = (result * base) % mod;
+			}
+			exp = exp >> 1n;
+			base = (base * base) % mod;
+		}
+		return result;
+	};
+	// thank you jippity
+	const pkcs1v15Pad = (messageBytes: Uint8Array, n: bigint) => {
+		const messageLength = messageBytes.length;
+		const nBytes = Math.ceil(n.toString(16).length / 2);
+
+		if (messageLength > nBytes - 11) {
+			throw new Error("Message too long for RSA encryption");
+		}
+
+		const paddingLength = nBytes - messageLength - 3;
+		const padding = Array(paddingLength).fill(0xff);
+
+		return BigInt(
+			"0x" +
+			[
+				"00",
+				"02",
+				...padding.map((byte) => byte.toString(16).padStart(2, "0")),
+				"00",
+				...Array.from(messageBytes).map((byte: any) =>
+					byte.toString(16).padStart(2, "0")
+				),
+			].join("")
+		);
+	};
+	const paddedMessage = pkcs1v15Pad(data, n);
+	let int = modExp(paddedMessage, e, n);
+
+	let hex = int.toString(16);
+	if (hex.length % 2) {
+		hex = "0" + hex;
+	}
+
+	// ????
+	return new Uint8Array(
+		Array.from(hex.match(/.{2}/g) || []).map((byte) => parseInt(byte, 16))
+	);
+}
 export async function preInit() {
 	console.debug("initializing dotnet");
 	const runtime = await dotnet.withConfig({
 		pthreadPoolInitialSize: 24
 	}).create();
 
+	console.log("loading libcurl");
+	// TODO: replace with epoxy
+	await libcurl.load_wasm("https://cdn.jsdelivr.net/npm/libcurl.js@0.6.20/libcurl.wasm");
+	libcurl.set_websocket(wisp_url);
+
+	window.WebSocket = new Proxy(WebSocket, {
+		construct(t, a, n) {
+			if (a[0] === wisp_url)
+				return Reflect.construct(t, a, n);
+
+			return new libcurl.WebSocket(...a);
+		}
+	});
+
+	let nativefetch = window.fetch;
+	window.fetch = async (...args) => {
+		try {
+			return await nativefetch(...args);
+		} catch {
+			return await libcurl.fetch(...args);
+		}
+	}
+
 	const config = runtime.getConfig();
 	exports = await runtime.getAssemblyExports(config.mainAssemblyName!);
+
+
+	// TODO: replace with native openssl
+	runtime.setModuleImports("interop.js", {
+		encryptrsa: (publicKeyModulusHex: string, publicKeyExponentHex: string, data: Uint8Array) => {
+			let modulus = BigInt("0x" + publicKeyModulusHex);
+			let exponent = BigInt("0x" + publicKeyExponentHex);
+			let encrypted = encryptRSA(data, modulus, exponent);
+			return new Uint8Array(encrypted);
+		}
+	});
+
+	runtime.setModuleImports("depot.js", {
+		newqr: (qr: string) => {
+			console.log("QR DATA" + qr);
+			// gameState.qr = qr;
+		}
+	});
 
 	(self as any).wasm = {
 		Module: runtime.Module,
@@ -115,6 +212,10 @@ export async function preInit() {
 	await runtime.runMain();
 	await exports.Program.PreInit(dlls);
 	console.debug("dotnet initialized");
+
+	if (await exports.Program.InitSteamSaved() == 0) {
+		console.log("Steam saved login success");
+	}
 
 	gameState.ready = true;
 };
