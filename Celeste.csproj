@@ -74,6 +74,7 @@
 		<ProjectReference Include="..\MonoMod\src\MonoMod.Patcher\MonoMod.Patcher.csproj" />
 		<ProjectReference Include="..\MonoMod\external\iced.csproj" />
 
+    <PackageReference Include="QRCoder" Version="1.6.0" />
 		<PackageReference Include="System.Security.Permissions" Version="9.0.1" />
 		<PackageReference Include="System.Threading.AccessControl" Version="9.0.1" />
 		<PackageReference Include="YamlDotNet" Version="16.1.3" />
@@ -81,5 +82,7 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="MAB.DotIgnore" Version="3.0.2" />
 		<ProjectReference Include="..\NLua\build\net8.0\NLua.net8.0.csproj" />
+    <ProjectReference Include="../terraria-wasm/SteamKit2.WASM/SteamKit/SteamKit2/SteamKit2/SteamKit2.csproj"/>
+    <ProjectReference Include="../terraria-wasm/SteamKit2.WASM/DepotDownloader/DepotDownloader.csproj"/>
 	</ItemGroup>
 </Project>
