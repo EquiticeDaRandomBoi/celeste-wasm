@@ -1,6 +1,5 @@
 using System;
 using Mono.Cecil;
-using Mono.Cecil.Cil;
 using MonoMod;
 using MonoMod.Cil;
 using MonoMod.InlineRT;
@@ -17,7 +16,7 @@ namespace FMOD.Studio
 
         [MonoModIgnore]
         [PatchFMODVersion]
-        public extern static RESULT create(out FMOD.Studio.System studiosystem);
+        public extern new static RESULT create(out FMOD.Studio.System studiosystem);
     }
 }
 
@@ -33,10 +32,6 @@ namespace MonoMod
     {
         public static void PatchFMODVersion(ILContext context, CustomAttribute attrib)
         {
-			foreach (Instruction instr in context.Instrs) {
-				Console.WriteLine($"INSTR {instr.OpCode} {instr.Operand}");
-			}
-
 			ILCursor cursor = new(context);
 			cursor.GotoNext(i => i.MatchLdcI4(out var num) && num == 69652);
 

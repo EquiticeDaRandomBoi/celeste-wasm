@@ -26,7 +26,7 @@ namespace MonoMod
         {
             if (!method.HasBody && method.HasPInvokeInfo && method.PInvokeInfo.Module.Name.StartsWith("fmod"))
             {
-                modder.Log($"[FMODPatcher] Wrapping {method.FullName} -> {method.PInvokeInfo.Module.Name}::{method.PInvokeInfo.EntryPoint}");
+                modder.LogVerbose($"[FMODPatcher] Wrapping {method.FullName} -> {method.PInvokeInfo.Module.Name}::{method.PInvokeInfo.EntryPoint}");
                 if (FMODMappings.TryGetValue(method.PInvokeInfo.EntryPoint, out var remapped))
                 {
                     method.PInvokeInfo.EntryPoint = "WRAP_" + remapped;
