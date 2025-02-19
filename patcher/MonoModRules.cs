@@ -8,7 +8,14 @@ namespace MonoMod
     {
         static Dictionary<string, string> FMODMappings = new() {
             { "FMOD_Studio_System_GetLowLevelSystem", "FMOD_Studio_System_GetCoreSystem" },
-            { "FMOD_Studio_System_SetListenerAttributes", "FMOD_Studio_System_SetListenerAttributes_2" }
+            { "FMOD_Studio_System_SetListenerAttributes", "FMOD_Studio_System_SetListenerAttributes_2" },
+            { "FMOD_Studio_EventInstance_GetParameterValue", "FMOD_Studio_EventInstance_GetParameterByName" },
+            { "FMOD_Studio_EventInstance_SetParameterValue", "FMOD_Studio_EventInstance_SetParameterByName_2" },
+            { "FMOD_Studio_EventDescription_GetParameterCount", "FMOD_Studio_EventDescription_GetParameterDescriptionCount" },
+            { "FMOD_Studio_EventDescription_GetParameterByIndex", "FMOD_Studio_EventDescription_GetParameterDescriptionByIndex" },
+            { "FMOD_Studio_EventDescription_GetParameterByName", "FMOD_Studio_EventDescription_GetParameterDescriptionByName" },
+			{ "FMOD_Studio_EventInstance_triggerCue", "FMOD_Studio_EventInstance_keyOff" },
+			{ "FMOD_Studio_EventDescription_hasCue", "FMOD_Studio_EventDescription_hasSustainPoint" }
         };
 
         static MonoModRules()

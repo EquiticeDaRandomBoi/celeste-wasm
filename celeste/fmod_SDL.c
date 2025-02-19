@@ -4,3 +4,8 @@ int WRAP_FMOD_Studio_System_SetListenerAttributes(void *system, int index, void 
 int WRAP_FMOD_Studio_System_SetListenerAttributes_2(void *system, int index, void *attributes) {
 	return WRAP_FMOD_Studio_System_SetListenerAttributes(system, index, attributes, (void*)0);
 }
+
+int WRAP_FMOD_Studio_EventInstance_SetParameterByName(void *instance, void *name, float val, int ignoreseekspeed);
+int WRAP_FMOD_Studio_EventInstance_SetParameterByName_2(void *instance, void *name, float val) {
+	return WRAP_FMOD_Studio_EventInstance_SetParameterByName(instance, name, val, 0);
+}

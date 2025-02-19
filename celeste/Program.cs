@@ -74,6 +74,8 @@ partial class Program
 
                 if (!Directory.Exists("/libsdl/Celeste/Everest"))
                     Directory.CreateDirectory("/libsdl/Celeste/Everest");
+                if (!Directory.Exists("/libsdl/Celeste/Mods"))
+                    Directory.CreateDirectory("/libsdl/Celeste/Mods");
 
                 // mono.cecil searches in /bin for some dlls
                 Directory.CreateDirectory("/bin");
@@ -88,6 +90,8 @@ partial class Program
                     }
                     File.CreateSymbolicLink("/bin/" + dll, "/dlls/" + dll);
                 });
+				File.CreateSymbolicLink("/bin/Celeste.exe", "/libsdl/CustomCeleste.dll");
+				File.CreateSymbolicLink("/bin/Celeste.dll", "/libsdl/CustomCeleste.dll");
                 Console.WriteLine("created symlinks");
 
                 if (File.Exists("/libsdl/Celeste.exe") && !File.Exists("/libsdl/CustomCeleste.dll"))
@@ -135,6 +139,8 @@ partial class Program
                 Console.WriteLine($"Loading assembly \"{name.Name}\" \"{name}\"");
                 try
                 {
+					if (name.Name == "Celeste") return ctx.LoadFromAssemblyPath($"/libsdl/CustomCeleste.dll"); 
+
                     return ctx.LoadFromAssemblyPath($"/libsdl/Celeste/Everest/{name.Name}.dll");
                 }
                 catch (Exception err)
@@ -178,7 +184,7 @@ partial class Program
             var Everest = celeste.GetType("Celeste.Mod.Everest");
             if (Everest != null)
             {
-                Console.WriteLine($"EVEREST DETECTED: ", Everest);
+                Console.WriteLine($"EVEREST DETECTED: {Everest}");
                 var ParseArgs = Everest.GetMethod("ParseArgs", BindingFlags.Static | BindingFlags.NonPublic);
                 ParseArgs.Invoke(null, [new string[] { }]);
             }

@@ -1,8 +1,5 @@
-using System;
 using System.IO;
-using System.Reflection;
 using Mono.Cecil;
-using System.Linq;
 using MonoMod;
 
 public class AotPatcher
@@ -38,6 +35,8 @@ public class AotPatcher
 
             modder.MapDependencies();
             modder.AutoPatch();
+
+			modder.Module.AssemblyReferences.Add(AssemblyNameReference.Parse("FNA"));
         }
     }
 
