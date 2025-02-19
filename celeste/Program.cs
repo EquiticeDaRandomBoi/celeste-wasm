@@ -120,7 +120,7 @@ partial class Program
         {
             if (File.Exists("/libsdl/CustomCeleste.dll"))
             {
-                celeste = Assembly.LoadFile("/libsdl/CustomCeleste.dll");
+                celeste = Assembly.LoadFrom("/libsdl/CustomCeleste.dll");
             }
             else
             {
