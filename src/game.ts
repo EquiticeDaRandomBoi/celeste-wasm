@@ -92,10 +92,11 @@ export async function getDlls(): Promise<string[]> {
 		"System.Private.Uri.dll",
 		"System.Runtime.dll",
 		"System.Runtime.InteropServices.dll",
+		"System.Text.RegularExpressions.dll",
 
 		"NETCoreifier.dll",
 		"FNA.dll",
-		"Celeste.dll",
+		"Wasm.Celeste.dll",
 		"Celeste.Wasm.mm.dll",
 
 		"MonoMod.Patcher.dll",

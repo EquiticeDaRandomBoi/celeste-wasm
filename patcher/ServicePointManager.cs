@@ -1,15 +1,12 @@
 using System.Net;
+using System.Net.Security;
 
 namespace MonoMod
 {
-    public class ServicePointManager
+    [MonoModLinkFrom("System.Net.ServicePointManager")]
+    public static class ServicePointManager
     {
-		[MonoModLinkFrom("System.Net.SecurityProtocolType System.Net.ServicePointManager::get_SecurityProtocol()")]
-        public SecurityProtocolType get_SecurityProtocol()
-        {
-            return SecurityProtocolType.SystemDefault;
-        }
-		[MonoModLinkFrom("System.Void System.Net.ServicePointManager::set_SecurityProtocol(System.Net.SecurityProtocolType)")]
-        public void set_SecurityProtocol(SecurityProtocolType type) { }
+        public static RemoteCertificateValidationCallback ServerCertificateValidationCallback { get { return null; } set { } }
+        public static SecurityProtocolType SecurityProtocol { get { return SecurityProtocolType.SystemDefault; } set { } }
     }
 }
