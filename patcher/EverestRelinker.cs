@@ -1,5 +1,4 @@
 using MonoMod;
-using System;
 using Mono.Cecil;
 
 namespace Celeste.Mod
@@ -15,9 +14,8 @@ namespace Celeste.Mod
 
 				var celeste = ModuleDefinition.ReadModule("/bin/Celeste.dll");
 				modder.DependencyCache[celeste.Assembly.FullName] = celeste;
-				foreach (var dep in celeste.AssemblyReferences) {
-					Console.WriteLine($"DEP: {dep}");
-				}
+				modder.DependencyDirs.Add("/bin/");
+
                 orig_InitMMFlags(modder);
             }
         }
