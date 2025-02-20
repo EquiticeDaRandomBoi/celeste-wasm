@@ -13,3 +13,4 @@ public/content
 dist
 
 .env.local
+.DS_Store
