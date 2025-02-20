@@ -91,8 +91,8 @@ partial class Program
                     }
                     File.CreateSymbolicLink("/bin/" + dll, "/dlls/" + dll);
                 });
-                File.CreateSymbolicLink("/bin/Celeste.exe", "/libsdl/CustomCeleste.dll");
-                File.CreateSymbolicLink("/bin/Celeste.dll", "/libsdl/CustomCeleste.dll");
+                // File.CreateSymbolicLink("/bin/Celeste.exe", "/libsdl/CustomCeleste.dll");
+                // File.CreateSymbolicLink("/bin/Celeste.dll", "/libsdl/CustomCeleste.dll");
                 Console.WriteLine("created symlinks");
             }
             catch (Exception e)

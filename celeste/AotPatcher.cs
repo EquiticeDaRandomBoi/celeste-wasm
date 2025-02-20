@@ -32,6 +32,7 @@ public class AotPatcher
             MissingDependencyThrow = false,
         })
         {
+            modder.DependencyDirs.Add("/bin/");
             NETCoreifier.Coreifier.ConvertToNetCore(modder);
             modder.Log("NETCoreifier finished");
 
