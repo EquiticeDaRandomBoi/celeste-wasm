@@ -76,16 +76,9 @@ const wasm = await eval(`import("/_framework/dotnet.js")`);
 const dotnet: DotnetHostBuilder = wasm.dotnet;
 let exports: any;
 
-export async function getDlls(): Promise<string[]> {
-	console.debug("registering dllsw");
-	await navigator.serviceWorker.register("/dllsw.js");
-	console.debug("registered dllsw");
-
-	/*
+export async function getDlls(): Promise<(readonly [string, string])[]> {
 	const resources: any = await fetch("/_framework/blazor.boot.json").then(r => r.json());
-	return Object.values(resources.resources.fingerprinting);
-	*/
-	return [
+	const whitelist = [
 		"netstandard.dll",
 		"mscorlib.dll",
 		"System.Collections.Concurrent.dll",
@@ -109,6 +102,8 @@ export async function getDlls(): Promise<string[]> {
 		"MonoMod.Utils.dll",
 		"Mono.Cecil.dll",
 	];
+
+	return Object.entries(resources.resources.fingerprinting).map(x => [x[0] as string, x[1] as string] as const).filter(([_, v]) => whitelist.includes(v));
 }
 
 const wisp_url = "wss://anura.pro/wisp/";
@@ -251,7 +246,8 @@ export async function preInit() {
 
 	console.debug("PreInit...");
 	await runtime.runMain();
-	await exports.Program.PreInit(dlls);
+	await exports.CelesteBootstrap.MountFilesystems(dlls.map(x => `${x[0]}|${x[1]}`));
+	await exports.Celeste.PreInit();
 	console.debug("dotnet initialized");
 
 	try {
@@ -266,7 +262,7 @@ export async function preInit() {
 	}
 
 	console.log("attempting to patch celeste");
-	await exports.Program.PatchCeleste();
+	await exports.Celeste.PatchCeleste();
 
 
 	/*
@@ -283,14 +279,14 @@ export async function play() {
 
 	const before = performance.now();
 	console.debug("Init...");
-	await exports.Program.Init();
+	await exports.Celeste.Init();
 	const after = performance.now();
 	console.debug(`Init : ${(after - before).toFixed(2)}ms`);
 
 	console.debug("MainLoop...");
 	const main = async () => {
 		const before = performance.now();
-		const ret = await exports.Program.MainLoop();
+		const ret = await exports.Celeste.MainLoop();
 		const after = performance.now();
 
 		gameState.timebuf.add(after - before);
@@ -300,7 +296,7 @@ export async function play() {
 
 			gameState.timebuf.clear();
 
-			await exports.Program.Cleanup();
+			await exports.Celeste.Cleanup();
 			gameState.ready = false;
 			gameState.playing = false;
 

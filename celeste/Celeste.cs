@@ -7,39 +7,16 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Loader;
 using Microsoft.Xna.Framework;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
-using System.Linq;
 using System.IO.Compression;
-
-/*
-using QRCoder;
-using SteamKit2;
-using SteamKit2.CDN;
-using DepotDownloader;
-*/
 
 [assembly: System.Runtime.Versioning.SupportedOSPlatform("browser")]
 
-
-partial class JS
-{
-    [JSImport("newqr", "depot.js")]
-    public static partial void newqr(string dataurl);
-}
-
-
-partial class Program
+public static partial class Celeste 
 {
     private static void Main()
     {
         Console.WriteLine("Hi!");
     }
-
-    [DllImport("Emscripten")]
-    public extern static int mount_opfs();
-    [DllImport("Emscripten")]
-    public extern static int mount_fetch(string path);
 
     [DllImport("Emscripten")]
     public extern static void wasm_func_viil(Int32 x, Int32 y, Int64 l);
@@ -50,7 +27,7 @@ partial class Program
     }
 
     [JSExport]
-    internal static Task PreInit(String[] dlls)
+    internal static Task PreInit()
     {
         return Task.Run(() =>
         {
@@ -58,42 +35,6 @@ partial class Program
             {
                 CallPinvokeFixers();
                 Console.WriteLine("fixed pinvoke");
-
-                int ret = mount_opfs();
-                Console.WriteLine($"called mount_opfs: {ret}");
-                if (ret != 0)
-                {
-                    throw new Exception("Failed to mount OPFS");
-                }
-
-                File.CreateSymbolicLink("/Content", "/libsdl/Content");
-
-                // everest saves to /Saves instead of opfs
-                if (!Directory.Exists("/libsdl/Celeste/Saves"))
-                    Directory.CreateDirectory("/libsdl/Celeste/Saves");
-                File.CreateSymbolicLink("/Saves", "/libsdl/Celeste/Saves");
-
-                if (!Directory.Exists("/libsdl/Celeste/Everest"))
-                    Directory.CreateDirectory("/libsdl/Celeste/Everest");
-                if (!Directory.Exists("/libsdl/Celeste/Mods"))
-                    Directory.CreateDirectory("/libsdl/Celeste/Mods");
-
-                // mono.cecil searches in /bin for some dlls
-                Directory.CreateDirectory("/bin");
-                Directory.CreateDirectory("/dlls");
-                Parallel.ForEach(dlls, (dll) =>
-                {
-                    Console.WriteLine($"Mounting {dll}");
-                    int fetchret = mount_fetch("/dlls/" + dll);
-                    if (ret != 0)
-                    {
-                        throw new Exception($"Failed to mount {dll}");
-                    }
-                    File.CreateSymbolicLink("/bin/" + dll, "/dlls/" + dll);
-                });
-                // File.CreateSymbolicLink("/bin/Celeste.exe", "/libsdl/CustomCeleste.dll");
-                // File.CreateSymbolicLink("/bin/Celeste.dll", "/libsdl/CustomCeleste.dll");
-                Console.WriteLine("created symlinks");
             }
             catch (Exception e)
             {
@@ -230,93 +171,6 @@ partial class Program
             return false;
         }
     }
-
-    /*
-    [JSExport]
-    internal static async Task<int> InitSteamSaved()
-    {
-        try
-        {
-            if (AccountSettingsStore.Instance.LoginTokens.Keys.Count > 0)
-            {
-                string username = AccountSettingsStore.Instance.LoginTokens.Keys.First();
-                if (String.IsNullOrEmpty(username)) return 1;
-
-                Console.WriteLine("Using saved login token for " + username);
-
-                if (ContentDownloader.InitializeSteam3(username, null))
-                {
-                    return 0;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-            return 1;
-        }
-        return 1;
-    }
-
-    [JSExport]
-    internal static async Task<bool> DownloadSteamCloud()
-    {
-        return await ContentDownloader.steam3.DownloadSteamCloud(504230, 100, "/libsdl/remote/");
-    }
-
-    [JSExport]
-    internal static async Task<int> InitSteam(string username, string password, bool qr)
-    {
-        try
-        {
-            ContentDownloader.Config.UseQrCode = qr;
-            Steam3Session.qrCallback = (QRCodeData q) =>
-            {
-                Console.WriteLine("Got QR code data");
-                PngByteQRCode png = new PngByteQRCode(q);
-                byte[] bytes = png.GetGraphic(20);
-                string dataurl = "data:image/png;base64," + Convert.ToBase64String(bytes);
-                JS.newqr(dataurl);
-            };
-
-            if (ContentDownloader.InitializeSteam3(username, password))
-            {
-                return 0;
-            }
-            else
-            {
-                Console.WriteLine("Error: InitializeSteam failed");
-                return 1;
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-        }
-
-
-        return 1;
-    }
-
-    [JSExport]
-    internal static async Task<int> DownloadApp()
-    {
-        var depotManifestIds = new List<(uint, ulong)>();
-        depotManifestIds.Add((504233, 5880027853585448535));
-
-        try
-        {
-            await ContentDownloader.DownloadAppAsync(504230, depotManifestIds, "public", null, null, null, false, false).ConfigureAwait(false);
-            return 0;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Could not download app: " + ex.Message);
-            return 1;
-        }
-    }
-
-	*/
 
     [JSExport]
     internal static Task Cleanup()
