@@ -16,17 +16,19 @@ public class AotPatcher
     public AotPatcher(string path)
     {
         ReaderParameters readerParams = new(ReadingMode.Immediate) { ReadSymbols = false, InMemory = true };
-		MemoryStream stream = new(File.ReadAllBytes(path));
+        MemoryStream stream = new(File.ReadAllBytes(path));
         Module = ModuleDefinition.ReadModule(stream, readerParams);
     }
 
     public void patch()
     {
-        ModuleDefinition mod = ModuleDefinition.ReadModule("/bin/Celeste.Wasm.mm.dll");
+        // TODO: account for the user uploading their own everest
+        ModuleDefinition everest = ModuleDefinition.ReadModule("/libsdl/Celeste.Mod.mm.dll");
+        ModuleDefinition wasmMod = ModuleDefinition.ReadModule("/bin/Celeste.Wasm.mm.dll");
         using (MonoModder modder = new()
         {
             Module = Module,
-            Mods = [mod],
+            Mods = [everest, wasmMod],
             MissingDependencyThrow = false,
         })
         {
@@ -36,7 +38,7 @@ public class AotPatcher
             modder.MapDependencies();
             modder.AutoPatch();
 
-			modder.Module.AssemblyReferences.Add(AssemblyNameReference.Parse("FNA"));
+            modder.Module.AssemblyReferences.Add(AssemblyNameReference.Parse("FNA"));
         }
     }
 
