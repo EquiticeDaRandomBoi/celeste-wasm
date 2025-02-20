@@ -24,7 +24,7 @@ namespace Celeste.Mod
         }
     }
 
-    public sealed class EverestModuleAssemblyContext
+    public sealed class patch_EverestModuleAssemblyContext
     {
         private static readonly Dictionary<string, AssemblyDefinition> _GlobalAssemblyResolveCache = new Dictionary<string, AssemblyDefinition>();
 

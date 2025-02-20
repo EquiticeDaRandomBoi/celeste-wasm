@@ -90,8 +90,8 @@ partial class Program
                     }
                     File.CreateSymbolicLink("/bin/" + dll, "/dlls/" + dll);
                 });
-				File.CreateSymbolicLink("/bin/Celeste.exe", "/libsdl/CustomCeleste.dll");
-				File.CreateSymbolicLink("/bin/Celeste.dll", "/libsdl/CustomCeleste.dll");
+                File.CreateSymbolicLink("/bin/Celeste.exe", "/libsdl/CustomCeleste.dll");
+                File.CreateSymbolicLink("/bin/Celeste.dll", "/libsdl/CustomCeleste.dll");
                 Console.WriteLine("created symlinks");
 
                 if (File.Exists("/libsdl/Celeste.exe") && !File.Exists("/libsdl/CustomCeleste.dll"))
@@ -139,9 +139,14 @@ partial class Program
                 Console.WriteLine($"Loading assembly \"{name.Name}\" \"{name}\"");
                 try
                 {
-					if (name.Name == "Celeste") return ctx.LoadFromAssemblyPath($"/libsdl/CustomCeleste.dll"); 
+                    Assembly asm;
 
-                    return ctx.LoadFromAssemblyPath($"/libsdl/Celeste/Everest/{name.Name}.dll");
+                    if (name.Name == "Celeste") asm = ctx.LoadFromAssemblyPath($"/libsdl/CustomCeleste.dll");
+                    else if (name.Name == "Celeste.Mod.mm") asm = ctx.LoadFromAssemblyPath($"/libsdl/Celeste.Mod.mm.dll");
+                    else asm = ctx.LoadFromAssemblyPath($"/libsdl/Celeste/Everest/{name.Name}.dll");
+
+                    Console.WriteLine($"Loaded assembly \"{name.Name}\" \"{name}\": {asm}");
+                    return asm;
                 }
                 catch (Exception err)
                 {
