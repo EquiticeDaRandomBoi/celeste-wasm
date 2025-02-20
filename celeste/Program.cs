@@ -180,8 +180,6 @@ partial class Program
             var GameConstructor = Celeste.GetConstructor([]);
             Console.WriteLine($"Celeste.Celeste..ctor: {GameConstructor}");
 
-            Hooks.Initialize(celeste);
-            Console.WriteLine($"HOOKS INITIALIZED");
             MainThreadId.SetValue(null, Thread.CurrentThread.ManagedThreadId);
             Console.WriteLine($"MAIN THREAD INITIALIZED");
             AssemblyDirectory.SetValue(null, "/");

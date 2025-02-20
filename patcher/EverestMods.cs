@@ -13,11 +13,7 @@ namespace Celeste.Mod
             private static void InitMMFlags(MonoModder modder)
             {
                 modder.LogVerboseEnabled = true;
-
-                var celeste = ModuleDefinition.ReadModule("/bin/Celeste.dll");
-                modder.DependencyCache[celeste.Assembly.FullName] = celeste;
                 modder.DependencyDirs.Add("/bin/");
-
                 modder.Mods.Add(ModuleDefinition.ReadModule("/bin/Celeste.Wasm.mm.dll"));
 
                 orig_InitMMFlags(modder);
@@ -39,16 +35,10 @@ namespace Celeste.Mod
                 {
                     def = ModuleDefinition.ReadModule($"/bin/{asmName.Name}.dll").Assembly;
                     _GlobalAssemblyResolveCache.Add(asmName.Name, def);
-                    Console.WriteLine($"Hook resolved {asmName} to {def}");
-                }
-                catch
-                {
-                    Console.WriteLine($"Failed to resolve {asmName.Name} {asmName}");
-                }
+                } catch { }
             }
 
             def = orig_ResolveGlobal(asmName);
-            Console.WriteLine($"Resolved {asmName} to {def}");
             return def;
         }
     }
