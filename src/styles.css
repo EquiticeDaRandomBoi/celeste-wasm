@@ -98,6 +98,12 @@ h3 {
 	font-weight: 500;
 }
 
+code,
+pre {
+	font-family: var(--font-mono);
+	font-size: 0.9em;
+}
+
 a {
 	color: var(--accent);
 	text-decoration: none;
@@ -106,4 +112,11 @@ a {
 	&:hover {
 		color: color-mix(in srgb, var(--accent) 80%, white);
 	}
+}
+
+.warning {
+	color: var(--warning);
+}
+.error {
+	color: var(--error);
 }

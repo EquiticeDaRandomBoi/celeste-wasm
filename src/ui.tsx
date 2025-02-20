@@ -88,6 +88,7 @@ export const Button: Component<{
 
 		button:disabled {
 			background: var(--surface0);
+			color: var(--fg4);
 			cursor: not-allowed;
 		}
 	`;
