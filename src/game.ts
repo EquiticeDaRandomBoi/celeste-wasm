@@ -258,11 +258,11 @@ export async function preInit() {
 		} catch {
 			await downloadEverest();
 		}
-		await exports.Program.ExtractEverest();
+		await exports.AotPatcher.ExtractEverest();
 	}
 
 	console.log("attempting to patch celeste");
-	await exports.Celeste.PatchCeleste();
+	await exports.AotPatcher.PatchCeleste();
 
 
 	/*

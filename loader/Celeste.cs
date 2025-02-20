@@ -11,7 +11,7 @@ using System.IO.Compression;
 
 [assembly: System.Runtime.Versioning.SupportedOSPlatform("browser")]
 
-public static partial class Celeste 
+public static partial class Celeste
 {
     private static void Main()
     {
@@ -43,27 +43,6 @@ public static partial class Celeste
                 throw;
             }
         });
-    }
-
-    [JSExport]
-    internal static async Task<bool> PatchCeleste()
-    {
-        try
-        {
-            if (File.Exists("/libsdl/Celeste.exe") && !File.Exists("/libsdl/CustomCeleste.dll"))
-            {
-                Console.WriteLine("netcorefiering celeste");
-                AotPatcher.AutoPatch("/libsdl/Celeste.exe", "/libsdl/CustomCeleste.dll");
-                Console.WriteLine("netcorefiered celeste");
-            }
-            return true;
-        }
-        catch (Exception e)
-        {
-            Console.Error.WriteLine("Error in PatchCeleste()!");
-            Console.Error.WriteLine(e);
-            return false;
-        }
     }
 
     static Game game;
@@ -151,29 +130,6 @@ public static partial class Celeste
             return Task.FromException(e);
         }
         return Task.Delay(0);
-    }
-
-    [JSExport]
-    internal static async Task<bool> ExtractEverest()
-    {
-        try
-        {
-            using (ZipArchive archive = ZipFile.OpenRead("/libsdl/everest.zip"))
-            {
-                string fileName = "Celeste.Mod.mm.dll";
-                ZipArchiveEntry entry = archive.GetEntry("main/" + fileName);
-                entry.ExtractToFile("/libsdl/" + fileName, true);
-            }
-
-            File.Delete("/libsdl/everest.zip");
-            return true;
-        }
-        catch (Exception e)
-        {
-            Console.Error.WriteLine("Error in ExtractEverest()!");
-            Console.Error.WriteLine(e);
-            return false;
-        }
     }
 
     [JSExport]

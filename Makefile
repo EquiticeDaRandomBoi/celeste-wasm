@@ -9,18 +9,31 @@ statics:
 	wget https://github.com/r58Playz/FNA-WASM-Build/releases/download/$(STATICS_RELEASE)/liba.o -O statics/liba.o
 	wget https://github.com/r58Playz/FNA-WASM-Build/releases/download/$(STATICS_RELEASE)/dotnet.zip -O statics/dotnet.zip
 
+FNA:
+	git clone https://github.com/FNA-XNA/FNA --recursive
+	cd FNA && git checkout 3ee5399 && git apply ../FNA.patch
+
+NLua:
+	git clone https://github.com/NLua/NLua --recursive
+	cd NLua && git checkout 9dc76edd0782d484c54433fdfa3a5097f45a379a && git apply ../nlua.patch
+
+MonoMod:
+	git clone https://github.com/r58Playz/MonoMod --recursive
+
 clean:
 	rm -rv statics obj bin public/_framework nuget || true
 
-build: statics
-	pnpm i
-	rm -rv public/_framework bin/Release/net9.0/publish/wwwroot/_framework || true
-#
-	NUGET_PACKAGES="$(realpath .)/nuget" dotnet restore
+nuget:
+	NUGET_PACKAGES="$(realpath .)/nuget" dotnet restore loader
 	unzip -o statics/dotnet.zip -d nuget/microsoft.netcore.app.runtime.mono.multithread.browser-wasm/9.?.?/
-	NUGET_PACKAGES="$(realpath .)/nuget" dotnet publish -c Release -v diag
+
+build: statics nuget FNA MonoMod NLua
+	pnpm i
+	rm -r public/_framework bin/Release/net9.0/publish/wwwroot/_framework || true
 #
-	cp -rv bin/Release/net9.0/publish/wwwroot/_framework public/
+	NUGET_PACKAGES="$(realpath .)/nuget" dotnet publish loader -c Release -v diag
+#
+	cp -rv loader/bin/Release/net9.0/publish/wwwroot/_framework public/
 	# emscripten sucks
 	sed -i 's/var offscreenCanvases \?= \?{};/var offscreenCanvases={};if(globalThis.window\&\&!window.TRANSFERRED_CANVAS){transferredCanvasNames=[".canvas"];window.TRANSFERRED_CANVAS=true;}/' public/_framework/dotnet.native.*.js
 
@@ -29,3 +42,6 @@ serve: build
 
 publish: build
 	pnpm build
+
+
+.PHONY: clean build serve publish

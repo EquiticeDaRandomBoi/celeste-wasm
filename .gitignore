@@ -3,6 +3,10 @@ obj
 statics
 nuget
 
+/FNA
+/MonoMod
+/NLua
+
 node_modules
 public/_framework
 public/content
