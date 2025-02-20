@@ -20,6 +20,7 @@ namespace MonoMod
 
         static MonoModRules()
         {
+			MonoModRule.Modder.Log($"[Celeste.Wasm] Loaded into module {MonoModRule.Modder.Module}");
             MonoModRule.Modder.PostProcessors += FMODPostProcessor;
         }
 

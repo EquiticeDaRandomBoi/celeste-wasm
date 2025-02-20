@@ -1,7 +1,6 @@
 using MonoMod;
 using Mono.Cecil;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Celeste.Mod
@@ -19,6 +18,8 @@ namespace Celeste.Mod
                 modder.DependencyCache[celeste.Assembly.FullName] = celeste;
                 modder.DependencyDirs.Add("/bin/");
 
+                modder.Mods.Add(ModuleDefinition.ReadModule("/bin/Celeste.Wasm.mm.dll"));
+
                 orig_InitMMFlags(modder);
             }
         }
@@ -32,21 +33,23 @@ namespace Celeste.Mod
 
         private AssemblyDefinition ResolveGlobal(AssemblyNameReference asmName)
         {
-            try
+            if (!_GlobalAssemblyResolveCache.TryGetValue(asmName.Name, out AssemblyDefinition def))
             {
-                AssemblyDefinition def = ModuleDefinition.ReadModule($"/bin/{asmName.Name}.dll").Assembly;
-                _GlobalAssemblyResolveCache.Add(asmName.Name, def);
-                Console.WriteLine($"Hook resolved {asmName} to {def}");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Failed to resolve {asmName.Name} {asmName}");
-                Console.WriteLine(e);
+                try
+                {
+                    def = ModuleDefinition.ReadModule($"/bin/{asmName.Name}.dll").Assembly;
+                    _GlobalAssemblyResolveCache.Add(asmName.Name, def);
+                    Console.WriteLine($"Hook resolved {asmName} to {def}");
+                }
+                catch
+                {
+                    Console.WriteLine($"Failed to resolve {asmName.Name} {asmName}");
+                }
             }
 
-            AssemblyDefinition ret = orig_ResolveGlobal(asmName);
-            Console.WriteLine($"Resolved {asmName} to {ret}");
-            return ret;
+            def = orig_ResolveGlobal(asmName);
+            Console.WriteLine($"Resolved {asmName} to {def}");
+            return def;
         }
     }
 }

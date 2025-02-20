@@ -165,8 +165,6 @@ partial class Program
 
             var MainThreadId = Celeste.GetField("_mainThreadId", BindingFlags.Static | BindingFlags.NonPublic);
             Console.WriteLine($"Celeste.Celeste._mainThreadId: {MainThreadId}");
-            var IsGGP = Celeste.GetField("IsGGP", BindingFlags.Static | BindingFlags.Public);
-            Console.WriteLine($"Celeste.Celeste.IsGGP: {IsGGP}");
             var AssemblyDirectory = Engine.GetField("AssemblyDirectory", BindingFlags.Static | BindingFlags.NonPublic);
             Console.WriteLine($"Engine.AssemblyDirectory: {AssemblyDirectory}");
             var SettingsInitialize = Settings.GetMethod("Initialize", BindingFlags.Static | BindingFlags.Public);
@@ -178,8 +176,6 @@ partial class Program
             Console.WriteLine($"HOOKS INITIALIZED");
             MainThreadId.SetValue(null, Thread.CurrentThread.ManagedThreadId);
             Console.WriteLine($"MAIN THREAD INITIALIZED");
-            IsGGP.SetValue(null, true);
-            Console.WriteLine($"GGP SET");
             AssemblyDirectory.SetValue(null, "/");
             Console.WriteLine($"ASSEMBLY DIRECTORY SET");
 
