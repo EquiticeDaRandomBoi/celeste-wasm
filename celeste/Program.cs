@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO.Compression;
 
 /*
 using QRCoder;
@@ -93,13 +94,6 @@ partial class Program
                 File.CreateSymbolicLink("/bin/Celeste.exe", "/libsdl/CustomCeleste.dll");
                 File.CreateSymbolicLink("/bin/Celeste.dll", "/libsdl/CustomCeleste.dll");
                 Console.WriteLine("created symlinks");
-
-                if (File.Exists("/libsdl/Celeste.exe") && !File.Exists("/libsdl/CustomCeleste.dll"))
-                {
-                    Console.WriteLine("netcorefiering celeste");
-                    AotPatcher.AutoPatch("/libsdl/Celeste.exe", "/libsdl/CustomCeleste.dll");
-                    Console.WriteLine("netcorefiered celeste");
-                }
             }
             catch (Exception e)
             {
@@ -108,6 +102,27 @@ partial class Program
                 throw;
             }
         });
+    }
+
+    [JSExport]
+    internal static async Task<bool> PatchCeleste()
+    {
+        try
+        {
+            if (File.Exists("/libsdl/Celeste.exe") && !File.Exists("/libsdl/CustomCeleste.dll"))
+            {
+                Console.WriteLine("netcorefiering celeste");
+                AotPatcher.AutoPatch("/libsdl/Celeste.exe", "/libsdl/CustomCeleste.dll");
+                Console.WriteLine("netcorefiered celeste");
+            }
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.Error.WriteLine("Error in PatchCeleste()!");
+            Console.Error.WriteLine(e);
+            return false;
+        }
     }
 
     static Game game;
@@ -193,6 +208,29 @@ partial class Program
             return Task.FromException(e);
         }
         return Task.Delay(0);
+    }
+
+    [JSExport]
+    internal static async Task<bool> ExtractEverest()
+    {
+        try
+        {
+            using (ZipArchive archive = ZipFile.OpenRead("/libsdl/everest.zip"))
+            {
+                string fileName = "Celeste.Mod.mm.dll";
+                ZipArchiveEntry entry = archive.GetEntry("main/" + fileName);
+                entry.ExtractToFile("/libsdl/" + fileName, true);
+            }
+
+            File.Delete("/libsdl/everest.zip");
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.Error.WriteLine("Error in ExtractEverest()!");
+            Console.Error.WriteLine(e);
+            return false;
+        }
     }
 
     /*

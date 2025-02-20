@@ -249,6 +249,11 @@ export async function preInit() {
 
 	const dlls = await getDlls();
 
+	console.debug("PreInit...");
+	await runtime.runMain();
+	await exports.Program.PreInit(dlls);
+	console.debug("dotnet initialized");
+
 	try {
 		await rootFolder.getFileHandle("Celeste.Mod.mm.dll", { create: false });
 	} catch {
@@ -257,12 +262,12 @@ export async function preInit() {
 		} catch {
 			await downloadEverest();
 		}
+		await exports.Program.ExtractEverest();
 	}
 
-	console.debug("PreInit...");
-	await runtime.runMain();
-	await exports.Program.PreInit(dlls);
-	console.debug("dotnet initialized");
+	console.log("attempting to patch celeste");
+	await exports.Program.PatchCeleste();
+
 
 	/*
 	if (await exports.Program.InitSteamSaved() == 0) {
