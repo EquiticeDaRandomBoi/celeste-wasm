@@ -184,7 +184,7 @@
  	public RESULT setListenerAttributes(int listener, _3D_ATTRIBUTES attributes)
  	{
 -		return FMOD_Studio_System_SetListenerAttributes(rawPtr, listener, ref attributes);
-+		return WRAP_FMOD_Studio_System_SetListenerAttributes(rawPtr, listener, ref attributes, IntPtr.Zero);
++		return WRAP_FMOD_Studio_System_SetListenerAttributes_2(rawPtr, listener, ref attributes);
  	}
  
  	public RESULT getListenerWeight(int listener, out float weight)
@@ -420,7 +420,7 @@
  
  	[DllImport("fmodstudio")]
 -	private static extern RESULT FMOD_Studio_System_SetListenerAttributes(IntPtr studiosystem, int listener, ref _3D_ATTRIBUTES attributes);
-+	private static extern RESULT WRAP_FMOD_Studio_System_SetListenerAttributes(IntPtr studiosystem, int listener, ref _3D_ATTRIBUTES attributes, IntPtr zero);
++	private static extern RESULT WRAP_FMOD_Studio_System_SetListenerAttributes_2(IntPtr studiosystem, int listener, ref _3D_ATTRIBUTES attributes);
  
  	[DllImport("fmodstudio")]
 -	private static extern RESULT FMOD_Studio_System_GetListenerWeight(IntPtr studiosystem, int listener, out float weight);

@@ -198,7 +198,7 @@
  	public RESULT setParameterValue(string name, float value)
  	{
 -		return FMOD_Studio_EventInstance_SetParameterValue(rawPtr, Encoding.UTF8.GetBytes(name + "\0"), value);
-+		return WRAP_FMOD_Studio_EventInstance_SetParameterByName(rawPtr, Encoding.UTF8.GetBytes(name + "\0"), value, false);
++		return WRAP_FMOD_Studio_EventInstance_SetParameterByName_2(rawPtr, Encoding.UTF8.GetBytes(name + "\0"), value);
  	}
  
  	public RESULT getParameterValueByIndex(int index, out float value, out float finalvalue)
@@ -362,7 +362,7 @@
  
  	[DllImport("fmodstudio")]
 -	private static extern RESULT FMOD_Studio_EventInstance_SetParameterValue(IntPtr _event, byte[] name, float value);
-+	private static extern RESULT WRAP_FMOD_Studio_EventInstance_SetParameterByName(IntPtr _event, byte[] name, float value, bool ignoreseekspeed);
++	private static extern RESULT WRAP_FMOD_Studio_EventInstance_SetParameterByName_2(IntPtr _event, byte[] name, float value);
  
 +	/*
  	[DllImport("fmodstudio")]
