@@ -206,11 +206,16 @@ export async function preInit() {
 
 	let nativefetch = window.fetch;
 	window.fetch = async (...args) => {
-		try {
-			return await nativefetch(...args);
-		} catch (e) {
-			return await libcurl.fetch(...args);
+
+		// don't try native for steam depots
+		if (typeof args[0] !== "string" || !args[0].includes("/depot/")) {
+			try {
+				return await nativefetch(...args);
+			} catch (e) {
+			}
 		}
+
+		return await libcurl.fetch(...args);
 	}
 
 	const config = runtime.getConfig();
@@ -265,11 +270,11 @@ export async function preInit() {
 	await exports.AotPatcher.PatchCeleste();
 
 
-	/*
-	if (await exports.Program.InitSteamSaved() == 0) {
+
+	await exports.Steam.Init();
+	if (await exports.Steam.InitSteamSaved()) {
 		console.log("Steam saved login success");
 	}
-	*/
 
 	gameState.ready = true;
 };
