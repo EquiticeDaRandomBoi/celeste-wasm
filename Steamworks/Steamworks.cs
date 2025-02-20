@@ -85,10 +85,11 @@ namespace Steamworks
             achieved = SteamJS.GetAchievement(achievement);
             return true;
         }
-        public static void SetAchievement(string achievement)
+        public static bool SetAchievement(string achievement)
         {
             Console.WriteLine($"Steamworks polyfill: SetAchievement {achievement}");
             SteamJS.SetAchievement(achievement);
+			return true;
         }
 
         public static bool GetStat(string stat, out int val)
