@@ -1,6 +1,7 @@
 import { RingBuffer } from "ring-buffer-ts";
 import { DotnetHostBuilder } from "./dotnet";
 import { libcurl } from "libcurl.js";
+import { rootFolder } from "./fs";
 
 export type Log = { color: string, log: string };
 export const TIMEBUF_SIZE = 120;
@@ -165,6 +166,29 @@ function encryptRSA(data: Uint8Array, n: bigint, e: bigint): Uint8Array {
 		Array.from(hex.match(/.{2}/g) || []).map((byte) => parseInt(byte, 16))
 	);
 }
+
+export async function downloadEverest() {
+	const branch = "stable"
+	const res = await fetch("https://everestapi.github.io/everestupdater.txt");
+	const versionsUrl = await res.text();
+	const versRes = await fetch(versionsUrl);
+
+	const versions = await versRes.json();
+	const build = versions.filter((v: any) => v.branch == branch)[0];
+
+	console.log(`Installing Everest ${branch} ${build.commit} ${build.date}`);
+	console.log("Downloading Everest from", build.mainDownload);
+	const zipres = await fetch(build.mainDownload);
+	const zipbin = await zipres.arrayBuffer();
+
+	const file = await rootFolder.getFileHandle("everest.zip", { create: true });
+	const writable = await file.createWritable();
+	await writable.write(new Uint8Array(zipbin));
+	await writable.close();
+
+	console.log("Successfully downloaded Everest");
+}
+
 export async function preInit() {
 	console.debug("initializing dotnet");
 	const runtime = await dotnet.withConfig({
@@ -189,7 +213,7 @@ export async function preInit() {
 	window.fetch = async (...args) => {
 		try {
 			return await nativefetch(...args);
-		} catch {
+		} catch (e) {
 			return await libcurl.fetch(...args);
 		}
 	}
@@ -224,6 +248,16 @@ export async function preInit() {
 	};
 
 	const dlls = await getDlls();
+
+	try {
+		await rootFolder.getFileHandle("Celeste.Mod.mm.dll", { create: false });
+	} catch {
+		try {
+			await rootFolder.getFileHandle("everest.zip", { create: false });
+		} catch {
+			await downloadEverest();
+		}
+	}
 
 	console.debug("PreInit...");
 	await runtime.runMain();
