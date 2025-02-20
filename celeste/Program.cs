@@ -118,14 +118,7 @@ partial class Program
     {
         try
         {
-            if (File.Exists("/libsdl/CustomCeleste.dll"))
-            {
-                celeste = Assembly.LoadFrom("/libsdl/CustomCeleste.dll");
-            }
-            else
-            {
-                celeste = Assembly.GetEntryAssembly();
-            }
+            celeste = Assembly.LoadFrom("/libsdl/CustomCeleste.dll");
             Console.WriteLine($"CELESTE: {celeste}");
 
             AssemblyLoadContext.Default.ResolvingUnmanagedDll += (assembly, name) =>
