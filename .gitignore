@@ -3,11 +3,6 @@ obj
 statics
 nuget
 
-celeste/Decompiled
-celeste/Celeste*
-celeste/Monocle
-celeste/FMOD*
-
 node_modules
 public/_framework
 public/content

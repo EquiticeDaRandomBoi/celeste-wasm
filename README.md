@@ -13,15 +13,11 @@ This "fork" will be merged into [the original](https://github.com/mercuryWorksho
 - You may encounter issues on firefox.
 
 ## I want to build this
-1. install arch packages `dotnet-sdk-9.0 dotnet-runtime-8.0 diffutils patch wget`
-2. run `dotnet tool install --global ilspycmd --version 9.0.0.7889`
-3. clone [FNA](https://github.com/FNA-XNA/FNA) version 25.02 (with submodules) in the parent dir (`../`)
-4. clone [this MonoMod fork](https://github.com/r58playz/MonoMod) in the parent dir
-4. apply (`git apply ...`) `FNA.patch` to FNA
-5. run `sudo dotnet workload restore` in this dir
-6. run `bash tools/decompile.sh path/to/Celeste.exe`
-7. run `bash tools/applypatches.sh Vanilla`
-8. run `make serve` for a dev server and `make publish` for a release build
+1. clone [FNA](https://github.com/FNA-XNA/FNA) version 25.02 (with submodules) in the parent dir (`../`)
+2. clone [this MonoMod fork](https://github.com/r58playz/MonoMod) in the parent dir
+3. apply (`git apply ...`) `FNA.patch` to FNA
+4. run `sudo dotnet workload restore` in this dir
+5. run `make serve` for a dev server and `make publish` for a release build
 
 to enable the download/decrypt feature:
 1. create a tar archive (optionally gzip compressed) of the Content directory
