@@ -3,6 +3,7 @@
 #include <emscripten/threading.h>
 #include <assert.h>
 #include <stdio.h>
+#include <unistd.h>
 
 int mount_opfs() {
 	printf("mount_opfs: starting\n");
@@ -18,6 +19,10 @@ int mount_fetch(char *src, char *dst) {
 	printf("mount_fetch: created fetch backend for \"%s\"\n", dst);
 	int ret = wasmfs_create_file(dst, 0777, fetch);
 	printf("mount_fetch: mounted fetch backend for \"%s\"\n", dst);
+
+	if (ret >= 0) {
+		return close(ret);
+	}
 
 	return ret;
 }

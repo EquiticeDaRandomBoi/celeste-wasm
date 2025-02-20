@@ -19,23 +19,14 @@ public static partial class CelesteBootstrap
     [DllImport("Emscripten")]
     public extern static int mount_fetch(string src, string dst);
 
-    [JSExport]
-    public static async Task MountFilesystems(string[] rawDlls)
+    private static void TryCreateDirectory(string path)
     {
-        int ret = mount_opfs();
-        Console.WriteLine($"called mount_opfs: {ret}");
-        if (ret != 0)
-        {
-            throw new Exception("Failed to mount OPFS");
-        }
+        if (!Directory.Exists(path))
+            Directory.CreateDirectory(path);
+    }
 
-        File.CreateSymbolicLink("/Content", "/libsdl/Content");
-
-        if (!Directory.Exists("/libsdl/Celeste/Everest"))
-            Directory.CreateDirectory("/libsdl/Celeste/Everest");
-        if (!Directory.Exists("/libsdl/Celeste/Mods"))
-            Directory.CreateDirectory("/libsdl/Celeste/Mods");
-
+    private static void MountDlls(string[] rawDlls)
+    {
         IEnumerable<Dll> dlls = rawDlls.Select(x =>
         {
             var split = x.Split('|');
@@ -47,15 +38,39 @@ public static partial class CelesteBootstrap
         Parallel.ForEach(dlls, (dll) =>
         {
             Console.WriteLine($"Mounting {dll.RealName}");
-            int fetchret = mount_fetch($"/_framework/{dll.RealName}", $"/bin/{dll.MappedName}");
+            int ret = mount_fetch($"/_framework/{dll.RealName}", $"/bin/{dll.MappedName}");
             if (ret != 0)
             {
-                throw new Exception($"Failed to mount {dll.MappedName}");
+                throw new Exception($"Failed to mount {dll.MappedName}: error code {ret}");
             }
         });
+    }
 
-        File.CreateSymbolicLink("/bin/Celeste.exe", "/libsdl/CustomCeleste.dll");
-        File.CreateSymbolicLink("/bin/Celeste.dll", "/libsdl/CustomCeleste.dll");
-        Console.WriteLine("created symlinks");
+    [JSExport]
+    public static async Task MountFilesystems(string[] rawDlls)
+    {
+        try
+        {
+            int ret = mount_opfs();
+            Console.WriteLine($"called mount_opfs: {ret}");
+            if (ret != 0)
+            {
+                throw new Exception($"Failed to mount OPFS: error code {ret}");
+            }
+
+            TryCreateDirectory("/libsdl/Celeste/Everest");
+            TryCreateDirectory("/libsdl/Celeste/Mods");
+            TryCreateDirectory("/libsdl/Celeste/Saves");
+            File.CreateSymbolicLink("/Content", "/libsdl/Content");
+            File.CreateSymbolicLink("/Saves", "/libsdl/Celeste/Saves");
+            Console.WriteLine("created symlinks");
+
+            MountDlls(rawDlls);
+            Console.WriteLine("mounted dlls");
+        }
+        catch (Exception err)
+        {
+            Console.WriteLine(err);
+        }
     }
 }

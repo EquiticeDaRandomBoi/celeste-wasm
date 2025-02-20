@@ -74,6 +74,10 @@ public static partial class Celeste
     {
         try
         {
+            File.CreateSymbolicLink("/bin/Celeste.exe", "/libsdl/CustomCeleste.dll");
+            File.CreateSymbolicLink("/bin/Celeste.dll", "/libsdl/CustomCeleste.dll");
+            Console.WriteLine("created celeste symlinks");
+
             celeste = Assembly.LoadFrom("/libsdl/CustomCeleste.dll");
             Console.WriteLine($"CELESTE: {celeste}");
 

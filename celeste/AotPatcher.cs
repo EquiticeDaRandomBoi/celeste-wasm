@@ -28,7 +28,7 @@ public class AotPatcher
         using (MonoModder modder = new()
         {
             Module = Module,
-            Mods = [everest, wasmMod],
+            Mods = [wasmMod],
             MissingDependencyThrow = false,
         })
         {
@@ -38,8 +38,6 @@ public class AotPatcher
 
             modder.MapDependencies();
             modder.AutoPatch();
-
-            modder.Module.AssemblyReferences.Add(AssemblyNameReference.Parse("FNA"));
         }
     }
 
