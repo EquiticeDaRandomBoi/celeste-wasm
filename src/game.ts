@@ -85,12 +85,14 @@ export async function getDlls(): Promise<string[]> {
 	return Object.values(resources.resources.fingerprinting);
 	*/
 	return [
+		"netstandard.dll",
 		"mscorlib.dll",
 		"System.Collections.Concurrent.dll",
 		"System.Memory.dll",
 		"System.Private.CoreLib.dll",
 		"System.Private.Uri.dll",
 		"System.Runtime.dll",
+		"System.Reflection.dll",
 		"System.Runtime.InteropServices.dll",
 		"System.Text.RegularExpressions.dll",
 
@@ -99,6 +101,7 @@ export async function getDlls(): Promise<string[]> {
 		"Wasm.Celeste.dll",
 		"Celeste.Wasm.mm.dll",
 
+		"MonoMod.Common.dll",
 		"MonoMod.Patcher.dll",
 		"MonoMod.ILHelpers.dll",
 		"MonoMod.Backports.dll",
