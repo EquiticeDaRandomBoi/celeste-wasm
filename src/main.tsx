@@ -17,7 +17,7 @@ export const Logo: Component<{}, {}> = function() {
 		align-items: center;
 		font-size: 1.5rem;
 
-		font-family: Renogare;
+		font-family: var(--font-display);
 
 		img {
 			image-rendering: pixelated;
@@ -139,6 +139,7 @@ const TopBar: Component<{
 const BottomBar: Component<{}, {}> = function() {
 	this.css = `
 		background: var(--bg-sub);
+		color: var(--fg3);
 		border-top: 2px solid var(--surface1);
 		padding: 0.5rem;
 		font-size: 0.8rem;
@@ -179,7 +180,7 @@ const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function() {
 			grid-area: overlay;
 			width: 100%;
 			height: 100%;
-			border: 2px solid var(--surface6);
+			border: 2px solid var(--surface4);
 		}
 		div.started, canvas.stopped {
 			visibility: hidden;
@@ -234,7 +235,7 @@ const LogView: Component<{}, {}> = function() {
 		overflow: scroll;
 		padding: 1em;
 
-		border: 2px solid var(--surface6);
+		border: 2px solid var(--surface4);
 		border-top: none;
 		background: var(--bg-sub);
 

@@ -24,10 +24,10 @@ export const Button: Component<{
 			height: 100%;
 
 			border: none;
-			border-radius: 1rem;
+			border-radius: 20rem;
 			padding: 0.5rem;
 
-			transition: background 0.25s;
+			transition: background 0.2s;
 			font-family: var(--font-body);
 			cursor: pointer;
 		}
@@ -54,10 +54,16 @@ export const Button: Component<{
 		button.type-listitem {
 			background: transparent;
 			color: var(--fg);
-			border-radius: 0.5rem;
+			border-radius: 0.85rem;
+			transition-duration: 0.1s;
+			padding-block: 0.75rem;
+			padding-inline: 0.5rem;
+			&:hover {
+				transition-duration: 0.1s;
+			}
 		}
 		button.type-listaction {
-			background: var(--surface2);
+			background: var(--surface1);
 			color: var(--fg);
 		}
 
@@ -68,22 +74,22 @@ export const Button: Component<{
 			background: color-mix(in srgb, var(--accent) 70%, white);
 		}
 		button.type-normal:not(:disabled):hover {
-			background: var(--surface2);
-		}
-		button.type-normal:not(:disabled):active {
-			background: var(--surface3);
-		}
-		button.type-listitem:not(:disabled):hover {
 			background: var(--surface1);
 		}
-		button.type-listitem:not(:disabled):active {
+		button.type-normal:not(:disabled):active {
 			background: var(--surface2);
 		}
+		button.type-listitem:not(:disabled):hover {
+			background: var(--surface0);
+		}
+		button.type-listitem:not(:disabled):active {
+			background: var(--surface1);
+		}
 		button.type-listaction:not(:disabled):hover {
-			background: var(--surface3);
+			background: var(--surface2);
 		}
 		button.type-listaction:not(:disabled):active {
-			background: var(--surface4);
+			background: var(--surface3);
 		}
 
 		button:disabled {
@@ -130,15 +136,16 @@ export const Dialog: Component<{ name: string, open: boolean }, { children: any[
 	this.css = `
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 1.25rem;
 
 		background: var(--bg-sub);
 		color: var(--fg);
-		border: none;
-		border-radius: 1rem;
+		border: 1.25px solid var(--surface3);
+		border-radius: 1.5rem;
 
-		width: min(32rem, 100%);
-		max-height: min(40rem, 100%);
+		width: min(40rem, 100%);
+		min-height: min(50rem, 100%);
+		max-height: min(50rem, 100%);
 
 		position: fixed;
 		inset: 0;
@@ -155,7 +162,7 @@ export const Dialog: Component<{ name: string, open: boolean }, { children: any[
 
 		&::backdrop {
 			background: var(--bg-sub);
-			opacity: 40%;
+			opacity: 50%;
 		}
 
 		.header {

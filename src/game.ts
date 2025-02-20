@@ -42,7 +42,7 @@ proxyConsole("error", "var(--error)");
 proxyConsole("warn", "var(--warning)");
 proxyConsole("log", "var(--fg)");
 proxyConsole("info", "var(--info)");
-proxyConsole("debug", "var(--fg6)");
+proxyConsole("debug", "var(--fg4)");
 
 function hookfmod() {
 	let contexts: AudioContext[] = [];
