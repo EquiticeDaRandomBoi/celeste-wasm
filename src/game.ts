@@ -101,6 +101,9 @@ export async function getDlls(): Promise<(readonly [string, string])[]> {
 		"MonoMod.Backports.dll",
 		"MonoMod.Utils.dll",
 		"Mono.Cecil.dll",
+		"System.Diagnostics.Process.dll",
+		"System.ComponentModel.Primitives.dll",
+		"System.Collections.dll"
 	];
 
 	return Object.entries(resources.resources.fingerprinting).map(x => [x[0] as string, x[1] as string] as const).filter(([_, v]) => whitelist.includes(v));
