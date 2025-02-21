@@ -249,9 +249,11 @@ export async function preInit() {
 
 	const dlls = await getDlls();
 
-	console.debug("PreInit...");
+	console.debug("runMain...");
 	await runtime.runMain();
+	console.debug("MountFilesystems...");
 	await exports.CelesteBootstrap.MountFilesystems(dlls.map(x => `${x[0]}|${x[1]}`));
+	console.debug("PreInit...");
 	await exports.Celeste.PreInit();
 	console.debug("dotnet initialized");
 

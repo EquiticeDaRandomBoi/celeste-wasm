@@ -164,7 +164,7 @@ const BottomBar: Component<{}, {}> = function() {
 		<div>
 			<span>Ported by <Link href="https://github.com/r58playz">r58Playz</Link></span>
 			<span>All game assets and code belong to <Link href="https://exok.com/">Extremely OK Games, Ltd.</Link> All rights reserved.</span>
-			<span>Check out the project on <Link href="https://github.com/r58playz/celeste-wasm-threads">GitHub!</Link></span>
+			<span>Check out the project on <Link href="https://github.com/MercuryWorkshop/celeste-wasm/tree/threads-v2">GitHub!</Link></span>
 		</div>
 	)
 }
@@ -188,7 +188,7 @@ const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function() {
 
 		div {
 			background: var(--surface1);
-			color: var(--fg6);
+			color: var(--surface6);
 
 			font-family: var(--font-display);
 			font-size: 2rem;

@@ -74,10 +74,10 @@ export const Button: Component<{
 			background: color-mix(in srgb, var(--accent) 70%, white);
 		}
 		button.type-normal:not(:disabled):hover {
-			background: var(--surface1);
+			background: var(--surface3);
 		}
 		button.type-normal:not(:disabled):active {
-			background: var(--surface2);
+			background: var(--surface4);
 		}
 		button.type-listitem:not(:disabled):hover {
 			background: var(--surface0);
