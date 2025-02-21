@@ -44,8 +44,7 @@ public static partial class Steam
         ContentDownloader.Config.MaxServers = 20;
 
 
-        ContentDownloader.Config.MaxDownloads = 8;
-        ContentDownloader.Config.MaxServers = 8;
+        ContentDownloader.Config.MaxDownloads = 20;
         ContentDownloader.Config.LoginID = null;
 
         return true;

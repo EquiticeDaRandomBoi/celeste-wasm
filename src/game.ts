@@ -109,7 +109,7 @@ export async function getDlls(): Promise<(readonly [string, string])[]> {
 	return Object.entries(resources.resources.fingerprinting).map(x => [x[0] as string, x[1] as string] as const).filter(([_, v]) => whitelist.includes(v));
 }
 
-const wisp_url = "wss://anura.pro/wisp/";
+const wisp_url = "wss://wisp.run/";
 
 // the funny custom rsa
 // https://github.com/MercuryWorkshop/wispcraft/blob/main/src/connection/crypto.ts
@@ -208,6 +208,11 @@ export async function preInit() {
 	});
 
 	let nativefetch = window.fetch;
+	let dl = document.createElement("a");
+	dl.style.display = "none";
+	document.body.appendChild(dl);
+
+
 	window.fetch = async (...args) => {
 
 		// don't try native for steam depots
@@ -216,6 +221,21 @@ export async function preInit() {
 				return await nativefetch(...args);
 			} catch (e) {
 			}
+		} else {
+			// let last = args[0].split("/").pop()!;
+			// dl.download = "cross origin lol";
+			// dl.href = args[0];
+			// dl.click();
+			//
+			// while (true) {
+			// 	try {
+			// 		let file = await downloads.getFileHandle(last, { create: false });
+			// 		let h = await file.getFile();
+			// 		console.log("got file", last);
+			// 		return new Response(h.stream());
+			// 	} catch { }
+			// 	await new Promise(r => setTimeout(r, 100));
+			// }
 		}
 
 		return await libcurl.fetch(...args);
@@ -254,6 +274,7 @@ export async function preInit() {
 
 	console.debug("PreInit...");
 	await runtime.runMain();
+	console.log(dlls);
 	await exports.CelesteBootstrap.MountFilesystems(dlls.map(x => `${x[0]}|${x[1]}`));
 	await exports.Celeste.PreInit();
 	console.debug("dotnet initialized");
