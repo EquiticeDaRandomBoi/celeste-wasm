@@ -42,7 +42,7 @@ proxyConsole("error", "var(--error)");
 proxyConsole("warn", "var(--warning)");
 proxyConsole("log", "var(--fg)");
 proxyConsole("info", "var(--info)");
-proxyConsole("debug", "var(--fg6)");
+proxyConsole("debug", "var(--fg4)");
 
 function hookfmod() {
 	let contexts: AudioContext[] = [];
@@ -272,10 +272,11 @@ export async function preInit() {
 
 	const dlls = await getDlls();
 
-	console.debug("PreInit...");
+	console.debug("runMain...");
 	await runtime.runMain();
-	console.log(dlls);
+	console.debug("MountFilesystems...");
 	await exports.CelesteBootstrap.MountFilesystems(dlls.map(x => `${x[0]}|${x[1]}`));
+	console.debug("PreInit...");
 	await exports.Celeste.PreInit();
 	console.debug("dotnet initialized");
 

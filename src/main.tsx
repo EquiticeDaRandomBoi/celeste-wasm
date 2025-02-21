@@ -17,7 +17,7 @@ export const Logo: Component<{}, {}> = function() {
 		align-items: center;
 		font-size: 1.5rem;
 
-		font-family: Renogare;
+		font-family: var(--font-display);
 
 		img {
 			image-rendering: pixelated;
@@ -57,7 +57,7 @@ const TopBar: Component<{
 		background: var(--bg-sub);
 		padding: 1em;
 		border-bottom: 2px solid var(--surface1);
-
+		transition: background 200ms, color 200ms, border-color 200ms;
 		display: flex;
 		align-items: stretch;
 		gap: 0.5rem;
@@ -129,7 +129,7 @@ const TopBar: Component<{
 					play();
 				}} icon="left" type="primary" disabled={use(this.allowPlay, x => !x)}>
 					<Icon icon={iconPlayArrow} />
-					Play
+					<span>Play</span>
 				</Button>
 			</div>
 		</div>
@@ -139,10 +139,11 @@ const TopBar: Component<{
 const BottomBar: Component<{}, {}> = function() {
 	this.css = `
 		background: var(--bg-sub);
+		color: var(--fg3);
 		border-top: 2px solid var(--surface1);
 		padding: 0.5rem;
 		font-size: 0.8rem;
-
+		transition: background 200ms, color 200ms, border-color 200ms;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -163,7 +164,7 @@ const BottomBar: Component<{}, {}> = function() {
 		<div>
 			<span>Ported by <Link href="https://github.com/r58playz">r58Playz</Link></span>
 			<span>All game assets and code belong to <Link href="https://exok.com/">Extremely OK Games, Ltd.</Link> All rights reserved.</span>
-			<span>Check out the project on <Link href="https://github.com/r58playz/celeste-wasm-threads">GitHub!</Link></span>
+			<span>Check out the project on <Link href="https://github.com/MercuryWorkshop/celeste-wasm/tree/threads-v2">GitHub!</Link></span>
 		</div>
 	)
 }
@@ -175,11 +176,14 @@ const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function() {
 		display: grid;
 		grid-template-areas: "overlay";
 
+		transition: background 200ms, color 200ms;
+
 		div, canvas {
 			grid-area: overlay;
 			width: 100%;
 			height: 100%;
-			border: 2px solid var(--surface6);
+			border: 2px solid var(--surface4);
+			transition: background 200ms, color 200ms, border-color 200ms;
 		}
 		div.started, canvas.stopped {
 			visibility: hidden;
@@ -187,8 +191,8 @@ const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function() {
 
 		div {
 			background: var(--surface1);
-			color: var(--fg6);
-
+			color: var(--surface6);
+			transition: background 200ms, color 200ms, border-color 200ms;
 			font-family: var(--font-display);
 			font-size: 2rem;
 			font-weight: 570;
@@ -234,15 +238,20 @@ const LogView: Component<{}, {}> = function() {
 		overflow: scroll;
 		padding: 1em;
 
-		border: 2px solid var(--surface6);
+		border: 2px solid var(--surface4);
 		border-top: none;
 		background: var(--bg-sub);
-
+		transition: background 200ms, color 200ms, border-color 200ms;
 		font-family: var(--font-mono);
+
+		.log {
+			transition: color 200ms;
+		}
 	`;
 
 	const create = (color: string, log: string) => {
 		const el = document.createElement("div");
+		el.classList.add("log");
 		el.innerText = log;
 		el.style.color = color;
 		return el;
@@ -280,6 +289,8 @@ export const Main: Component<{}, {
 		display: flex;
 		flex-direction: column;
 		overflow: scroll;
+
+		transition: background 200ms, color 200ms;
 
 		.main {
 			flex: 1;

@@ -206,7 +206,7 @@ export const OpfsExplorer: Component<{
 			min-height: 16rem;
 			background: var(--bg-sub);
 			color: var(--fg);
-			border: 2px solid var(--surface6);
+			border: 2px solid var(--surface4);
 			border-radius: 0.5rem;
 		}
 
@@ -256,7 +256,7 @@ export const OpfsExplorer: Component<{
 	return (
 		<div>
 			<div class="path">
-				<h3>{use(this.components, x => "/" + x.join("/"))}</h3>
+				<h3>{use(this.components, x => (x.length == 0 ? "Root Directory" : "/" + x.join("/")))}</h3>
 				<div class="expand" />
 				<Button type="normal" icon="full" disabled={uploadDisabled} on:click={uploadFile}>
 					<Icon icon={iconUploadFile} />
@@ -304,8 +304,8 @@ export const OpfsExplorer: Component<{
 
 					return (
 						<Button on:click={action} icon="none" type="listitem" disabled={false} class="entry">
-							<Icon icon={icon} />
-							<span>{x.name}</span>
+							<Icon icon={x.name == ".." ? iconUploadFolder : icon} />
+							<span>{x.name === ".." ? "Parent Directory" : x.name}</span>
 							<div class="expand" />
 							<Button class={x.entry.kind !== "file" ? "hidden" : ""} on:click={download} icon="full" type="listaction" disabled={false}>
 								<Icon icon={iconDownload} />

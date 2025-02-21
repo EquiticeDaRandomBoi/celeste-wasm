@@ -15,66 +15,155 @@ html {
 	width: 100%;
 	height: 100%;
 
-	--font-body: 'Inter', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
+	--font-body: 'Adwaita Sans', 'Inter', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
 		Roboto, "Helvetica Neue", Arial, sans-serif;
-	--font-display: 'Inter Tight', 'Inter', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
+	--font-display: 'Renogare', 'Inter Tight', 'Adwaita Sans', 'Inter', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
 		Roboto, "Helvetica Neue", Arial, sans-serif;
-	--font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+	--font-mono: 'Adwaita Mono', "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
 	font-family: var(--font-body);
 }
 
 #app.dark {
-	--bg-sub: #131313;
-	--bg: #171717;
-	--surface0: #1e1e1e;
-	--surface1: #2b2b2b;
-	--surface2: #333333;
-	--surface3: #3b3b3b;
-	--surface4: #444444;
-	--surface5: #4c4c4c;
-	--surface6: #555555;
+	--bg-sub: #040002;
+	--bg: #12060b;
+	--surface0: #1b171a;
+	--surface1: #272124;
+	--surface2: #342a2f;
+	--surface3: #3a3133;
+	--surface4: #4a4144;
+	--surface5: #554a4f;
+	--surface6: #5c5355;
 	--accent: #f02424;
 	--error: #f02424;
 	--success: #84f084;
 	--warning: #f0f084;
-	--info: #7c98f6;
-	--fg: #f0f0f0;
-	--fg2: #e0e0e0;
-	--fg3: #d0d0d0;
-	--fg4: #c0c0c0;
-	--fg5: #b0b0b0;
-	--fg6: #a0a0a0;
+	--info: #b2c2f8;
+	--fg: #fffafe;
+	--fg2: #efeaee;
+	--fg3: #dedede;
+	--fg4: #cacaca;
+	--fg5: #bebebe;
+	--fg6: #aaaaaa;
 }
 
 #app.light {
-	--bg-sub: #fafafa;
-	--bg: #f0f0f0;
-	--surface0: #e0e0e0;
-	--surface1: #d0d0d0;
-	--surface2: #c0c0c0;
-	--surface3: #b0b0b0;
-	--surface4: #a0a0a0;
-	--surface5: #909090;
-	--surface6: #808080;
+	--bg-sub: #f6f0f3;
+	--bg: #fffaff;
+	--surface0: #f6f0ff;
+	--surface1: #e6e0e3;
+	--surface2: #d6d0d3;
+	--surface3: #c6c0c3;
+	--surface4: #b6b0b3;
+	--surface5: #a6a0a3;
+	--surface6: #969093;
 	--accent: #f06060;
 	--error: #e43e3e;
 	--success: #14b614;
 	--warning: #e0e060;
-	--info: #6097f0;
-	--fg: #171717;
-	--fg2: #2b2b2b;
-	--fg3: #3b3b3b;
-	--fg4: #4c4c4c;
-	--fg5: #555555;
-	--fg6: #5f5f5f;
+	--info: #3563ad;
+	--fg: #1a1719;
+	--fg2: #2f2b2e;
+	--fg3: #3f3b3e;
+	--fg4: #4f4c4d;
+	--fg5: #585556;
+	--fg6: #5f5a5e;
 }
+
+#app.ctp {
+	--bg-sub: #181825;
+	--bg: #1e1e2e;
+	--surface0: #313244;
+	--surface1: #45475a;
+	--surface2: #585b70;
+	--surface3: #6c7086;
+	--surface4: #7f849c;
+	--surface5: #9399b2;
+	--surface6: #a6adc8;
+	--accent: #f38ba8;
+	--error: #f38ba8;
+	--success: #a6e3a1;
+	--warning: #f9e2af;
+	--info: #cba6f7;
+	--fg: #cdd6f4;
+	--fg2: #bac2de;
+	--fg3: #a6adc8;
+	--fg4: #9399b2;
+	--fg5: #7f849c;
+	--fg6: #6c7086;
+}	
 
 @font-face {
 	font-family: "Renogare";
 	src:
 		local("Renogare"),
-		url("/Renogare.woff2") format("woff2"),
+		url("/fonts/display/Renogare.woff2") format("woff2"),
+}
+
+@font-face {
+	font-family: "Adwaita Sans";
+	src: local("Adwaita Sans"),
+		url("/fonts/body/AdwaitaSans-Regular.woff2") format("woff2"),
+		url("/fonts/body/AdwaitaSans-Regular.woff") format("woff"),
+		url("/fonts/body/AdwaitaSans-Regular.ttf") format("truetype");
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Adwaita Sans";
+	src: local("Adwaita Sans"),
+		url("/fonts/body/AdwaitaSans-Italic.woff2") format("woff2"),
+		url("/fonts/body/AdwaitaSans-Italic.woff") format("woff"),
+		url("/fonts/body/AdwaitaSans-Italic.ttf") format("truetype");
+	font-weight: 100 900;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Adwaita Mono";
+	src: local("Adwaita Mono"),
+		url("/fonts/mono/AdwaitaMono-Regular.woff2") format("woff2"),
+		url("/fonts/mono/AdwaitaMono-Regular.woff") format("woff"),
+		url("/fonts/mono/AdwaitaMono-Regular.ttf") format("truetype");
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Adwaita Mono";
+	src: local("Adwaita Mono"),
+		url("/fonts/mono/AdwaitaMono-Italic.woff2") format("woff2"),
+		url("/fonts/mono/AdwaitaMono-Italic.woff") format("woff"),
+		url("/fonts/mono/AdwaitaMono-Italic.ttf") format("truetype");
+	font-weight: normal;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Adwaita Mono";
+	src: local("Adwaita Mono"),
+		url("/fonts/mono/AdwaitaMono-Bold.woff2") format("woff2"),
+		url("/fonts/mono/AdwaitaMono-Bold.woff") format("woff"),
+		url("/fonts/mono/AdwaitaMono-Bold.ttf") format("truetype");
+	font-weight: bold;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Adwaita Mono";
+	src: local("Adwaita Mono"),
+		url("/fonts/mono/AdwaitaMono-BoldItalic.woff2") format("woff2"),
+		url("/fonts/mono/AdwaitaMono-BoldItalic.woff") format("woff"),
+		url("/fonts/mono/AdwaitaMono-BoldItalic.ttf") format("truetype");
+	font-weight: bold;
+	font-style: italic;
+	font-display: swap;
 }
 
 h1,
@@ -98,6 +187,12 @@ h3 {
 	font-weight: 500;
 }
 
+code,
+pre {
+	font-family: var(--font-mono);
+	font-size: 0.9em;
+}
+
 a {
 	color: var(--accent);
 	text-decoration: none;
@@ -106,4 +201,11 @@ a {
 	&:hover {
 		color: color-mix(in srgb, var(--accent) 80%, white);
 	}
+}
+
+.warning {
+	color: var(--warning);
+}
+.error {
+	color: var(--error);
 }

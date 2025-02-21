@@ -37,31 +37,29 @@ const Intro: Component<{
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
-
-		.warning {
-			color: var(--warning);
-		}
+		
 		.error {
-			color: var(--error);
+			margin-block: 0.3em;
+		}
+		
+		p {
+			margin-block: 0.3em;
 		}
 	`;
 
 	return (
 		<div>
-			<div>
+			<p>
 				This is a mostly-complete port of <Link href="https://www.celestegame.com/">Celeste</Link> to the browser using <b>dotnet 9's threaded WASM support</b>.
 				It also uses <Link href="https://github.com/r58playz/monomod">r58Playz's <b>MonoMod WASM port</b></Link> to patch the game dynamically.
 				It needs around 0.6GB of memory and will probably not work on low-end devices.
-			</div>
-
-			<div>
+			</p>
+			<p>
 				You will need to own Celeste to play this. Make sure you have it downloaded and installed on your computer.
-			</div>
-
-			<div>
+			</p>
+			<p>
 				The background is from <Link href="https://www.fangamer.com/products/celeste-desk-mat-skies">fangamer merch</Link>.
-			</div>
-
+			</p>
 			{PICKERS_UNAVAILABLE ?
 				<div class="error">
 					Your browser does not support the
@@ -70,8 +68,8 @@ const Intro: Component<{
 				</div>
 				: null}
 			{DECRYPT_INFO ? null :
-				<div class="error">
-					This deployment of celeste-wasm does not have encrypted assets. You cannot download and decrypt them to play.
+				<div class="warning">
+					<span>This deployment of celeste-wasm does not have encrypted assets. You cannot download and decrypt them to play.</span>
 				</div>}
 			{PICKERS_UNAVAILABLE && !DECRYPT_INFO ?
 				<div class="error">
@@ -85,7 +83,7 @@ const Intro: Component<{
 			</Button>
 			<Button on:click={() => this["on:next"]("download")} type="primary" icon="left" disabled={!DECRYPT_INFO}>
 				<Icon icon={iconDownload} />
-				{DECRYPT_INFO ? "Download and decrypt assets" : "Download and decrypt assets is disabled"}
+				{DECRYPT_INFO ? "Download and decrypt assets" : "Downloading and decrypting assets is disabled"}
 			</Button>
 		</div>
 	)
@@ -114,6 +112,7 @@ const Copy: Component<{
 	"on:done": () => void,
 }, {
 	copying: boolean,
+	os: string,
 	status: string,
 	percent: number,
 }> = function() {
@@ -121,6 +120,10 @@ const Copy: Component<{
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
+
+		code {
+			overflow-wrap: break-word;
+		}
 	`;
 
 	const opfs = async () => {
@@ -147,19 +150,50 @@ const Copy: Component<{
 		this["on:done"]();
 	}
 
+	let ua = navigator.userAgent;
+	this.os = "";
+	if (ua.includes("Win")) {
+		this.os = "win";
+	} else if (ua.includes("Mac")) {
+		this.os = "darwin";
+	} else if (ua.includes("Linux")) {
+		this.os = "linux";
+	}
+
 	return (
 		<div>
 			<div>
 				Select your Celeste install's Content directory. It will be copied to browser storage and can be removed in the file manager.
 			</div>
+			{this.os == "win" ? (<div>
+				The Content directory for Steam installs of Celeste is usually located in <code>C:\Program Files (x86)\Steam\steamapps\common\Celeste</code>.
+			</div>) : null}
+			{this.os == "darwin" ? (
 			<div>
+				<p>
+					The Content directory for Steam installs of Celeste is usually located in <code>~/Library/Application Support/Steam/steamapps/common/Celeste/Celeste.app/Contents/Resources</code>.
+				</p>
+				<p class="warning">
+					If you get an error stating it can't open the folder because it "contains system files", try copying it to another location first.
+				</p>
+			</div>
+		) : null}
+			{this.os == "linux" ? (<div>
+				<p>
+				The Content directory for Steam installs of Celeste is usually located in <code>~/.steam/root/steamapps/common/Celeste</code>.
+				</p>
+				<p class="warning">
+					If you get an error stating it can't open the folder because it "contains system files", try copying it to another location first.
+				</p>
+			</div>) : null}
+			{this.os == "" ? (<div>
 				The Content directory for Steam installs of Celeste is usually located in one of these locations:
 				<ul>
 					<li><code>~/.steam/root/steamapps/common/Celeste</code></li>
 					<li><code>C:\Program Files (x86)\Steam\steamapps\common\Celeste</code></li>
-					<li><code>~/Library/Application Support/Steam/steamapps/common/Celeste</code></li>
+					<li><code>~/Library/Application Support/Steam/steamapps/common/Celeste/Celeste.app/Contents/Resources</code></li>
 				</ul>
-			</div>
+			</div>) : null }
 			{$if(use(this.copying), <Progress percent={use(this.percent)} />)}
 			<Button on:click={opfs} type="primary" icon="left" disabled={use(this.copying)}>
 				<Icon icon={iconFolderOpen} />
@@ -340,10 +374,10 @@ export const Splash: Component<{
 		.container {
 			backdrop-filter: blur(0.5vw);
 			background-color: color-mix(in srgb, var(--bg) 80%, transparent);
-			width: min(32rem, 100%);
+			width: min(40rem, 100%);
 			margin: 0 1rem;
-			padding: 1em;
-			border-radius: 1rem;
+			padding: 1.3em;
+			border-radius: 1.5rem;
 
 			color: var(--fg);
 
