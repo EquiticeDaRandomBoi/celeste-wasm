@@ -129,7 +129,7 @@ const TopBar: Component<{
 					play();
 				}} icon="left" type="primary" disabled={use(this.allowPlay, x => !x)}>
 					<Icon icon={iconPlayArrow} />
-					Play
+					<span>Play</span>
 				</Button>
 			</div>
 		</div>

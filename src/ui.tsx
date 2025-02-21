@@ -27,9 +27,19 @@ export const Button: Component<{
 			border-radius: 20rem;
 			padding: 0.5rem;
 
-			transition: background 0.2s;
+			transition: background 0.2s, color 0.2s, transform 0.1s;
 			font-family: var(--font-body);
 			cursor: pointer;
+		}
+
+		button > *, button:active > * {
+			transition: transform 0.1s;
+			-webkit-user-select: none;
+			user-select: none;
+		}
+
+		button:active > * {
+			transform: scale(0.9);
 		}
 
 		button.icon-full svg, button.icon-left svg {

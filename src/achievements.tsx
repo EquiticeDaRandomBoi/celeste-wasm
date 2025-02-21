@@ -5,65 +5,85 @@ import glowOuter from "./steam-glow-outer.png";
 import glowInner from "./steam-glow-inner.png";
 
 export type Achievement = {
-	hidden: boolean,
-	unlocked_image: string,
-	locked_image: string,
-	name: string,
-	description: string,
+  hidden: boolean;
+  unlocked_image: string;
+  locked_image: string;
+  name: string;
+  description: string;
 };
 
 async function getAchievementsFile(): Promise<FileSystemFileHandle | null> {
-	try {
-		return await rootFolder.getFileHandle("achievements.json");
-	} catch {
-		return null;
-	}
+  try {
+    return await rootFolder.getFileHandle("achievements.json");
+  } catch {
+    return null;
+  }
 }
 
-export async function getUnlockedAchievements(): Promise<Record<string, Achievement>> {
-	const file = await getAchievementsFile()
-	if (file) {
-		const unlocked = JSON.parse(await file.getFile().then(r => r.text())) as string[];
-		return Object.fromEntries(unlocked.map(x => [x, achievements[x]] as const));
-	} else {
-		return {};
-	}
+export async function getUnlockedAchievements(): Promise<
+  Record<string, Achievement>
+> {
+  const file = await getAchievementsFile();
+  if (file) {
+    const unlocked = JSON.parse(
+      await file.getFile().then((r) => r.text())
+    ) as string[];
+    return Object.fromEntries(
+      unlocked.map((x) => [x, achievements[x]] as const)
+    );
+  } else {
+    return {};
+  }
 }
 
-export async function getLockedAchievements(): Promise<Record<string, Achievement>> {
-	const file = await getAchievementsFile()
-	if (file) {
-		const unlocked = JSON.parse(await file.getFile().then(r => r.text())) as string[];
-		return Object.fromEntries(Object.entries(achievements).filter(([id, _]) => !unlocked.includes(id)));
-	} else {
-		return achievements;
-	}
+export async function getLockedAchievements(): Promise<
+  Record<string, Achievement>
+> {
+  const file = await getAchievementsFile();
+  if (file) {
+    const unlocked = JSON.parse(
+      await file.getFile().then((r) => r.text())
+    ) as string[];
+    return Object.fromEntries(
+      Object.entries(achievements).filter(([id, _]) => !unlocked.includes(id))
+    );
+  } else {
+    return achievements;
+  }
 }
 
 (self as any).achievements = {
-	getUnlockedAchievements,
-	getLockedAchievements,
+  getUnlockedAchievements,
+  getLockedAchievements,
 };
 
-export const Achievements: Component<{
-	open: boolean,
-}, {
-	unlocked: [string, Achievement][],
-	locked: [string, Achievement][],
-}> = function() {
-	this.unlocked = [];
-	this.locked = [];
+export const Achievements: Component<
+  {
+    open: boolean;
+  },
+  {
+    unlocked: [string, Achievement][];
+    locked: [string, Achievement][];
+  }
+> = function () {
+  this.unlocked = [];
+  this.locked = [];
 
-	this.css = `
+  this.css = `
 		.achievements {
 			display: flex;
 			flex-direction: column;
 			gap: 1em;
+			margin-block: 1em;
+		}
+
+		h3 {
+			margin-block: 0;
 		}
 
 		.achievement {
 			display: flex;
-			gap: 0.5rem;
+			gap: 0.8rem;
 
 			background: var(--surface1);
 			padding: 0.5rem;
@@ -98,6 +118,7 @@ export const Achievements: Component<{
 			position: relative;
 			height: 64px;
 			width: 64px;
+			border-radius: 3px;
 		}
 		.image .glow-root, .image .glow-container, .image .glow {
 			position: absolute;
@@ -146,41 +167,72 @@ export const Achievements: Component<{
 		}
 	`;
 
-	useChange([this.open], async () => {
-		this.unlocked = Object.entries(await getUnlockedAchievements());
-		this.locked = Object.entries(await getLockedAchievements());
-	});
+  useChange([this.open], async () => {
+    this.unlocked = Object.entries(await getUnlockedAchievements());
+    this.locked = Object.entries(await getLockedAchievements());
+  });
 
-	const createAchievement = (id: string, achievement: Achievement, unlocked: boolean) => {
-		return (
-			<div class={`achievement ${unlocked ? "unlocked" : ""} ${achievement.hidden ? "hidden" : ""}`}>
-				<div class="image">
-					<div class={`glow-root ${glowingAchievements.includes(id) ? "glows" : ""}`}>
-						<div class="glow-container">
-							<div class="glow" />
-						</div>
-					</div>
-					<img src={unlocked ? achievement.unlocked_image : achievement.locked_image} />
-				</div>
-				<div class="inner">
-					<div>{achievement.name}</div>
-					<div>{achievement.description}</div>
-				</div>
-			</div>
-		)
-	}
+  const createAchievement = (
+    id: string,
+    achievement: Achievement,
+    unlocked: boolean
+  ) => {
+    return (
+      <div
+        class={`achievement ${unlocked ? "unlocked" : ""} ${
+          achievement.hidden ? "hidden" : ""
+        }`}
+      >
+        <div class="image">
+          <div
+            class={`glow-root ${
+              glowingAchievements.includes(id) ? "glows" : ""
+            }`}
+          >
+            <div class="glow-container">
+              <div class="glow" />
+            </div>
+          </div>
+          <img
+            src={
+              unlocked ? achievement.unlocked_image : achievement.locked_image
+            }
+          />
+        </div>
+        <div class="inner">
+          <div>{achievement.name}</div>
+          <div>{achievement.description}</div>
+        </div>
+      </div>
+    );
+  };
 
-	return (
-		<div>
-			<h3>Unlocked</h3>
-			<div class="achievements">
-				{use(this.unlocked, x => x.map(([id, x]) => createAchievement(id, x, true)))}
-			</div>
-			<h3>Locked</h3>
-			<div class="achievements">
-				{use(this.locked, x => x.map(([id, x]) => createAchievement(id, x, false)))}
-			</div>
-			<div class="padding" />
-		</div>
-	)
-}
+  return (
+    <div>
+      {$if(
+        use(this.unlocked, (x) => x.length > 0),
+        <div>
+          <h3>Unlocked</h3>
+          <div class="achievements">
+            {use(this.unlocked, (x) =>
+              x.map(([id, x]) => createAchievement(id, x, true))
+            )}
+          </div>
+        </div>
+      )}
+
+      {$if(
+        use(this.unlocked, (x) => x.length === 0),
+        <div>
+          <h3>Locked</h3>
+          <div class="achievements">
+            {use(this.locked, (x) =>
+              x.map(([id, x]) => createAchievement(id, x, false))
+            )}
+          </div>
+        </div>
+      )}
+      {/* <div class="padding" /> */}
+    </div>
+  );
+};
