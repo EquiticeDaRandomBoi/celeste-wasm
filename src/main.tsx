@@ -57,7 +57,7 @@ const TopBar: Component<{
 		background: var(--bg-sub);
 		padding: 1em;
 		border-bottom: 2px solid var(--surface1);
-
+		transition: background 200ms, color 200ms, border-color 200ms;
 		display: flex;
 		align-items: stretch;
 		gap: 0.5rem;
@@ -143,7 +143,7 @@ const BottomBar: Component<{}, {}> = function() {
 		border-top: 2px solid var(--surface1);
 		padding: 0.5rem;
 		font-size: 0.8rem;
-
+		transition: background 200ms, color 200ms, border-color 200ms;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -176,11 +176,14 @@ const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function() {
 		display: grid;
 		grid-template-areas: "overlay";
 
+		transition: background 200ms, color 200ms;
+
 		div, canvas {
 			grid-area: overlay;
 			width: 100%;
 			height: 100%;
 			border: 2px solid var(--surface4);
+			transition: background 200ms, color 200ms, border-color 200ms;
 		}
 		div.started, canvas.stopped {
 			visibility: hidden;
@@ -189,7 +192,7 @@ const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function() {
 		div {
 			background: var(--surface1);
 			color: var(--surface6);
-
+			transition: background 200ms, color 200ms, border-color 200ms;
 			font-family: var(--font-display);
 			font-size: 2rem;
 			font-weight: 570;
@@ -238,12 +241,17 @@ const LogView: Component<{}, {}> = function() {
 		border: 2px solid var(--surface4);
 		border-top: none;
 		background: var(--bg-sub);
-
+		transition: background 200ms, color 200ms, border-color 200ms;
 		font-family: var(--font-mono);
+
+		.log {
+			transition: color 200ms;
+		}
 	`;
 
 	const create = (color: string, log: string) => {
 		const el = document.createElement("div");
+		el.classList.add("log");
 		el.innerText = log;
 		el.style.color = color;
 		return el;
@@ -281,6 +289,8 @@ export const Main: Component<{}, {
 		display: flex;
 		flex-direction: column;
 		overflow: scroll;
+
+		transition: background 200ms, color 200ms;
 
 		.main {
 			flex: 1;
