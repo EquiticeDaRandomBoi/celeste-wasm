@@ -103,7 +103,9 @@ export async function getDlls(): Promise<(readonly [string, string])[]> {
 		"Mono.Cecil.dll",
 		"System.Diagnostics.Process.dll",
 		"System.ComponentModel.Primitives.dll",
-		"System.Collections.dll"
+		"System.Collections.dll",
+		"System.dll",
+		"Steamworks.NET.dll"
 	];
 
 	return Object.entries(resources.resources.fingerprinting).map(x => [x[0] as string, x[1] as string] as const).filter(([_, v]) => whitelist.includes(v));
@@ -169,7 +171,7 @@ export async function downloadEverest() {
 	const branch = "stable"
 	const res = await fetch("https://everestapi.github.io/everestupdater.txt");
 	const versionsUrl = await res.text();
-	const versRes = await fetch(versionsUrl);
+	const versRes = await fetch(versionsUrl + "?supportsNativeBuilds=true");
 
 	const versions = await versRes.json();
 	const build = versions.filter((v: any) => v.branch == branch)[0];
@@ -281,7 +283,7 @@ export async function preInit() {
 	console.debug("dotnet initialized");
 
 	try {
-		await rootFolder.getFileHandle("Celeste.Mod.mm.dll", { create: false });
+		await (await (await rootFolder.getDirectoryHandle("Celeste")).getDirectoryHandle("Everest")).getFileHandle("Celeste.Mod.mm.dll", { create: false });
 	} catch {
 		try {
 			await rootFolder.getFileHandle("everest.zip", { create: false });
