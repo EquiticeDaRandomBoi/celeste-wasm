@@ -55,6 +55,8 @@ public static partial class Celeste
         {
             File.CreateSymbolicLink("/bin/Celeste.exe", "/libsdl/CustomCeleste.dll");
             File.CreateSymbolicLink("/bin/Celeste.dll", "/libsdl/CustomCeleste.dll");
+            File.Copy("/libsdl/Celeste/Everest/Celeste.Mod.mm.dll", "/libsdl/Celeste.Mod.mm.dll");
+            File.Copy("/libsdl/Celeste/Everest/MMHOOK_Celeste.dll", "/libsdl/MMHOOK_Celeste.dll");
             Console.WriteLine("created celeste symlinks");
 
             celeste = Assembly.LoadFrom("/libsdl/CustomCeleste.dll");

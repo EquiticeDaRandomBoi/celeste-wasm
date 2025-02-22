@@ -109,6 +109,20 @@ public partial class Patcher
                 modder.Log("Converting Celeste to NET Core");
                 NETCoreifier.Coreifier.ConvertToNetCore(modder);
 
+                modder.Log("Installing Everest");
+                modder.MapDependencies();
+                modder.AutoPatch();
+            }
+
+            using (MonoModder modder = new()
+            {
+                Module = Module,
+                MissingDependencyThrow = false,
+            })
+            {
+                modder.DependencyDirs.Add("/bin");
+                modder.DependencyDirs.Add("/libsdl/Celeste/Everest");
+                modder.MapDependencies();
                 modder.Log("Generating MMHOOK_Celeste.dll");
                 string pathOut = "/libsdl/Celeste/Everest/MMHOOK_Celeste.dll";
                 var gen = new HookGenerator(modder, Path.GetFileName(pathOut))
@@ -118,16 +132,12 @@ public partial class Patcher
                 using (var mOut = gen.OutputModule)
                 {
                     gen.Generate();
+
+                    // we're supposed to run everest again on the mmhook? i don't feel like doing that
+                    // it's only for monomod crimes so we should be fine
                     mOut.Write(pathOut);
                 }
-
-                modder.Log("Installing Everest");
-                modder.MapDependencies();
-                modder.AutoPatch();
             }
-
-            // we're supposed to run everest again on the mmhook? but i think it should work since i did it all in one pass? idk
-            // it's only for monomod crimes so we should be fine
         }
 
 
