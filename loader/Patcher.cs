@@ -7,8 +7,9 @@ using System.Runtime.InteropServices;
 using System.IO.Compression;
 using Mono.Cecil;
 using MonoMod;
+using MonoMod.RuntimeDetour.HookGen;
 
-public partial class AotPatcher
+public partial class Patcher
 {
 
     [JSExport]
@@ -16,12 +17,30 @@ public partial class AotPatcher
     {
         try
         {
-            if (File.Exists("/libsdl/Celeste.exe") && !File.Exists("/libsdl/CustomCeleste.dll"))
+            if (File.Exists("/libsdl/CustomCeleste.dll"))
             {
-                Console.WriteLine("netcorefiering celeste");
-                AotPatcher.AutoPatch("/libsdl/Celeste.exe", "/libsdl/CustomCeleste.dll");
-                Console.WriteLine("netcorefiered celeste");
+                Console.WriteLine("CustomCeleste.dll found, skipping patcher");
+                return true;
             }
+
+            Patcher patcher;
+            if (File.Exists("/libsdl/Celeste.dll"))
+            {
+                patcher = new("/libsdl/Celeste.dll");
+            }
+            else if (File.Exists("/libsdl/Celeste.exe"))
+            {
+                patcher = new("/libsdl/Celeste.exe");
+                patcher.installEverest = true;
+            }
+            else
+            {
+                throw new Exception("Celeste.dll or Celeste.exe not found!");
+            }
+
+            Console.WriteLine($"Patching Assembly {patcher._path}");
+            patcher.patch();
+            patcher.write("/libsdl/CustomCeleste.dll");
             return true;
         }
         catch (Exception e)
@@ -62,16 +81,12 @@ public partial class AotPatcher
     }
 
     public ModuleDefinition Module;
+    public string _path;
+    public bool installEverest = false;
 
-    public static void AutoPatch(string src, string dst)
+    public Patcher(string path)
     {
-        AotPatcher patcher = new(src);
-        patcher.patch();
-        patcher.write(dst);
-    }
-
-    public AotPatcher(string path)
-    {
+        _path = path;
         ReaderParameters readerParams = new(ReadingMode.Immediate) { ReadSymbols = false, InMemory = true };
         MemoryStream stream = new(File.ReadAllBytes(path));
         Module = ModuleDefinition.ReadModule(stream, readerParams);
@@ -79,25 +94,40 @@ public partial class AotPatcher
 
     public void patch()
     {
-
-        // TODO: account for the user uploading their own everest
-
-        ModuleDefinition everest = ModuleDefinition.ReadModule("/libsdl/Celeste/Everest/Celeste.Mod.mm.dll");
-        using (MonoModder modder = new()
+        if (installEverest)
         {
-            Module = Module,
-            Mods = [everest],
-            MissingDependencyThrow = false,
-        })
-        {
-            modder.DependencyDirs.Add("/bin");
-            modder.DependencyDirs.Add("/libsdl/Celeste/Everest");
-            modder.Log("Converting Celeste to NET Core");
-            NETCoreifier.Coreifier.ConvertToNetCore(modder);
+            ModuleDefinition everest = ModuleDefinition.ReadModule("/libsdl/Celeste/Everest/Celeste.Mod.mm.dll");
+            using (MonoModder modder = new()
+            {
+                Module = Module,
+                Mods = [everest],
+                MissingDependencyThrow = false,
+            })
+            {
+                modder.DependencyDirs.Add("/bin");
+                modder.DependencyDirs.Add("/libsdl/Celeste/Everest");
+                modder.Log("Converting Celeste to NET Core");
+                NETCoreifier.Coreifier.ConvertToNetCore(modder);
 
-            modder.Log("Installing Everest");
-            modder.MapDependencies();
-            modder.AutoPatch();
+                modder.Log("Generating MMHOOK_Celeste.dll");
+                string pathOut = "/libsdl/Celeste/Everest/MMHOOK_Celeste.dll";
+                var gen = new HookGenerator(modder, Path.GetFileName(pathOut))
+                {
+                    HookPrivate = true,
+                };
+                using (var mOut = gen.OutputModule)
+                {
+                    gen.Generate();
+                    mOut.Write(pathOut);
+                }
+
+                modder.Log("Installing Everest");
+                modder.MapDependencies();
+                modder.AutoPatch();
+            }
+
+            // we're supposed to run everest again on the mmhook? but i think it should work since i did it all in one pass? idk
+            // it's only for monomod crimes so we should be fine
         }
 
 
