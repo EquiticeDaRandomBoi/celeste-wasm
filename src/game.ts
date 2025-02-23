@@ -192,7 +192,8 @@ export async function downloadEverest() {
 export async function preInit() {
 	console.debug("initializing dotnet");
 	const runtime = await dotnet.withConfig({
-		pthreadPoolInitialSize: 64
+		pthreadPoolInitialSize: 24,
+		pthreadPoolUnusedSize: 512,
 	}).create();
 
 	console.log("loading libcurl");

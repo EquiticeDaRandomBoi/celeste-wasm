@@ -24,7 +24,7 @@ public static partial class Celeste
     internal static void CallPinvokeFixers()
     {
         wasm_func_viil(0, 0, 0);
-		MonoMod.CustomBankLoader.PinvokeFix();
+        MonoMod.CustomBankLoader.PinvokeFix();
     }
 
     [JSExport]
@@ -56,6 +56,8 @@ public static partial class Celeste
         {
             File.CreateSymbolicLink("/bin/Celeste.exe", "/libsdl/CustomCeleste.dll");
             File.CreateSymbolicLink("/bin/Celeste.dll", "/libsdl/CustomCeleste.dll");
+            File.CreateSymbolicLink("/bin/Celeste.Mod.mm.dll", "/libsdl/Celeste.Mod.mm.dll");
+            File.CreateSymbolicLink("/bin/MMHOOK_Celeste.dll", "/libsdl/MMHOOK_Celeste.dll");
 
             File.Copy("/libsdl/Celeste/Everest/Celeste.Mod.mm.dll", "/libsdl/Celeste.Mod.mm.dll", true);
             File.Copy("/libsdl/Celeste/Everest/MMHOOK_Celeste.dll", "/libsdl/MMHOOK_Celeste.dll", true);

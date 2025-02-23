@@ -20,7 +20,7 @@ public class RegularHttpClient : HttpClient
 
 namespace Celeste.Mod
 {
-    public static partial class Everest
+    public static partial class patch_Everest
     {
 
         public static partial class patch_Updater

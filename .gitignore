@@ -6,6 +6,7 @@ nuget
 /FNA
 /MonoMod
 /NLua
+/SteamKit2.WASM
 
 node_modules
 public/_framework
