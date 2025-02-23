@@ -1,4 +1,4 @@
-STATICS_RELEASE=043bcb60-fed3-4525-b55b-39a8098405ee
+STATICS_RELEASE=e6c1cdf1-906d-4063-876e-bf6763190eeb
 
 statics:
 	mkdir statics
@@ -9,6 +9,9 @@ statics:
 	wget https://github.com/r58Playz/FNA-WASM-Build/releases/download/$(STATICS_RELEASE)/liba.o -O statics/liba.o
 	wget https://github.com/r58Playz/FNA-WASM-Build/releases/download/$(STATICS_RELEASE)/dotnet.zip -O statics/dotnet.zip
 	wget https://github.com/r58Playz/FNA-WASM-Build/releases/download/$(STATICS_RELEASE)/libcrypto.a -O statics/libcrypto.a
+
+SteamKit2.WASM:
+	git clone https://github.com/MercuryWorkshop/SteamKit2.WASM --recursive
 
 FNA:
 	git clone https://github.com/FNA-XNA/FNA --recursive
@@ -28,11 +31,11 @@ nuget:
 	NUGET_PACKAGES="$(realpath .)/nuget" dotnet restore loader
 	unzip -o statics/dotnet.zip -d nuget/microsoft.netcore.app.runtime.mono.multithread.browser-wasm/9.?.?/
 
-build: statics nuget FNA MonoMod NLua
+build: statics nuget FNA MonoMod NLua SteamKit2.WASM
 	pnpm i
 	rm -r public/_framework bin/Release/net9.0/publish/wwwroot/_framework || true
 #
-	NUGET_PACKAGES="$(realpath .)/nuget" dotnet publish loader -c Release -v diag
+	NUGET_PACKAGES="$(realpath .)/nuget" dotnet publish loader -c Release
 #
 	cp -rv loader/bin/Release/net9.0/publish/wwwroot/_framework public/
 	# emscripten sucks

@@ -29,12 +29,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build csproj
-        steps:
-        - uses: actions/checkout@v4
-        - uses: actions/setup-dotnet@v4
-          with:
-            dotnet-version: '9.0.2'
-        - run: |
-          dotnet workload restore
+      - name: Setup Dotnet 
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.102'
+
+      - name: Install mono
+        run: sudo apt-get install mono-devel
+
+      - name: Build Csproj
+        run: |
+          cd loader && dotnet workload restore && cd ..
           make serve
