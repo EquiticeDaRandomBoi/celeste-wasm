@@ -1,4 +1,4 @@
-STATICS_RELEASE=a27fb36d-842c-4ff8-a2b9-707dd35ec236
+STATICS_RELEASE=a2368804-2f6d-44af-8e67-4a1fc2e9d2d8
 
 statics:
 	mkdir statics
