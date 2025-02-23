@@ -40,7 +40,7 @@ function proxyConsole(name: string, color: string) {
 }
 proxyConsole("error", "var(--error)");
 proxyConsole("warn", "var(--warning)");
-proxyConsole("log", "var(--fg)");
+//proxyConsole("log", "var(--fg)");
 proxyConsole("info", "var(--info)");
 proxyConsole("debug", "var(--fg4)");
 
@@ -192,7 +192,7 @@ export async function downloadEverest() {
 export async function preInit() {
 	console.debug("initializing dotnet");
 	const runtime = await dotnet.withConfig({
-		pthreadPoolInitialSize: 24
+		pthreadPoolInitialSize: 64
 	}).create();
 
 	console.log("loading libcurl");
@@ -298,10 +298,12 @@ export async function preInit() {
 
 
 
+	/*
 	await exports.Steam.Init();
 	if (await exports.Steam.InitSteamSaved()) {
 		console.log("Steam saved login success");
 	}
+	*/
 
 	gameState.ready = true;
 };

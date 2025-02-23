@@ -24,6 +24,7 @@ public static partial class Celeste
     internal static void CallPinvokeFixers()
     {
         wasm_func_viil(0, 0, 0);
+		MonoMod.CustomBankLoader.PinvokeFix();
     }
 
     [JSExport]

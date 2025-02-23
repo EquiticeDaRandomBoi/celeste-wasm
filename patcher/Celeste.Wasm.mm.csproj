@@ -9,9 +9,5 @@
 		<PackageReference Include="Mono.Cecil" Version="0.11.6" />
 		<ProjectReference Include="..\MonoMod\src\MonoMod.Patcher\MonoMod.Patcher.csproj" />
 		<ProjectReference Include="..\FNA\FNA.Core.csproj" />
-		<Reference Include="Celeste">
-			<HintPath>..\Celeste-stripped.exe</HintPath>
-			<Private>False</Private>
-		</Reference>
 	</ItemGroup>
 </Project>

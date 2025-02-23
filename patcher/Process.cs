@@ -8,5 +8,6 @@ namespace MonoMod
 		}
 
 		public long WorkingSet64 { get { return long.MaxValue; } }
+		public long VirtualMemorySize64 { get { return long.MaxValue; } }
     }
 }

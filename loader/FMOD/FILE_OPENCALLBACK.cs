@@ -1,5 +1,6 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace FMOD;
-
-public delegate RESULT FILE_OPENCALLBACK(StringWrapper name, ref uint filesize, ref IntPtr handle, IntPtr userdata);
+[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+public delegate RESULT FILE_OPENCALLBACK(StringWrapper name, IntPtr filesize, IntPtr handle, IntPtr userdata);

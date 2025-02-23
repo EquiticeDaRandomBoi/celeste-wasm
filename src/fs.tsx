@@ -235,7 +235,7 @@ export const OpfsExplorer: Component<{
 	});
 
 	const uploadFile = async () => {
-		const files = await showOpenFilePicker();
+		const files = await showOpenFilePicker({ multiple: true });
 		this.uploading = true;
 		for (const file of files) {
 			await copyFile(file, this.path);

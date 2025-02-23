@@ -3,20 +3,116 @@ using Mono.Cecil;
 using MonoMod;
 using MonoMod.Cil;
 using MonoMod.InlineRT;
+using FMOD;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
+namespace FMOD
+{
+    public struct StringWrapper { }
+    public enum RESULT { }
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate RESULT REAL_FILE_CLOSECALLBACK(IntPtr handle, IntPtr userdata);
+    // ref uint filesize, ref IntPtr handle
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate RESULT REAL_FILE_OPENCALLBACK(StringWrapper name, IntPtr filesize, IntPtr handle, IntPtr userdata);
+    // ref uint bytesread
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate RESULT REAL_FILE_READCALLBACK(IntPtr handle, IntPtr buffer, uint sizebytes, IntPtr bytesread, IntPtr userdata);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate RESULT REAL_FILE_SEEKCALLBACK(IntPtr handle, uint pos, IntPtr userdata);
+
+    public delegate RESULT FILE_OPENCALLBACK(StringWrapper name, ref uint filesize, ref IntPtr handle, IntPtr userdata);
+    public delegate RESULT FILE_CLOSECALLBACK(IntPtr handle, IntPtr userdata);
+    public delegate RESULT FILE_READCALLBACK(IntPtr handle, IntPtr buffer, uint sizebytes, ref uint bytesread, IntPtr userdata);
+    public delegate RESULT FILE_SEEKCALLBACK(IntPtr handle, uint pos, IntPtr userdata);
+}
 namespace FMOD.Studio
 {
-    public class patch_System : System
+    [MonoModIgnore]
+    public class Bank { protected IntPtr rawPtr; public Bank(IntPtr raw) { rawPtr = raw; } }
+
+    public struct REAL_BANK_INFO
     {
-        public patch_System(IntPtr x)
-            : base(x)
+        public int size;
+
+        public IntPtr userdata;
+
+        public int userdatalength;
+
+        public REAL_FILE_OPENCALLBACK opencallback;
+
+        public REAL_FILE_CLOSECALLBACK closecallback;
+
+        public REAL_FILE_READCALLBACK readcallback;
+
+        public REAL_FILE_SEEKCALLBACK seekcallback;
+    }
+    public struct BANK_INFO
+    {
+        public int size;
+
+        public IntPtr userdata;
+
+        public int userdatalength;
+
+        public FILE_OPENCALLBACK opencallback;
+
+        public FILE_CLOSECALLBACK closecallback;
+
+        public FILE_READCALLBACK readcallback;
+
+        public FILE_SEEKCALLBACK seekcallback;
+    }
+
+    [Flags]
+    public enum LOAD_BANK_FLAGS : uint
+    {
+        NORMAL = 0u,
+        NONBLOCKING = 1u,
+        DECOMPRESS_SAMPLES = 2u
+    }
+
+    public class System 
+    {
+        [DllImport("fmodstudio")]
+        private static extern RESULT FMOD_Studio_System_LoadBankCustom(IntPtr studiosystem, ref REAL_BANK_INFO info, LOAD_BANK_FLAGS flags, out IntPtr bank);
+
+        public RESULT loadBankCustom(BANK_INFO info, LOAD_BANK_FLAGS flags, out Bank bank)
         {
-            // no-op. MonoMod ignores this - we only need this to make the compiler shut up.
+            bank = null;
+            info.size = Marshal.SizeOf(info);
+            IntPtr bank2 = default(IntPtr);
+
+            CustomBankLoader.MODOPEN = info.opencallback;
+            CustomBankLoader.MODCLOSE = info.closecallback;
+            CustomBankLoader.MODREAD = info.readcallback;
+            CustomBankLoader.MODSEEK = info.seekcallback;
+
+            REAL_BANK_INFO real = new REAL_BANK_INFO()
+            {
+                size = info.size,
+                userdata = info.userdata,
+                userdatalength = info.userdatalength,
+
+                opencallback = CustomBankLoader.OPEN,
+                closecallback = CustomBankLoader.CLOSE,
+                readcallback = CustomBankLoader.READ,
+                seekcallback = CustomBankLoader.SEEK,
+            };
+
+            RESULT rESULT = FMOD_Studio_System_LoadBankCustom((IntPtr)typeof(System).GetField("rawPtr", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(this), ref real, flags, out bank2);
+            if (rESULT != 0)
+            {
+                return rESULT;
+            }
+            bank = new Bank(bank2);
+            return rESULT;
         }
 
         [MonoModIgnore]
         [PatchFMODVersion]
-        public extern new static RESULT create(out FMOD.Studio.System studiosystem);
+        public extern static RESULT create(out System studiosystem);
     }
 }
 
@@ -32,14 +128,77 @@ namespace MonoMod
     {
         public static void PatchFMODVersion(ILContext context, CustomAttribute attrib)
         {
-			ILCursor cursor = new(context);
-			cursor.GotoNext(i => i.MatchLdcI4(out var num) && num == 69652);
+            ILCursor cursor = new(context);
+            cursor.GotoNext(i => i.MatchLdcI4(out var num) && num == 69652);
 
-			if (!context.Instrs[cursor.Index].MatchLdcI4(out var _))
-				throw new Exception("should never happen");
+            if (!context.Instrs[cursor.Index].MatchLdcI4(out var _))
+                throw new Exception("should never happen");
 
-			context.Instrs[cursor.Index].Operand = (int)0x00020222;
-			MonoModRule.Modder.Log("[FMODPatcher] Patched FMOD Version");
+            context.Instrs[cursor.Index].Operand = (int)0x00020222;
+            MonoModRule.Modder.Log("[FMODPatcher] Patched FMOD Version");
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Method)]
+    sealed class MonoPInvokeCallbackAttribute : Attribute
+    {
+        public MonoPInvokeCallbackAttribute(Type t) { }
+    }
+
+    public class CustomBankLoader
+    {
+        public static object MODOPEN;
+        public static object MODCLOSE;
+        public static object MODREAD;
+        public static object MODSEEK;
+
+        public static REAL_FILE_OPENCALLBACK OPEN = OpenCallback;
+        public static REAL_FILE_CLOSECALLBACK CLOSE = CloseCallback;
+        public static REAL_FILE_READCALLBACK READ = ReadCallback;
+        public static REAL_FILE_SEEKCALLBACK SEEK = SeekCallback;
+
+        public static void PinvokeFix()
+        {
+            OPEN = OpenCallback;
+            CLOSE = CloseCallback;
+            READ = ReadCallback;
+            SEEK = SeekCallback;
+        }
+
+        [MonoPInvokeCallback(typeof(REAL_FILE_OPENCALLBACK))]
+        public static RESULT OpenCallback(StringWrapper name, IntPtr realfilesize, IntPtr realhandle, IntPtr userdata)
+        {
+            uint filesize = 0;
+            IntPtr handle = 0;
+            var ret = ((FILE_OPENCALLBACK)MODOPEN)(name, ref filesize, ref handle, userdata);
+            Marshal.WriteIntPtr(realhandle, handle);
+            Marshal.WriteInt32(realfilesize, (int)filesize);
+
+            return ret;
+        }
+
+        [MonoPInvokeCallback(typeof(REAL_FILE_CLOSECALLBACK))]
+        public static RESULT CloseCallback(IntPtr handle, IntPtr userdata)
+        {
+            var ret = ((FILE_CLOSECALLBACK)MODCLOSE)(handle, userdata);
+            return ret;
+        }
+
+        [MonoPInvokeCallback(typeof(REAL_FILE_READCALLBACK))]
+        public static RESULT ReadCallback(IntPtr handle, IntPtr buffer, uint sizebytes, IntPtr realbytesread, IntPtr userdata)
+        {
+            uint bytesread = 0;
+            var ret = ((FILE_READCALLBACK)MODREAD)(handle, buffer, sizebytes, ref bytesread, userdata);
+            Marshal.WriteInt32(realbytesread, (int)bytesread);
+
+            return ret;
+        }
+
+        [MonoPInvokeCallback(typeof(REAL_FILE_SEEKCALLBACK))]
+        public static RESULT SeekCallback(IntPtr handle, uint pos, IntPtr userdata)
+        {
+            var ret = ((FILE_SEEKCALLBACK)MODSEEK)(handle, pos, userdata);
+            return ret;
         }
     }
 }

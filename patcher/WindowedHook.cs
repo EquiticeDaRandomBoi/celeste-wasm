@@ -1,5 +1,11 @@
 using System;
-using MonoMod;
+using Microsoft.Xna.Framework;
+
+namespace Monocle {
+	class Engine {
+		public static GraphicsDeviceManager Graphics { get; private set; }
+	}
+}
 
 namespace Celeste
 {

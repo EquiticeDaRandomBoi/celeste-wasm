@@ -1,5 +1,6 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace FMOD;
-
-public delegate RESULT FILE_READCALLBACK(IntPtr handle, IntPtr buffer, uint sizebytes, ref uint bytesread, IntPtr userdata);
+[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+public delegate RESULT FILE_READCALLBACK(IntPtr handle, IntPtr buffer, uint sizebytes, IntPtr bytesread, IntPtr userdata);

@@ -12,6 +12,12 @@ struct Dll
     public string MappedName;
 }
 
+[AttributeUsage(AttributeTargets.Method)]
+sealed class MonoPInvokeCallbackAttribute : Attribute
+{
+    public MonoPInvokeCallbackAttribute(Type t) { }
+}
+
 public static partial class CelesteBootstrap
 {
     [DllImport("Emscripten")]
@@ -35,7 +41,7 @@ public static partial class CelesteBootstrap
 
         // mono.cecil searches in /bin for some dlls
         Directory.CreateDirectory("/bin");
-        Parallel.ForEach(dlls, (dll) =>
+        foreach (var dll in dlls)
         {
             Console.WriteLine($"Mounting {dll.RealName}");
             int ret = mount_fetch($"/_framework/{dll.RealName}", $"/bin/{dll.MappedName}");
@@ -43,7 +49,7 @@ public static partial class CelesteBootstrap
             {
                 throw new Exception($"Failed to mount {dll.MappedName}: error code {ret}");
             }
-        });
+        }
     }
 
     [JSExport]
