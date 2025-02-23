@@ -15,20 +15,20 @@ SteamKit2.WASM:
 	git clone https://github.com/MercuryWorkshop/SteamKit2.WASM --recursive
 
 FNA:
-	git clone https://github.com/FNA-XNA/FNA --recursive --depth=1
+	git clone https://github.com/FNA-XNA/FNA --recursive
 	cd FNA && git checkout 3ee5399 && git apply ../FNA.patch
 
 NLua:
-	git clone https://github.com/NLua/NLua --recursive --depth=1
+	git clone https://github.com/NLua/NLua --recursive
 	cd NLua && git checkout 9dc76edd0782d484c54433fdfa3a5097f45a379a && git apply ../nlua.patch
 
 MonoMod:
 	git clone https://github.com/r58Playz/MonoMod --recursive --depth=1
 
 clean:
-	rm -rv statics loader/obj loader/bin public/_framework nuget || true
+	rm -rvf statics loader/obj loader/bin public/_framework nuget MonoMod NLua FNA SteamKit2.WASM || true
 
-build: statics FNA MonoMod NLua
+build: statics FNA MonoMod NLua SteamKit2.WASM
 	pnpm i
 	rm -rvf public/_framework loader/bin/Release/net9.0/publish/wwwroot/_framework || true
 	NUGET_PACKAGES="$(realpath .)/nuget" dotnet restore loader
