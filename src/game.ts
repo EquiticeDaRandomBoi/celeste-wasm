@@ -7,6 +7,7 @@ export type Log = { color: string, log: string };
 export const TIMEBUF_SIZE = 120;
 export const gameState: Stateful<{
 	ready: boolean,
+	initting: boolean,
 	playing: boolean,
 
 	// these will NOT work with use()
@@ -71,6 +72,46 @@ function hookfmod() {
 	});
 }
 hookfmod();
+
+useChange([gameState.playing], () => {
+	try {
+		if (gameState.playing) {
+			// @ts-expect-error
+			navigator.keyboard.lock()
+		} else {
+			// @ts-expect-error
+			navigator.keyboard.unlock();
+		}
+	} catch (err) { console.log("keyboard lock error:", err); }
+});
+
+document.addEventListener("keydown", (e: KeyboardEvent) => {
+	if (gameState.playing && ["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Tab"].includes(e.code)) {
+		e.preventDefault();
+	}
+});
+
+const oldEventListener = EventTarget.prototype.addEventListener;
+const delayedEventListeners: { thisArg: any, args: any[] }[] = [];
+function undelayEventListeners() {
+	while (delayedEventListeners.length) {
+		const { thisArg, args } = delayedEventListeners.pop()!;
+
+		console.log(`undelayed event listener ${args[0]}`);
+		// @ts-ignore
+		oldEventListener.bind(thisArg)(...args);
+	}
+}
+EventTarget.prototype.addEventListener = function(...args: any[]) {
+	if (gameState.initting) {
+		console.log(`delayed event listener ${args[0]}`);
+		delayedEventListeners.push({ thisArg: this, args: args });
+		return;
+	}
+
+	// @ts-ignore
+	oldEventListener.bind(this)(...args);
+}
 
 const wasm = await eval(`import("/_framework/dotnet.js")`);
 const dotnet: DotnetHostBuilder = wasm.dotnet;
@@ -312,11 +353,17 @@ export async function preInit() {
 export async function play() {
 	gameState.playing = true;
 
+	gameState.initting = true;
 	const before = performance.now();
 	console.debug("Init...");
 	await exports.Celeste.Init();
+	// this is needed so that fna fully inits
+	await exports.Celeste.MainLoop();
 	const after = performance.now();
 	console.debug(`Init : ${(after - before).toFixed(2)}ms`);
+	gameState.initting = false;
+
+	undelayEventListeners();
 
 	console.debug("MainLoop...");
 	const main = async () => {
@@ -342,21 +389,3 @@ export async function play() {
 	}
 	requestAnimationFrame(main);
 }
-
-useChange([gameState.playing], () => {
-	try {
-		if (gameState.playing) {
-			// @ts-expect-error
-			navigator.keyboard.lock()
-		} else {
-			// @ts-expect-error
-			navigator.keyboard.unlock();
-		}
-	} catch (err) { console.log("keyboard lock error:", err); }
-});
-
-document.addEventListener("keydown", (e: KeyboardEvent) => {
-	if (gameState.playing && ["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Tab"].includes(e.code)) {
-		e.preventDefault();
-	}
-});
