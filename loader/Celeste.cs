@@ -68,28 +68,21 @@ public static partial class Celeste
 
             AssemblyLoadContext.Default.ResolvingUnmanagedDll += (assembly, name) =>
             {
-                Console.WriteLine($"Loading native lib \"{name}\"");
                 if (name == "SDL2") name = "SDL3";
                 return NativeLibrary.Load(name, assembly, null);
             };
             AssemblyLoadContext.Default.Resolving += (ctx, name) =>
             {
-                Console.WriteLine($"Loading assembly \"{name.Name}\" \"{name}\"");
                 try
                 {
                     Assembly asm;
-
                     if (name.Name == "Celeste") asm = ctx.LoadFromAssemblyPath($"/libsdl/CustomCeleste.dll");
                     else if (name.Name == "Celeste.Mod.mm") asm = ctx.LoadFromAssemblyPath($"/libsdl/Celeste.Mod.mm.dll");
                     else asm = ctx.LoadFromAssemblyPath($"/libsdl/Celeste/Everest/{name.Name}.dll");
-
-                    Console.WriteLine($"Loaded assembly \"{name.Name}\" \"{name}\": {asm}");
                     return asm;
                 }
                 catch (Exception err)
                 {
-                    Console.WriteLine("Failed");
-                    Console.WriteLine(err);
                     return null;
                 }
             };

@@ -40,7 +40,7 @@ function proxyConsole(name: string, color: string) {
 }
 proxyConsole("error", "var(--error)");
 proxyConsole("warn", "var(--warning)");
-//proxyConsole("log", "var(--fg)");
+proxyConsole("log", "var(--fg)");
 proxyConsole("info", "var(--info)");
 proxyConsole("debug", "var(--fg4)");
 

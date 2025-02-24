@@ -34,7 +34,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<WasmOptConfigurationFlags Include="--converge -O4 -Oz"></WasmOptConfigurationFlags>
+		<WasmOptConfigurationFlags Include="--converge -O4"></WasmOptConfigurationFlags>
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,4 +1,4 @@
-STATICS_RELEASE=a2368804-2f6d-44af-8e67-4a1fc2e9d2d8
+STATICS_RELEASE=f1de2b29-0957-4396-a601-ca06c10aaa16
 
 statics:
 	mkdir statics
@@ -39,7 +39,7 @@ build: statics FNA MonoMod NLua SteamKit2.WASM
 	cp -rv loader/bin/Release/net9.0/publish/wwwroot/_framework public/
 	# emscripten sucks
 	sed -i 's/var offscreenCanvases \?= \?{};/var offscreenCanvases={};if(globalThis.window\&\&!window.TRANSFERRED_CANVAS){transferredCanvasNames=[".canvas"];window.TRANSFERRED_CANVAS=true;}/' public/_framework/dotnet.native.*.js
-	sed -i 's/st.diagnosticTracing&&Oe(`Failed to find unused WebWorker/Oe(`Failed to find unused WebWorker/g' public/_framework/dotnet.runtime.*.js
+	sed -i 's/st.diagnosticTracing&&Oe(\`Failed to find unused WebWorker/Oe(\`Failed to find unused WebWorker/g' public/_framework/dotnet.runtime.*.js
 
 serve: build
 	pnpm dev
