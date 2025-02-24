@@ -10,10 +10,29 @@ Starting with .NET 5, Microsoft released Blazor in an attempt to take over the f
 ## demo part
 <!-- here i'm gonna have it be like walking through the process -->
 
+The first step is setting up a development environment for modding
 Let's open up Terraria.exe with `ilspycmd` and try to get a project going.
 
-The process of building FNA for wasm is [well documented](https://github.com/RedMike/FNA.WASM.Sample/wiki/Manually-setting-up-FNA-Project-for-WASM), so this part wasn't much of a challenge. The guide is pretty outdated now but it was helpful nonetheless.
+After removing the platform specific code for windows and adding back the assembly references for dependencies, the project recompiles and launches on linux.
 
+Install the wasm sdk, then we can change the build type to a web project
+
+All of the project code compiles without issue, but FNA is partially written in c++ and needs to be linked against its native components
+
+the web target isn't officially supported by FNA, but its native components compile without issue under emscripten's opengl emulation layer
+
+add the reference to the project
+
+and it launches
+image of relogic logo
+
+but threads aren't supported so it aborts at runtime. set wasmenablethreads
+
+with threads, all code runs inside web workers. the "main" thread is the deputy thread.
+
+sdl2 does not have good offscreencanvas support
+
+add wrap_fna.fish explanation here
 
 at first we just committed the entire source code into a private repository
 
