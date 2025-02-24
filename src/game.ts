@@ -106,7 +106,7 @@ function undelayEventListeners() {
 	}
 }
 EventTarget.prototype.addEventListener = function(...args: any[]) {
-	if (gameState.initting) {
+	if (gameState.initting && (!args[1].toString().startsWith("(..."))) {
 		console.log(`delayed event listener ${args[0]}`);
 		delayedEventListeners.push({ thisArg: this, args: args });
 		return;
