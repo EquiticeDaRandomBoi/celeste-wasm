@@ -168,6 +168,110 @@ const BottomBar: Component<{}, {}> = function() {
 		</div>
 	)
 }
+const Loader: Component<{}, {
+	spinnerstate: string
+}> = function() {
+	this.css = `
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+		position: relative;
+		.fix {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
+
+		.text {
+			position: absolute;
+			top: 0;
+			display: flex;
+			width: 100%;
+			padding-top: 3rem;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			gap: 0.5em;
+		}
+
+		h2 {
+			font-size: 3rem;
+			font-family: var(--font-display);
+			text-shadow: 0 0 1rem var(--fg6);
+			color: white;
+			padding: 0;
+			margin: 0;
+		}
+		h3 {
+			font-size: 2rem;
+			font-family: var(--font-display);
+			color: var(--fg6);
+
+			padding: 0;
+			margin: 0;
+		}
+		.spinner {
+			position: absolute;
+			bottom: 0em;
+			right: 0em;
+			width: 2em;
+			height: 2em;
+			transform: translate(-50%, -50%);
+			transition: opacity 200ms;
+		}
+	`
+	this.mount = () => {
+		let particles = [];
+		for (let i = 0; i < 100; i++) {
+			let randclamp = (min: number, max: number) => Math.min(Math.max(min, Math.random() * (max - min)), max);
+			particles.push({
+				x: randclamp(0, 100),
+				y: randclamp(0, 100),
+				size: Math.random() < 0.1 ? randclamp(3, 5) : randclamp(0.1, 2),
+				speed: randclamp(0.1, 1),
+				offset: randclamp(Math.PI / 4, Math.PI / 2),
+				elm: <img class="snowflake" src="snow.png" style="position: absolute; top: 0; left: 0; width: 1rem; height: 1rem;" />
+			});
+			this.root.appendChild(particles[i].elm);
+		}
+
+		let upd = () => {
+			for (let particle of particles) {
+				let y = Math.sin(performance.now() / 1000 * particle.speed + particle.offset) * 10 + particle.y;
+				particle.x -= particle.speed;
+				if (particle.x <= 0)
+					particle.x = 100;
+				if (y >= 100)
+					y -= 100;
+				if (y <= 0)
+					y += 100;
+
+				particle.elm.style.opacity = String(1 - (particle.size) / 4);
+				particle.elm.style.transform = `translate(${particle.x}rem, ${y}rem) scale(${particle.size})`;
+			}
+			requestAnimationFrame(upd);
+		};
+		upd();
+
+		let i = 0;
+		setInterval(() => {
+			i++;
+			this.spinnerstate = `loading/0${i % 10}.png`;
+		}, 100);
+	};
+
+	return <div>
+		<div class="fix" style={{ filter: "brightness(0.18)", backgroundImage: "url(/overlay.png)", backgroundRepeat: "repeat-x", backgroundSize: "80% 100%" }} />
+		<img class="fix" src="vignette.png" style="opacity: 0.1" />
+		<div class="text">
+			<h2>celeste-wasm</h2>
+			<h3>Loading...</h3>
+		</div>
+		<img class="spinner" src={use(this.spinnerstate)} />
+	</div>
+}
 
 const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function() {
 	this.css = `
@@ -222,6 +326,7 @@ const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function() {
 			<div class={div}>
 				Game not running.
 			</div>
+			{$if(use(gameState.initting), <Loader />)}
 			<canvas
 				id="canvas"
 				class={canvas}
