@@ -1,6 +1,6 @@
 name: Build
 
-on: [push, pull_request, workflow_dispatch]
+on: [workflow_dispatch]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -40,4 +40,4 @@ jobs:
       - name: Build Csproj
         run: |
           cd loader && dotnet workload restore && cd ..
-          make serve
+          make build 

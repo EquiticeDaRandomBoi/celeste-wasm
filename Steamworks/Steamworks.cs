@@ -1,52 +1,19 @@
 using System;
-using System.IO;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Collections.Generic;
-
-[JsonSerializable(typeof(List<string>))]
-internal partial class SourceGenerationContext : JsonSerializerContext
-{
-}
+using System.Runtime.InteropServices.JavaScript;
 
 namespace Steamworks
 {
-    class SteamJS
+    partial class SteamJS
     {
-        static string AchievementsFile = "/libsdl/achievements.json";
-        static List<string> Achievements = new();
+		[JSImport("GetAchievement", "SteamJS")]
+        public static partial bool GetAchievement(string achievement);
+		[JSImport("SetAchievement", "SteamJS")]
+        public static partial void SetAchievement(string achievement);
 
-        private static void ReadAchievements()
-        {
-            if (File.Exists(AchievementsFile))
-            {
-                Achievements = JsonSerializer.Deserialize<List<string>>(File.ReadAllText(AchievementsFile), SourceGenerationContext.Default.ListString);
-            }
-            else
-            {
-                SaveAchievements();
-            }
-        }
-        private static void SaveAchievements()
-        {
-            File.WriteAllText(AchievementsFile, JsonSerializer.Serialize(Achievements, SourceGenerationContext.Default.ListString));
-        }
-
-        public static bool GetAchievement(string achievement)
-        {
-            ReadAchievements();
-            return Achievements.Contains(achievement);
-        }
-
-        public static void SetAchievement(string achievement)
-        {
-            ReadAchievements();
-            if (!Achievements.Contains(achievement))
-            {
-                Achievements.Add(achievement);
-            }
-            SaveAchievements();
-        }
+		[JSImport("GetStat", "SteamJS")]
+		public static partial int GetStat(string stat);
+		[JSImport("SetStat", "SteamJS")]
+		public static partial void SetStat(string stat, int value);
     }
 
     public class SteamAPI
@@ -95,18 +62,19 @@ namespace Steamworks
         public static bool GetStat(string stat, out int val)
         {
             Console.WriteLine($"Steamworks polyfill: GetStat {stat}");
-            val = 0;
+            val = SteamJS.GetStat(stat);
             return true;
         }
         public static bool SetStat(string stat, int val)
         {
             Console.WriteLine($"Steamworks polyfill: SetStat {stat} {val}");
+			SteamJS.SetStat(stat, val);
             return true;
         }
         public static bool GetGlobalStat(string stat, out long val)
         {
             Console.WriteLine($"Steamworks polyfill: GetGlobalStat {stat}");
-            val = 0;
+            val = SteamJS.GetStat(stat);
             return true;
         }
         public static bool StoreStats()

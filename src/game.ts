@@ -2,6 +2,7 @@ import { RingBuffer } from "ring-buffer-ts";
 import { DotnetHostBuilder } from "./dotnet";
 import { libcurl } from "libcurl.js";
 import { rootFolder } from "./fs";
+import { SteamJS } from "./achievements";
 
 export type Log = { color: string, log: string };
 export const TIMEBUF_SIZE = 120;
@@ -15,7 +16,9 @@ export const gameState: Stateful<{
 	timebuf: RingBuffer<number>,
 }> = $state({
 	ready: false,
+	initting: false,
 	playing: false,
+
 	logbuf: [],
 	timebuf: new RingBuffer<number>(TIMEBUF_SIZE)
 });
@@ -236,6 +239,8 @@ export async function preInit() {
 		pthreadPoolInitialSize: 24,
 		pthreadPoolUnusedSize: 512,
 	}).create();
+
+	runtime.setModuleImports("SteamJS", SteamJS);
 
 	console.log("loading libcurl");
 	// TODO: replace with epoxy
