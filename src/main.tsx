@@ -10,6 +10,8 @@ import iconLightMode from "@ktibow/iconset-material-symbols/light-mode";
 import iconDarkMode from "@ktibow/iconset-material-symbols/dark-mode";
 import iconFolderOpen from "@ktibow/iconset-material-symbols/folder-open";
 import iconTrophy from "@ktibow/iconset-material-symbols/trophy";
+import iconDownload from "@ktibow/iconset-material-symbols/download";
+import { ModInstaller } from "./modinstaller";
 
 export const Logo: Component<{}, {}> = function() {
 	this.css = `
@@ -52,6 +54,7 @@ const TopBar: Component<{
 	canvas: HTMLCanvasElement,
 	fsOpen: boolean,
 	achievementsOpen: boolean,
+	modInstallerOpen: boolean,
 }, { allowPlay: boolean, fps: HTMLElement }> = function() {
 	this.css = `
 		background: var(--bg-sub);
@@ -103,6 +106,10 @@ const TopBar: Component<{
 			</div>
 			<div class="expand" />
 			<div class="group">
+				<Button on:click={() => this.modInstallerOpen = true} icon="left" type="normal" disabled={false}>
+					<Icon icon={iconDownload} />
+					<span>Mods</span>
+				</Button>
 				<Button on:click={() => this.achievementsOpen = true} icon="full" type="normal" disabled={false}>
 					<Icon icon={iconTrophy} />
 				</Button>
@@ -424,6 +431,7 @@ export const Main: Component<{}, {
 	canvas: HTMLCanvasElement,
 	fsOpen: boolean,
 	achievementsOpen: boolean,
+	modInstallerOpen: boolean,
 }> = function() {
 	this.css = `
 		width: 100%;
@@ -462,6 +470,7 @@ export const Main: Component<{}, {
 				canvas={use(this.canvas)}
 				bind:fsOpen={use(this.fsOpen)}
 				bind:achievementsOpen={use(this.achievementsOpen)}
+				bind:modInstallerOpen={use(this.modInstallerOpen)}
 			/>
 			<div class="main">
 				<GameView bind:canvas={use(this.canvas)} />
@@ -471,6 +480,9 @@ export const Main: Component<{}, {
 			</Dialog>
 			<Dialog name="Achievements" bind:open={use(this.achievementsOpen)}>
 				<Achievements open={use(this.achievementsOpen)} />
+			</Dialog>
+			<Dialog name="Mod Installer" bind:open={use(this.modInstallerOpen)}>
+				<ModInstaller open={use(this.modInstallerOpen)} />
 			</Dialog>
 			<BottomBar />
 		</div>

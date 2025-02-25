@@ -233,6 +233,8 @@ export async function downloadEverest() {
 	console.log("Successfully downloaded Everest");
 }
 
+let libcurlresolver: any;
+export const loadedLibcurlPromise = new Promise(r => libcurlresolver = r);
 export async function preInit() {
 	console.debug("initializing dotnet");
 	const runtime = await dotnet.withRuntimeOptions([
@@ -294,6 +296,7 @@ export async function preInit() {
 
 		return await libcurl.fetch(...args);
 	}
+	libcurlresolver();
 
 	const config = runtime.getConfig();
 	exports = await runtime.getAssemblyExports(config.mainAssemblyName!);

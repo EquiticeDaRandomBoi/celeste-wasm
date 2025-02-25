@@ -186,7 +186,7 @@ export const Dialog: Component<{ name: string, open: boolean }, { children: any[
 		}
 
 		.children {
-			overflow: scroll;
+			overflow-y: scroll;
 		}
 
 		.expand { flex: 1 }
