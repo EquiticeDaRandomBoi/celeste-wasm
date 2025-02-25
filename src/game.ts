@@ -106,7 +106,7 @@ function undelayEventListeners() {
 	}
 }
 EventTarget.prototype.addEventListener = function(...args: any[]) {
-	if (gameState.initting && (!args[1].toString().startsWith("(..."))) {
+	if (gameState.initting && (!args[1].toString().startsWith("(...")) && !["message", "abort", "close", "open", "error"].includes(args[0])) {
 		console.log(`delayed event listener ${args[0]}`);
 		delayedEventListeners.push({ thisArg: this, args: args });
 		return;
@@ -235,7 +235,12 @@ export async function downloadEverest() {
 
 export async function preInit() {
 	console.debug("initializing dotnet");
-	const runtime = await dotnet.withConfig({
+	const runtime = await dotnet.withRuntimeOptions([
+		"--jiterpreter-traces-enabled",
+		"--jiterpreter-stats-enabled",
+		"--jiterpreter-backward-branches-enabled",
+		"--jiterpreter-eliminate-null-checks",
+	]).withConfig({
 		pthreadPoolInitialSize: 24,
 		pthreadPoolUnusedSize: 512,
 	}).create();

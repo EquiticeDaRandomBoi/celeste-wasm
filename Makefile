@@ -28,13 +28,13 @@ MonoMod:
 clean:
 	rm -rvf statics loader/obj loader/bin public/_framework nuget MonoMod NLua FNA SteamKit2.WASM || true
 
-build: statics FNA MonoMod NLua SteamKit2.WASM
+deps: statics FNA MonoMod NLua SteamKit2.WASM
+
+build: deps
 	pnpm i
 	rm -rvf public/_framework loader/bin/Release/net9.0/publish/wwwroot/_framework || true
-	NUGET_PACKAGES="$(realpath .)/nuget" dotnet restore loader
-	unzip -o statics/dotnet.zip -d nuget/microsoft.netcore.app.runtime.mono.multithread.browser-wasm/9.?.?/
 #
-	NUGET_PACKAGES="$(realpath .)/nuget" dotnet publish loader -c Release
+	NUGET_PACKAGES="$(shell realpath .)/nuget" dotnet publish loader -c Release -v d
 #
 	cp -rv loader/bin/Release/net9.0/publish/wwwroot/_framework public/
 	# emscripten sucks

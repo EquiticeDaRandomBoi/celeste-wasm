@@ -93,6 +93,11 @@
 		<ProjectReference Include="../SteamKit2.WASM/DepotDownloader/DepotDownloader.csproj"/>
 	</ItemGroup>
 
+	<Target Name="ReplaceDotnetRuntime" BeforeTargets="BeforeBuild">
+		<Exec Command="bash '$(MSBuildProjectDirectory)/../replaceruntime.sh'" />
+		<Message Importance="High" Text="Replaced runtime" />
+	</Target>
+
 	<Target Name="HackMonoPinvokeTable" BeforeTargets="_WasmCompileNativeSourceFiles" DependsOnTargets="_GenerateManagedToNative">
 		<Exec Command="sed -i $(_WasmPInvokeTablePath) -e 's/Celeste_Wasm_mm/Celeste/g' -e 's/Celeste.Wasm.mm/Celeste/g'" />
 		<Message Importance="High" Text="PInvoke table hacked" />
