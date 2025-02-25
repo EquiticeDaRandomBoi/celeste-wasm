@@ -40,7 +40,7 @@ export const Logo: Component<{}, {}> = function() {
 	return (
 		<div>
 			<img src="/app.ico" />
-			<span>celeste-wasm</span>
+			<span>webleste</span>
 			<div class="extras">
 				<span>v1.4.0.0</span>
 			</div>
@@ -221,6 +221,24 @@ const Loader: Component<{}, {
 			transform: translate(-50%, -50%);
 			transition: opacity 200ms;
 		}
+
+		.logs {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 70%;
+			height: 100%;
+			font-family: var(--font-mono);
+			font-size: 0.8rem;
+			overflow-y: scroll;
+			mask-image:
+				linear-gradient(to top, black 0%, black 5%, transparent 50%),
+				linear-gradient(90deg, black 0%, black 60%, transparent 100%);
+			mask-composite: intersect;
+			padding-bottom: 1em;
+			padding-left: 1em;
+			scrollbar-width: none;
+		}
 	`
 	this.mount = () => {
 		let particles = [];
@@ -260,16 +278,38 @@ const Loader: Component<{}, {
 			i++;
 			this.spinnerstate = `loading/0${i % 10}.png`;
 		}, 100);
+
+		const create = (color: string, log: string) => {
+			const el = document.createElement("div");
+			el.classList.add("log");
+			el.innerText = log;
+			el.style.color = color;
+			return el;
+		}
+
+		let logroot = this.root.querySelector(".logs")!;
+		setInterval(() => {
+			if (gameState.logbuf.length > 0) {
+				for (const log of gameState.logbuf) {
+					logroot.appendChild(create(log.color, log.log));
+				}
+				logroot.scrollTop = logroot.scrollHeight;
+				gameState.logbuf = [];
+			}
+		}, 100);
 	};
 
 	return <div>
 		<div class="fix" style={{ filter: "brightness(0.18)", backgroundImage: "url(/overlay.png)", backgroundRepeat: "repeat-x", backgroundSize: "80% 100%" }} />
 		<img class="fix" src="vignette.png" style="opacity: 0.1" />
 		<div class="text">
-			<h2>celeste-wasm</h2>
+			<h2>webleste</h2>
 			<h3>Loading...</h3>
 		</div>
 		<img class="spinner" src={use(this.spinnerstate)} />
+		<div class="logs">
+
+		</div>
 	</div>
 }
 
@@ -415,6 +455,7 @@ export const Main: Component<{}, {
 	this.fsOpen = false;
 	this.achievementsOpen = false;
 
+	// <LogView />
 	return (
 		<div>
 			<TopBar
@@ -424,7 +465,6 @@ export const Main: Component<{}, {
 			/>
 			<div class="main">
 				<GameView bind:canvas={use(this.canvas)} />
-				<LogView />
 			</div>
 			<Dialog name="File System" bind:open={use(this.fsOpen)}>
 				<OpfsExplorer open={use(this.fsOpen)} />

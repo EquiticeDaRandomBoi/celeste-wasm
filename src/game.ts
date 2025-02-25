@@ -37,7 +37,7 @@ function proxyConsole(name: string, color: string) {
 		old(...args);
 		gameState.logbuf.push({
 			color,
-			log: `[${new Date().toISOString()}]: ${str}`
+			log: `${str}`
 		});
 		gameState.logbuf = gameState.logbuf;
 	}
