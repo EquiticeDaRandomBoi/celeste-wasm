@@ -1,4 +1,5 @@
 STATICS_RELEASE=f1de2b29-0957-4396-a601-ca06c10aaa16
+DOTNETFLAGS=-v d --nodereuse:false
 
 statics:
 	mkdir statics
@@ -25,21 +26,30 @@ NLua:
 MonoMod:
 	git clone https://github.com/r58Playz/MonoMod --recursive --depth=1
 
-clean:
-	rm -rvf statics loader/obj loader/bin public/_framework nuget MonoMod NLua FNA SteamKit2.WASM || true
+emsdk:
+	git clone https://github.com/emscripten-core/emsdk
+	./emsdk/emsdk install 3.1.56
+	./emsdk/emsdk activate 3.1.56
+	python3 ./sanitizeemsdk.py "$(shell realpath ./emsdk/)"
+	patch -p1 --directory emsdk/upstream/emscripten/ < emsdk.patch
 
-deps: statics FNA MonoMod NLua SteamKit2.WASM
+clean:
+	rm -rvf statics loader/obj loader/bin frontend/public/_framework nuget MonoMod NLua FNA SteamKit2.WASM emsdk || true
+
+deps: statics FNA MonoMod NLua SteamKit2.WASM emsdk
 
 build: deps
 	pnpm i
-	rm -rvf public/_framework loader/bin/Release/net9.0/publish/wwwroot/_framework || true
+	rm -r frontend/public/_framework loader/bin/Release/net9.0/publish/wwwroot/_framework || true
 #
-	NUGET_PACKAGES="$(shell realpath .)/nuget" dotnet publish loader -c Release -v d
+	NUGET_PACKAGES="$(shell realpath .)/nuget" dotnet restore loader $(DOTNETFLAGS)
+	bash replaceruntime.sh
+	NUGET_PACKAGES="$(shell realpath .)/nuget" dotnet publish loader -c Release $(DOTNETFLAGS)
 #
-	cp -rv loader/bin/Release/net9.0/publish/wwwroot/_framework public/
+	cp -r loader/bin/Release/net9.0/publish/wwwroot/_framework frontend/public/
 	# emscripten sucks
-	sed -i 's/var offscreenCanvases \?= \?{};/var offscreenCanvases={};if(globalThis.window\&\&!window.TRANSFERRED_CANVAS){transferredCanvasNames=[".canvas"];window.TRANSFERRED_CANVAS=true;}/' public/_framework/dotnet.native.*.js
-	sed -i 's/st.diagnosticTracing&&Oe(\`Failed to find unused WebWorker/Oe(\`Failed to find unused WebWorker/g' public/_framework/dotnet.runtime.*.js
+	sed -i 's/var offscreenCanvases \?= \?{};/var offscreenCanvases={};if(globalThis.window\&\&!window.TRANSFERRED_CANVAS){transferredCanvasNames=[".canvas"];window.TRANSFERRED_CANVAS=true;}/' frontend/public/_framework/dotnet.native.*.js
+	sed -i 's/st.diagnosticTracing&&Oe(\`Failed to find unused WebWorker/Oe(\`Failed to find unused WebWorker/g' frontend/public/_framework/dotnet.runtime.*.js
 
 serve: build
 	pnpm dev

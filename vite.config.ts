@@ -3,7 +3,7 @@ import { dreamlandPlugin } from 'vite-plugin-dreamland';
 
 export default defineConfig({
 	plugins: [dreamlandPlugin()],
-	base: './',
+	root: "./frontend",
 	server: {
 		headers: {
 			"Cross-Origin-Embedder-Policy": "require-corp",
@@ -19,5 +19,5 @@ export default defineConfig({
 		alias: {
 			fs: "rollup-plugin-node-polyfills/polyfills/empty",
 		}
-	}
+	},
 });
