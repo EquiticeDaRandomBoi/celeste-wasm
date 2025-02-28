@@ -2,19 +2,19 @@ namespace Celeste.Mod
 {
     public static class patch_Logger
     {
-        public extern static patch_LogLevel orig_GetLogLevel(string tag);
+        public extern static LogLevel orig_GetLogLevel(string tag);
 
-        public static patch_LogLevel GetLogLevel(string tag)
+        public static LogLevel GetLogLevel(string tag)
         {
             if (tag == "loader" || tag == "relinker")
             {
-                return patch_LogLevel.Verbose;
+                return LogLevel.Verbose;
             }
             return orig_GetLogLevel(tag);
         }
     }
 
-    public enum patch_LogLevel
+    public enum LogLevel 
     {
         Verbose,
         Debug,
