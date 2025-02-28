@@ -1,4 +1,4 @@
-import { gameState, play, preInit, TIMEBUF_SIZE } from "./game";
+import { gameState, play, FpsView, GameView, LogView } from "./game/index";
 import { Button, Dialog, Icon, Link } from "./ui";
 import { store } from "./store";
 import { OpfsExplorer } from "./fs";
@@ -12,6 +12,8 @@ import iconFolderOpen from "@ktibow/iconset-material-symbols/folder-open";
 import iconTrophy from "@ktibow/iconset-material-symbols/trophy";
 import iconDownload from "@ktibow/iconset-material-symbols/download";
 import { ModInstaller } from "./modinstaller";
+
+export const NAME = "webleste";
 
 export const Logo: Component<{}, {}> = function() {
 	this.css = `
@@ -42,7 +44,7 @@ export const Logo: Component<{}, {}> = function() {
 	return (
 		<div>
 			<img src="/app.ico" />
-			<span>webleste</span>
+			<span>{NAME}</span>
 			<div class="extras">
 				<span>v1.4.0.0</span>
 			</div>
@@ -87,22 +89,11 @@ const TopBar: Component<{
 		this.allowPlay = gameState.ready && !gameState.playing;
 	});
 
-	this.mount = () => {
-		const interval = 250;
-		setInterval(() => {
-			if (gameState.playing) {
-				const avgFrametime = gameState.timebuf.toArray().reduce((acc, x) => acc + x, 0) / TIMEBUF_SIZE;
-				const avgFps = (1000 / avgFrametime).toFixed(0);
-				this.fps.innerText = "" + avgFps;
-			}
-		}, interval);
-	}
-
 	return (
 		<div>
 			<div class="group">
 				<Logo />
-				{$if(use(gameState.playing), <div>FPS: <span bind:this={use(this.fps)}></span></div>)}
+				{$if(use(gameState.playing), <FpsView />)}
 			</div>
 			<div class="expand" />
 			<div class="group">
@@ -175,257 +166,6 @@ const BottomBar: Component<{}, {}> = function() {
 		</div>
 	)
 }
-const Loader: Component<{}, {
-	spinnerstate: string
-}> = function() {
-	this.css = `
-		width: 100%;
-		height: 100%;
-		overflow: hidden;
-		position: relative;
-		.fix {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-		}
-
-		.text {
-			position: absolute;
-			top: 0;
-			display: flex;
-			width: 100%;
-			padding-top: 3rem;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			gap: 0.5em;
-		}
-
-		h2 {
-			font-size: 3rem;
-			font-family: var(--font-display);
-			text-shadow: 0 0 1rem var(--fg6);
-			color: white;
-			padding: 0;
-			margin: 0;
-		}
-		h3 {
-			font-size: 2rem;
-			font-family: var(--font-display);
-			color: var(--fg6);
-
-			padding: 0;
-			margin: 0;
-		}
-		.spinner {
-			position: absolute;
-			bottom: 0em;
-			right: 0em;
-			width: 2em;
-			height: 2em;
-			transform: translate(-50%, -50%);
-			transition: opacity 200ms;
-		}
-
-		.logs {
-			position: absolute;
-			bottom: 0;
-			left: 0;
-			width: 70%;
-			height: 100%;
-			font-family: var(--font-mono);
-			font-size: 0.8rem;
-			overflow-y: scroll;
-			mask-image:
-				linear-gradient(to top, black 0%, black 5%, transparent 50%),
-				linear-gradient(90deg, black 0%, black 60%, transparent 100%);
-			mask-composite: intersect;
-			padding-bottom: 1em;
-			padding-left: 1em;
-			scrollbar-width: none;
-		}
-	`
-	this.mount = () => {
-		let particles = [];
-		for (let i = 0; i < 100; i++) {
-			let randclamp = (min: number, max: number) => Math.min(Math.max(min, Math.random() * (max - min)), max);
-			particles.push({
-				x: randclamp(0, 100),
-				y: randclamp(0, 100),
-				size: Math.random() < 0.1 ? randclamp(3, 5) : randclamp(0.1, 2),
-				speed: randclamp(0.1, 1),
-				offset: randclamp(Math.PI / 4, Math.PI / 2),
-				elm: <img class="snowflake" src="snow.png" style="position: absolute; top: 0; left: 0; width: 1rem; height: 1rem;" />
-			});
-			this.root.appendChild(particles[i].elm);
-		}
-
-		let upd = () => {
-			for (let particle of particles) {
-				let y = Math.sin(performance.now() / 1000 * particle.speed + particle.offset) * 10 + particle.y;
-				particle.x -= particle.speed;
-				if (particle.x <= 0)
-					particle.x = 100;
-				if (y >= 100)
-					y -= 100;
-				if (y <= 0)
-					y += 100;
-
-				particle.elm.style.opacity = String(1 - (particle.size) / 4);
-				particle.elm.style.transform = `translate(${particle.x}rem, ${y}rem) scale(${particle.size})`;
-			}
-			requestAnimationFrame(upd);
-		};
-		upd();
-
-		let i = 0;
-		setInterval(() => {
-			i++;
-			this.spinnerstate = `loading/0${i % 10}.png`;
-		}, 100);
-
-		const create = (color: string, log: string) => {
-			const el = document.createElement("div");
-			el.classList.add("log");
-			el.innerText = log;
-			el.style.color = color;
-			return el;
-		}
-
-		let logroot = this.root.querySelector(".logs")!;
-		setInterval(() => {
-			if (gameState.logbuf.length > 0) {
-				for (const log of gameState.logbuf) {
-					logroot.appendChild(create(log.color, log.log));
-				}
-				logroot.scrollTop = logroot.scrollHeight;
-				gameState.logbuf = [];
-			}
-		}, 100);
-	};
-
-	return <div>
-		<div class="fix" style={{ filter: "brightness(0.18)", backgroundImage: "url(/overlay.png)", backgroundRepeat: "repeat-x", backgroundSize: "80% 100%" }} />
-		<img class="fix" src="vignette.png" style="opacity: 0.1" />
-		<div class="text">
-			<h2>webleste</h2>
-			<h3>Loading...</h3>
-		</div>
-		<img class="spinner" src={use(this.spinnerstate)} />
-		<div class="logs">
-
-		</div>
-	</div>
-}
-
-const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function() {
-	this.css = `
-		aspect-ratio: 16 / 9;
-		user-select: none;
-		display: grid;
-		grid-template-areas: "overlay";
-
-		transition: background 200ms, color 200ms;
-
-		div, canvas {
-			grid-area: overlay;
-			width: 100%;
-			height: 100%;
-			border: 2px solid var(--surface4);
-			transition: background 200ms, color 200ms, border-color 200ms;
-		}
-		div.started, canvas.stopped {
-			visibility: hidden;
-		}
-
-		div {
-			background: var(--surface1);
-			color: var(--surface6);
-			transition: background 200ms, color 200ms, border-color 200ms;
-			font-family: var(--font-display);
-			font-size: 2rem;
-			font-weight: 570;
-			
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-		}
-
-		canvas:fullscreen {
-			border: none;
-			border-radius: 0;
-			background: black;
-		}
-	`;
-	const div = use(gameState.playing, x => x ? "started" : "stopped");
-	const canvas = use(gameState.playing, x => x ? "canvas started" : "canvas stopped");
-
-	this.mount = () => {
-		// dotnet will immediately transfer the canvas to deputy thread, so this.mount is required
-		preInit();
-	};
-
-	return (
-		<div>
-			<div class={div}>
-				Game not running.
-			</div>
-			{$if(use(gameState.initting), <Loader />)}
-			<canvas
-				id="canvas"
-				class={canvas}
-				bind:this={use(this.canvas)}
-				on:contextmenu={(e: Event) => e.preventDefault()}
-			/>
-		</div>
-	)
-}
-
-const LogView: Component<{}, {}> = function() {
-	this.css = `
-		height: 16rem;
-		overflow: scroll;
-		padding: 1em;
-
-		border: 2px solid var(--surface4);
-		border-top: none;
-		background: var(--bg-sub);
-		transition: background 200ms, color 200ms, border-color 200ms;
-		font-family: var(--font-mono);
-
-		.log {
-			transition: color 200ms;
-		}
-	`;
-
-	const create = (color: string, log: string) => {
-		const el = document.createElement("div");
-		el.classList.add("log");
-		el.innerText = log;
-		el.style.color = color;
-		return el;
-	}
-
-	this.mount = () => {
-		setInterval(() => {
-			if (gameState.logbuf.length > 0) {
-				for (const log of gameState.logbuf) {
-					this.root.appendChild(create(log.color, log.log));
-				}
-				this.root.scrollTop = this.root.scrollHeight;
-				gameState.logbuf = [];
-			}
-		}, 1000);
-	};
-
-	return (
-		<div>
-		</div>
-	)
-}
 
 export const Main: Component<{}, {
 	canvas: HTMLCanvasElement,
@@ -463,7 +203,6 @@ export const Main: Component<{}, {
 	this.fsOpen = false;
 	this.achievementsOpen = false;
 
-	// <LogView />
 	return (
 		<div>
 			<TopBar
@@ -474,6 +213,7 @@ export const Main: Component<{}, {
 			/>
 			<div class="main">
 				<GameView bind:canvas={use(this.canvas)} />
+				<LogView minimal={false} scrolling={true} />
 			</div>
 			<Dialog name="File System" bind:open={use(this.fsOpen)}>
 				<OpfsExplorer open={use(this.fsOpen)} />
@@ -482,7 +222,7 @@ export const Main: Component<{}, {
 				<Achievements open={use(this.achievementsOpen)} />
 			</Dialog>
 			<Dialog name="Mod Installer" bind:open={use(this.modInstallerOpen)}>
-				<ModInstaller open={use(this.modInstallerOpen)} />
+				{/*<ModInstaller open={use(this.modInstallerOpen)} />*/}
 			</Dialog>
 			<BottomBar />
 		</div>

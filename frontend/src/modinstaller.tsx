@@ -1,5 +1,5 @@
 import { libcurl } from "libcurl.js";
-import { loadedLibcurlPromise } from "./game";
+import { loadedLibcurlPromise } from "./game/index";
 import { Button } from "./ui";
 import iconDownload from "@ktibow/iconset-material-symbols/download";
 import { rootFolder } from "./fs";

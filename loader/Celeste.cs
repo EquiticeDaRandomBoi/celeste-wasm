@@ -7,11 +7,10 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Loader;
 using Microsoft.Xna.Framework;
-using System.IO.Compression;
 
 [assembly: System.Runtime.Versioning.SupportedOSPlatform("browser")]
 
-public static partial class Celeste
+public static partial class CelesteLoader
 {
     private static void Main()
     {
@@ -36,6 +35,7 @@ public static partial class Celeste
             {
                 CallPinvokeFixers();
                 Console.WriteLine("fixed pinvoke");
+				Console.WriteLine("initted js splash");
             }
             catch (Exception e)
             {
@@ -86,6 +86,8 @@ public static partial class Celeste
                     return null;
                 }
             };
+
+			JsSplash.Init(celeste);
 
             var Celeste = celeste.GetType("Celeste.Celeste");
             Console.WriteLine($"Celeste.Celeste: {Celeste}");

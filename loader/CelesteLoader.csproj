@@ -8,7 +8,7 @@
 
 		<AssemblyName>CelesteLoader</AssemblyName>
 
-		<StartupObject>Celeste</StartupObject>
+		<StartupObject>CelesteLoader</StartupObject>
 
 		<DisableBuildCompression>true</DisableBuildCompression>
 		<PublishTrimmed>false</PublishTrimmed>

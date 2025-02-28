@@ -4,7 +4,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"build": "tsc && vite build",
+		"build": "cd frontend && tsc && vite build",
 		"dev": "vite"
 	},
 	"dependencies": {

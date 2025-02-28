@@ -1,0 +1,141 @@
+import { gameState, Log, loglisteners, preInit, TIMEBUF_SIZE } from "./dotnet";
+import { Loader } from "./loading";
+
+export const LogView: Component<{ minimal: boolean, scrolling: boolean, }, { logbuf: Log[] }> = function() {
+	this.css = `
+		height: 100%;
+		.minimal, .regular {
+			font-family: var(--font-mono);
+		}
+
+		.minimal {
+			height: 100%;
+		}
+
+		.regular {
+			height: 16rem;
+			padding: 1em;
+
+			border-bottom: 2px solid var(--surface4);
+			border-left: 2px solid var(--surface4);
+			border-right: 2px solid var(--surface4);
+			background: var(--bg-sub);
+		}
+	`;
+
+	this.logbuf = [];
+
+	const create = (color: string, log: string) => {
+		const el = document.createElement("div");
+		el.classList.add("log");
+		el.innerText = log;
+		el.style.color = color;
+		return el;
+	}
+
+	this.mount = () => {
+		const logroot = this.root.firstChild! as HTMLElement;
+
+		loglisteners.push((log) => { logroot.appendChild(create(log.color, log.log)); logroot.scrollTop = logroot.scrollHeight });
+
+		/*
+		loglisteners.push((x) => this.logbuf.push(x));
+		setTimeout(() => {
+			if (this.logbuf.length > 0) {
+				for (const log of this.logbuf) {
+					logroot.appendChild(create(log.color, log.log));
+				}
+				logroot.scrollTop = logroot.scrollHeight;
+			}
+			this.logbuf = [];
+		}, 100);
+		*/
+	};
+
+	return (
+		<div>
+			<div class={this.minimal ? "minimal" : "regular"} style={this.scrolling ? "overflow: scroll" : "overflow: hidden"} />
+		</div>
+	)
+}
+
+export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function() {
+	this.css = `
+		aspect-ratio: 16 / 9;
+		user-select: none;
+		display: grid;
+		grid-template-areas: "overlay";
+
+		transition: background 200ms, color 200ms;
+
+		div, canvas {
+			grid-area: overlay;
+			width: 100%;
+			height: 100%;
+			border: 2px solid var(--surface4);
+			transition: background 200ms, color 200ms, border-color 200ms;
+		}
+		div.started, canvas.stopped {
+			visibility: hidden;
+		}
+
+		div {
+			background: var(--surface1);
+			color: var(--surface6);
+			transition: background 200ms, color 200ms, border-color 200ms;
+			font-family: var(--font-display);
+			font-size: 2rem;
+			font-weight: 570;
+			
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+
+		canvas:fullscreen {
+			border: none;
+			border-radius: 0;
+			background: black;
+		}
+	`;
+	const div = use(gameState.playing, x => x ? "started" : "stopped");
+	const canvas = use(gameState.playing, x => x ? "canvas started" : "canvas stopped");
+
+	this.mount = () => {
+		// dotnet will immediately transfer the canvas to deputy thread, so this.mount is required
+		preInit();
+	};
+
+	return (
+		<div>
+			<div class={div}>
+				Game not running.
+			</div>
+			{$if(use(gameState.initting), <Loader />)}
+			<canvas
+				id="canvas"
+				class={canvas}
+				bind:this={use(this.canvas)}
+				on:contextmenu={(e: Event) => e.preventDefault()}
+			/>
+		</div>
+	)
+}
+
+export const FpsView: Component<{}, { fps: HTMLElement }> = function() {
+	this.mount = () => {
+		const interval = 250;
+		setInterval(() => {
+			if (gameState.playing) {
+				const avgFrametime = gameState.timebuf.toArray().reduce((acc, x) => acc + x, 0) / TIMEBUF_SIZE;
+				const avgFps = (1000 / avgFrametime).toFixed(0);
+				this.fps.innerText = "" + avgFps;
+			}
+		}, interval);
+	}
+
+	return <span>FPS: <span bind:this={use(this.fps)} /></span>
+}
+
+export { gameState, play, loadedLibcurlPromise } from "./dotnet";
