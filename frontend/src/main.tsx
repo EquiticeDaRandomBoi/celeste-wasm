@@ -222,7 +222,7 @@ export const Main: Component<{}, {
 				<Achievements open={use(this.achievementsOpen)} />
 			</Dialog>
 			<Dialog name="Mod Installer" bind:open={use(this.modInstallerOpen)}>
-				{/*<ModInstaller open={use(this.modInstallerOpen)} />*/}
+				<ModInstaller open={use(this.modInstallerOpen)} />
 			</Dialog>
 			<BottomBar />
 		</div>

@@ -381,7 +381,7 @@ export async function play() {
 
 	gameState.timebuf.clear();
 
-	await exports.Celeste.Cleanup();
+	await exports.CelesteLoader.Cleanup();
 	gameState.ready = false;
 	gameState.playing = false;
 }

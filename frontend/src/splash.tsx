@@ -1,11 +1,11 @@
-import { Logo, LogView } from "./main";
+import { Logo } from "./main";
 import { Button, Icon, Link } from "./ui";
-import { copyFolder, countFolder, extractTar, PICKERS_UNAVAILABLE, rootFolder } from "./fs";
+import { copyFolder, countFolder, PICKERS_UNAVAILABLE, rootFolder } from "./fs";
 
 import iconFolderOpen from "@ktibow/iconset-material-symbols/folder-open-outline";
 import iconDownload from "@ktibow/iconset-material-symbols/download";
 import iconEncrypted from "@ktibow/iconset-material-symbols/encrypted";
-import { downloadApp, gameState, initSteam } from "./game";
+import { downloadApp, gameState, initSteam } from "./game/dotnet";
 
 const DECRYPT_INFO = import.meta.env.VITE_DECRYPT_ENABLED ? {
 	key: import.meta.env.VITE_DECRYPT_KEY,
