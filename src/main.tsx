@@ -384,7 +384,7 @@ const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function() {
 	)
 }
 
-const LogView: Component<{}, {}> = function() {
+export const LogView: Component<{}, {}> = function() {
 	this.css = `
 		height: 16rem;
 		overflow: scroll;

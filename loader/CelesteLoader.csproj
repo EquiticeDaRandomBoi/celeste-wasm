@@ -65,7 +65,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Remove="Steam.cs" />
+		<!-- <Compile Remove="Steam.cs" /> -->
 		<ProjectReference Include="..\FNA\FNA.Core.csproj" />
 
 		<PackageReference Include="QRCoder" Version="1.6.0" />

@@ -1,10 +1,11 @@
-import { Logo } from "./main";
+import { Logo, LogView } from "./main";
 import { Button, Icon, Link } from "./ui";
 import { copyFolder, countFolder, extractTar, PICKERS_UNAVAILABLE, rootFolder } from "./fs";
 
 import iconFolderOpen from "@ktibow/iconset-material-symbols/folder-open-outline";
 import iconDownload from "@ktibow/iconset-material-symbols/download";
 import iconEncrypted from "@ktibow/iconset-material-symbols/encrypted";
+import { downloadApp, gameState, initSteam } from "./game";
 
 const DECRYPT_INFO = import.meta.env.VITE_DECRYPT_ENABLED ? {
 	key: import.meta.env.VITE_DECRYPT_KEY,
@@ -81,7 +82,7 @@ const Intro: Component<{
 				<Icon icon={iconFolderOpen} />
 				{PICKERS_UNAVAILABLE ? "Copying local Celeste assets is unsupported" : "Copy local Celeste assets"}
 			</Button>
-			<Button on:click={() => this["on:next"]("download")} type="primary" icon="left" disabled={!DECRYPT_INFO}>
+			<Button on:click={() => this["on:next"]("download")} type="primary" icon="left" disabled={false}>
 				<Icon icon={iconDownload} />
 				{DECRYPT_INFO ? "Download and decrypt assets" : "Downloading and decrypting assets is disabled"}
 			</Button>
@@ -169,18 +170,18 @@ const Copy: Component<{
 				The Content directory for Steam installs of Celeste is usually located in <code>C:\Program Files (x86)\Steam\steamapps\common\Celeste</code>.
 			</div>) : null}
 			{this.os == "darwin" ? (
-			<div>
-				<p>
-					The Content directory for Steam installs of Celeste is usually located in <code>~/Library/Application Support/Steam/steamapps/common/Celeste/Celeste.app/Contents/Resources</code>.
-				</p>
-				<p class="warning">
-					If you get an error stating it can't open the folder because it "contains system files", try copying it to another location first.
-				</p>
-			</div>
-		) : null}
+				<div>
+					<p>
+						The Content directory for Steam installs of Celeste is usually located in <code>~/Library/Application Support/Steam/steamapps/common/Celeste/Celeste.app/Contents/Resources</code>.
+					</p>
+					<p class="warning">
+						If you get an error stating it can't open the folder because it "contains system files", try copying it to another location first.
+					</p>
+				</div>
+			) : null}
 			{this.os == "linux" ? (<div>
 				<p>
-				The Content directory for Steam installs of Celeste is usually located in <code>~/.steam/root/steamapps/common/Celeste</code>.
+					The Content directory for Steam installs of Celeste is usually located in <code>~/.steam/root/steamapps/common/Celeste</code>.
 				</p>
 				<p class="warning">
 					If you get an error stating it can't open the folder because it "contains system files", try copying it to another location first.
@@ -193,7 +194,7 @@ const Copy: Component<{
 					<li><code>C:\Program Files (x86)\Steam\steamapps\common\Celeste</code></li>
 					<li><code>~/Library/Application Support/Steam/steamapps/common/Celeste/Celeste.app/Contents/Resources</code></li>
 				</ul>
-			</div>) : null }
+			</div>) : null}
 			{$if(use(this.copying), <Progress percent={use(this.percent)} />)}
 			<Button on:click={opfs} type="primary" icon="left" disabled={use(this.copying)}>
 				<Icon icon={iconFolderOpen} />
@@ -211,132 +212,170 @@ export const Download: Component<{
 	status: string,
 	percent: number,
 	input: HTMLInputElement,
+
+	username: string,
+	password: string,
 }> = function() {
+	this.username = "";
+	this.password = "";
+
 	this.css = `
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 1rem;
+		font-size: 15pt;
 
 		input[type="file"] {
 			display: none;
 		}
-	`;
 
-	const download = async () => {
-		const self = this;
-		let bytes = 0;
-		let keyCursor = 0;
-		let chunkCursor = 0;
-		let count = 0;
-		const length = ("" + DECRYPT_INFO!.count).length;
+		.methods {
+		  display: flex;
+		  gap: 1rem;
+		}
+		.methods > div {
+		  flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
 
-		const inputPromise = new Promise<Uint8Array>((res, rej) => {
-			const fileHandler = () => {
-				this.input.removeEventListener("input", fileHandler);
-				const file = this.input.files ? this.input.files[0] : null;
-				if (!file) {
-					rej(new Error("No file was provided"));
-					return;
-				}
+      padding: 1rem;
+		}
+		input {
+		  color: var(--fg);
+		  background: var(--bg);
+		  border: 2px solid black;
+		  border-radius: 0.5em;
+		  padding: 0.25rem;
 
-				const reader = new FileReader();
-				reader.onload = () => {
-					res(new Uint8Array(reader.result as ArrayBuffer));
-				}
-				reader.onerror = () => {
-					rej(reader.error);
-				}
-				reader.readAsArrayBuffer(file);
-			};
-			this.input.addEventListener("input", fileHandler);
-		});
-		this.input.click();
-		const key = await inputPromise;
-
-		const root = await rootFolder.getDirectoryHandle("Content", { create: true });
-
-		this.downloading = true;
-		const input = new ReadableStream({
-			async pull(controller) {
-				if (count >= DECRYPT_INFO!.count) {
-					controller.close();
-					return;
-				}
-
-				const path = `${DECRYPT_INFO!.path}.${("" + count).padStart(length, '0')}`;
-				console.log(`downloading path ${path}`);
-				const resp = await fetch(path);
-				if (!resp.body) throw new Error(`Failed to fetch ${path}`);
-				const reader = resp.body.getReader();
-
-				while (true) {
-					const { done, value } = await reader.read();
-					if (done || !value) break;
-
-					controller.enqueue(value);
-				}
-
-				count++;
-			},
-		});
-		const decrypt = new TransformStream({
-			async transform(chunk, controller) {
-				while (chunkCursor < chunk.length) {
-					chunk[chunkCursor] ^= key[keyCursor % key.length];
-					chunkCursor += 4096;
-					keyCursor += 4096;
-				}
-				chunkCursor -= chunk.length;
-				controller.enqueue(chunk);
-			}
-		});
-		const counter = new TransformStream({
-			transform(chunk, controller) {
-				bytes += chunk.length;
-				self.percent = bytes / DECRYPT_INFO!.size * 100;
-
-				controller.enqueue(chunk);
-			}
-		});
-		const decrypted = input.pipeThrough(decrypt).pipeThrough(counter);
-		let decompressed;
-		if (DECRYPT_INFO!.compressed) {
-			decompressed = decrypted.pipeThrough(new DecompressionStream("gzip"));
-		} else {
-			decompressed = decrypted;
+		  font-family: Andy Bold;
+		  font-size: 18pt;
 		}
 
-		const before = performance.now();
-		await extractTar(decompressed, root, (type, name) => {
-			console.log(`extracted ${type} "${name}"`);
-		});
-		const after = performance.now();
-		console.log(`downloaded and extracted assets in ${(after - before).toFixed(2)}ms`);
+		.spacer {
+		      flex: 1;
+		      margin-top: 0.5em;
+		      margin-bottom: 0.5em;
+		      border-bottom: 1px solid var(--fg);
+    }
 
-		this["on:done"]();
+		h1, h3 {
+		  text-align: center;
+		  font-family: Andy Bold;
+      padding: 0;
+      margin: 0;
+		}
+		.logcontainer {
+		  font-size: initial;
+		}
+
+		.qrcontainer {
+		  display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+		}
+		.qrcontainer img {
+		  width: 40%;
+		}
+	`;
+
+	const loginqr = async () => {
+		gameState.loginstate = 1;
+		let result = await initSteam(null, null, true);
+		if (!result) {
+			gameState.loginstate = 3;
+		} else {
+			gameState.loginstate = 2;
+		}
+
+	};
+
+	const loginpass = async () => {
+		gameState.loginstate = 1;
+		let result = await initSteam(this.username, this.password, false);
+		if (!result) {
+			this.username = "";
+			this.password = "";
+			gameState.loginstate = 3;
+		} else {
+			gameState.loginstate = 2;
+		}
+	};
+	const download = async () => {
+		this.downloading = true;
+		let result = await downloadApp();
 	};
 
 	return (
 		<div>
+			<h1>Steam Login</h1>
 			<div>
-				{(DECRYPT_INFO!.size / (1024 * 1024)).toFixed(2)} MiB of {DECRYPT_INFO!.compressed ? "compressed" : ""} data will be downloaded and decrypted.
+				This will log into Steam through a proxy, so that it can download Terraria assets and achievement stats <br />
+				The account details are encrpyted on your device and never sent to a server. Still, beware of unofficial deployments
 			</div>
-			<div>
-				Select <code>{DECRYPT_INFO!.key}</code> from your Celeste install's Content directory. It will be used to decrypt the download.
-			</div>
-			{$if(use(this.status), <div class="error">
-				{use(this.status)}<br />You might have chosen the wrong decryption file. Please reload to try again.
-			</div>)}
+
+			{$if(use(gameState.loginstate, l => l == 0 || l == 3),
+				<div class="methods">
+					<div class="tcontainer">
+						<h3>Username and Password</h3>
+						<input bind:value={use(this.username)} placeholder="Username" />
+						<input bind:value={use(this.password)} type="password" placeholder="Password" />
+						<Button type="primary" icon="left" disabled={use(this.downloading)} on:click={loginpass}>
+							<Icon icon={iconEncrypted} />
+							Log In with Username and Password
+						</Button>
+					</div>
+					<div class="tcontainer">
+						<h3>Steam Guard QR Code</h3>
+						Requires the Steam app on your phone to be installed. <br />
+						<div style="flex: 1"></div>
+						<Button type="primary" icon="left" disabled={use(this.downloading)} on:click={loginqr}>
+							<Icon icon={iconEncrypted} />
+							Log In with QR Code
+						</Button>
+					</div>
+				</div>
+			)}
+
+			{$if(use(gameState.loginstate, l => l == 3),
+				<div style="color: var(--error)">Failed to log in! Try again</div>
+			)}
+
+			{$if(use(gameState.loginstate, l => l == 3 || l == 1 || l == 2),
+				<div class="logcontainer">
+					<LogView />
+				</div>
+			)}
+
+			{$if(use(gameState.loginstate, l => l == 1),
+				<div class="qrcontainer">
+					<p>Since this uses a proxy, the steam app might complain about your location being wrong. Just select the location that you don't usually log in from if it asks</p>
+					{$if(use(gameState.qr),
+						<img src={use(gameState.qr)} />
+					)}
+
+					{$if(use(gameState.qr),
+						<div>Scan this QR code with the Steam app on your phone.</div>
+					)}
+
+				</div>
+			)}
+
+			{$if(use(gameState.loginstate, l => l == 2),
+				<div>
+					<Button type="primary" icon="left" disabled={use(this.downloading)} on:click={download}>
+						<Icon icon={iconEncrypted} />
+						Download Assets
+					</Button>
+				</div>
+			)}
+
 			{$if(use(this.downloading), <Progress percent={use(this.percent)} />)}
-			<input type="file" bind:this={use(this.input)} />
-			<Button type="primary" icon="left" disabled={use(this.downloading)} on:click={download}>
-				<Icon icon={iconEncrypted} />
-				Select decryption file
-			</Button>
 		</div>
 	)
 }
-
 export const Splash: Component<{
 	"on:next": () => void,
 }, {
@@ -409,6 +448,7 @@ export const Splash: Component<{
 						} else if (x === "copy") {
 							return <Copy on:done={this["on:next"]} />;
 						} else {
+							console.log("what");
 							return <Download on:done={this["on:next"]} />;
 						}
 					})}

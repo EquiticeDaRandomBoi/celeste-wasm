@@ -18,7 +18,7 @@ partial class JS
     public static partial void newqr(string dataurl);
 }
 
-public static partial class Steam
+public partial class Steam
 {
 
     [JSExport]

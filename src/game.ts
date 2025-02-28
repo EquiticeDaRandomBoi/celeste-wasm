@@ -10,6 +10,8 @@ export const gameState: Stateful<{
 	ready: boolean,
 	initting: boolean,
 	playing: boolean,
+	loginstate: number,
+	qr: string,
 
 	// these will NOT work with use()
 	logbuf: Log[],
@@ -18,6 +20,8 @@ export const gameState: Stateful<{
 	ready: false,
 	initting: false,
 	playing: false,
+	loginstate: 0,
+	qr: "",
 
 	logbuf: [],
 	timebuf: new RingBuffer<number>(TIMEBUF_SIZE)
@@ -315,7 +319,7 @@ export async function preInit() {
 	runtime.setModuleImports("depot.js", {
 		newqr: (qr: string) => {
 			console.log("QR DATA" + qr);
-			// gameState.qr = qr;
+			gameState.qr = qr;
 		}
 	});
 
@@ -353,15 +357,22 @@ export async function preInit() {
 
 
 
-	/*
 	await exports.Steam.Init();
 	if (await exports.Steam.InitSteamSaved()) {
 		console.log("Steam saved login success");
+		gameState.loginstate = 2;
 	}
-	*/
 
 	gameState.ready = true;
 };
+
+export async function initSteam(username: string | null, password: string | null, qr: boolean) {
+	return await exports.Steam.InitSteam(username, password, qr);
+}
+
+export async function downloadApp() {
+	return await exports.Steam.DownloadApp();
+}
 
 export async function play() {
 	gameState.playing = true;
