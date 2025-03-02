@@ -3,6 +3,7 @@ import { Loader } from "./loading";
 
 export const LogView: Component<{ scrolling: boolean, }> = function() {
 	this.css = `
+		min-height: 0;
 		flex: 1;
 		font-family: var(--font-mono);
 

@@ -7,7 +7,7 @@ import { JsSplash } from "./loading";
 import { STEAM_ENABLED, WISP_URL } from "../main";
 
 export type Log = { color: string, log: string };
-export const TIMEBUF_SIZE = 120;
+export const TIMEBUF_SIZE = 10;
 export const gameState: Stateful<{
 	ready: boolean,
 	initting: boolean,

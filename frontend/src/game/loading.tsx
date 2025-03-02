@@ -121,6 +121,7 @@ export const Loader: Component<{}, {
 		}
 
 		.logs {
+			display: flex;
 			flex: 1;
 			min-height: 0;
 			padding-bottom: 0.5rem;

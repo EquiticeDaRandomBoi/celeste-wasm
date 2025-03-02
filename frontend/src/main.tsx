@@ -187,12 +187,13 @@ export const Main: Component<{}, {
 			margin: auto;
 		}
 
-		.tall .gameview {
-			height: 100%;
-			width: min-content;
+		@media (min-aspect-ratio: 16 / 9) {
+			.gameview {
+				height: 100%;
+				width: min-content;
+			}
 		}
-
-		.wide .gameview {
+		@media (max-aspect-ratio: 16 / 9) {
 			width: 100%;
 			height: min-content;
 		}
@@ -211,19 +212,6 @@ export const Main: Component<{}, {
 
 	this.fsOpen = false;
 	this.achievementsOpen = false;
-
-	this.mount = () => {
-		let main = this.root.querySelector(".main")!;
-		setInterval(() => {
-			if (main.clientWidth / main.clientHeight > 16 / 9) {
-				main.classList.add("tall");
-				main.classList.remove("wide");
-			} else {
-				main.classList.add("wide");
-				main.classList.remove("tall");
-			}
-		}, 100);
-	}
 
 	return (
 		<div>
