@@ -78,7 +78,7 @@ public partial class Steam
     [JSExport]
     internal static async Task<bool> DownloadSteamCloud()
     {
-        return await ContentDownloader.steam3.DownloadSteamCloud(504230, 1000, "/libsdl/Persistent/");
+        return await ContentDownloader.steam3.DownloadSteamCloud(504230, 1000, "/remote/");
     }
 
     [JSExport]

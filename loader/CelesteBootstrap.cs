@@ -66,9 +66,11 @@ public static partial class CelesteBootstrap
 
             TryCreateDirectory("/libsdl/Celeste/Everest");
             TryCreateDirectory("/libsdl/Celeste/Mods");
-            TryCreateDirectory("/libsdl/Persistent/Saves");
+            TryCreateDirectory("/libsdl/Celeste/Saves");
+            TryCreateDirectory("/remote/");
             File.CreateSymbolicLink("/Content", "/libsdl/Content");
-            File.CreateSymbolicLink("/Saves", "/libsdl/Persistent/Saves");
+            File.CreateSymbolicLink("/Saves", "/libsdl/Celeste/Saves");
+            File.CreateSymbolicLink("/remote/%GameInstall%Saves", "/libsdl/Celeste/Saves");
             Console.WriteLine("created symlinks");
 
             MountDlls(rawDlls);
