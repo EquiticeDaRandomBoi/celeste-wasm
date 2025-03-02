@@ -3,7 +3,6 @@ import "./styles.css";
 import { Main } from "./main";
 import { Splash } from "./splash";
 import { store } from "./store";
-import { hasContent } from "./fs";
 
 const App: Component<{}, {
 	el: HTMLElement

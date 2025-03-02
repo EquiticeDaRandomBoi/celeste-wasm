@@ -1,6 +1,6 @@
 import { Logo, STEAM_ENABLED } from "./main";
 import { Button, Icon, Link } from "./ui";
-import { copyFolder, countFolder, hasContent, PICKERS_UNAVAILABLE, rootFolder } from "./fs";
+import { copyFile, copyFolder, countFolder, hasContent, PICKERS_UNAVAILABLE, rootFolder } from "./fs";
 
 import iconFolderOpen from "@ktibow/iconset-material-symbols/folder-open-outline";
 import iconDownload from "@ktibow/iconset-material-symbols/download";
@@ -10,16 +10,32 @@ import { SteamLogin } from "./steam";
 import { LogView } from "./game";
 
 const validateDirectory = async (directory: FileSystemDirectoryHandle) => {
-	if (directory.name != "Content") {
-		return "Directory name is not Content";
+	let content;
+	try {
+		content = await directory.getDirectoryHandle("Content", { create: false });
+	} catch {
+		return `Failed to find Content directory in selected folder`
 	}
+
 	for (const child of ["Dialog", "Effects", "FMOD", "Graphics", "Maps", "Monocle", "Overworld", "Tutorials"]) {
 		try {
-			await directory.getDirectoryHandle(child, { create: false });
+			await content.getDirectoryHandle(child, { create: false });
 		} catch {
-			return `Failed to find subdirectory ${child}`
+			return `Failed to find subdirectory Content/${child}`
 		}
 	}
+
+	try {
+		await directory.getFileHandle("Celeste.exe", { create: false });
+	} catch {
+		try {
+			const orig = await directory.getDirectoryHandle("orig", { create: false });
+			await orig.getFileHandle("Celeste.exe", { create: false });
+		} catch {
+			return `Failed to find Celeste.exe in selected folder`
+		}
+	}
+
 	return "";
 };
 
@@ -127,17 +143,28 @@ const Copy: Component<{
 			return;
 		}
 
-		const max = await countFolder(directory);
+		const contentFolder = await directory.getDirectoryHandle("Content", { create: false });
+
+		const max = await countFolder(contentFolder);
 		let cnt = 0;
 		this.copying = true;
 		const before = performance.now();
-		await copyFolder(directory, rootFolder, (x) => {
+		await copyFolder(contentFolder, rootFolder, (x) => {
 			cnt++;
 			this.percent = cnt / max * 100;
 			console.debug(`copied ${x}: ${(cnt / max * 100).toFixed(2)}`);
 		});
 		const after = performance.now();
 		console.debug(`copy took ${(after - before).toFixed(2)}ms`);
+
+		let celesteExe;
+		try {
+			celesteExe = await directory.getFileHandle("Celeste.exe", { create: false });
+		} catch {
+			let orig = await directory.getDirectoryHandle("orig", { create: false });
+			celesteExe = await orig.getFileHandle("Celeste.exe", { create: false });
+		}
+		await copyFile(celesteExe, rootFolder);
 
 		await new Promise(r => setTimeout(r, 250));
 		await rootFolder.getFileHandle(".ContentExists", { create: true });
@@ -157,15 +184,15 @@ const Copy: Component<{
 	return (
 		<div>
 			<div>
-				Select your Celeste install's Content directory. It will be copied to browser storage and can be removed in the file manager.
+				Select your Celeste install's directory. It will be copied to browser storage and can be removed in the file manager.
 			</div>
 			{this.os == "win" ? (<div>
-				The Content directory for Steam installs of Celeste is usually located in <code>C:\Program Files (x86)\Steam\steamapps\common\Celeste</code>.
+				The directory for Steam installs of Celeste is usually located in <code>C:\Program Files (x86)\Steam\steamapps\common\Celeste</code>.
 			</div>) : null}
 			{this.os == "darwin" ? (
 				<div>
 					<p>
-						The Content directory for Steam installs of Celeste is usually located in <code>~/Library/Application Support/Steam/steamapps/common/Celeste/Celeste.app/Contents/Resources</code>.
+						The directory for Steam installs of Celeste is usually located in <code>~/Library/Application Support/Steam/steamapps/common/Celeste/Celeste.app/Contents/Resources</code>.
 					</p>
 					<p class="warning">
 						If you get an error stating it can't open the folder because it "contains system files", try copying it to another location first.
@@ -174,7 +201,7 @@ const Copy: Component<{
 			) : null}
 			{this.os == "linux" ? (<div>
 				<p>
-					The Content directory for Steam installs of Celeste is usually located in <code>~/.steam/root/steamapps/common/Celeste</code>.
+					The directory for Steam installs of Celeste is usually located in <code>~/.steam/root/steamapps/common/Celeste</code>.
 				</p>
 				<p class="warning">
 					If you get an error stating it can't open the folder because it "contains system files", try copying it to another location first.
@@ -288,7 +315,7 @@ export const Patch: Component<{
 	}
 
 	return <div>
-		<p>We're going to patch Celeste with MonoMod for neccesary webassembly fixes. You also have the option to install the Everest Mod Loader</p>
+		<p>We're going to patch Celeste with MonoMod for neccesary webassembly fixes. You also have the option to install the Everest Mod Loader, but it will take longer to install</p>
 		<div>
 			<input type="checkbox" id="installEverest" />
 			<label for="installEverest">Install Everest Mod Loader?</label>
