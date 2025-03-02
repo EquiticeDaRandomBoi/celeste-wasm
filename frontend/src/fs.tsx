@@ -1,6 +1,6 @@
 import { Button, Icon } from "./ui";
 
-import tar from "tar-stream";
+import tar, { Headers as TarHeaders, Pack } from "tar-stream";
 // @ts-expect-error
 import { fromWeb as streamFromWeb, toWeb as streamToWeb } from "streamx-webstream";
 import { h64 as XXH64 } from "xxhashjs";
@@ -13,6 +13,8 @@ import iconClose from "@ktibow/iconset-material-symbols/close";
 import iconSave from "@ktibow/iconset-material-symbols/save";
 import iconUploadFile from "@ktibow/iconset-material-symbols/upload-file";
 import iconUploadFolder from "@ktibow/iconset-material-symbols/drive-folder-upload";
+import iconArchive from "@ktibow/iconset-material-symbols/archive";
+import iconUnarchive from "@ktibow/iconset-material-symbols/unarchive";
 
 export const PICKERS_UNAVAILABLE = !window.showDirectoryPicker || !window.showOpenFilePicker;
 
@@ -32,7 +34,7 @@ export async function calculateCelesteHash(): Promise<string> {
 
 export async function replaceHashes(hash: string) {
 	const cacheDir = await recursiveGetDirectory(rootFolder, ["Celeste", "Mods", "Cache"]);
-	for await (const [name, file] of cacheDir.entries()) {
+	for await (const [name, file] of cacheDir) {
 		if (!name.endsWith(".sum") || file.kind !== "file") continue;
 
 		const contents = await file.getFile().then(r => r.text());
@@ -49,6 +51,16 @@ export async function replaceHashes(hash: string) {
 }
 (self as any).calculateCelesteHash = calculateCelesteHash;
 (self as any).replaceHashes = replaceHashes;
+
+async function skipOobe() {
+	await rootFolder.getFileHandle(".ContentExists", { create: true });
+	await rootFolder.getFileHandle("CustomCeleste.dll", { create: true });
+	const content = await rootFolder.getDirectoryHandle("Content", { create: true });
+	for (const folder of ["Dialog", "Effects", "FMOD", "Graphics", "Maps", "Monocle", "Overworld", "Tutorials"]) {
+		await content.getDirectoryHandle(folder, { create: true });
+	}
+}
+(self as any).skipOobe = skipOobe;
 
 export async function copyFile(file: FileSystemFileHandle, to: FileSystemDirectoryHandle) {
 	const data = await file.getFile().then(r => r.stream());
@@ -103,6 +115,64 @@ export async function hasContent(): Promise<boolean> {
 	} catch {
 		return false;
 	}
+}
+
+async function createEntry(pack: Pack, header: TarHeaders, file?: ReadableStream<Uint8Array>) {
+	let resolve: () => void = null!;
+	let reject: (err: any) => void = null!;
+	const promise = new Promise<void>((res, rej) => { resolve = res; reject = rej; });
+
+	const entry = pack.entry(header, (err) => {
+		if (err) reject(err);
+		else resolve();
+	});
+
+	if (file) {
+		const reader = file.getReader();
+		while (true) {
+			const { value, done } = await reader.read();
+			if (done || !value) break;
+
+			entry.write(value);
+		}
+
+		entry.end();
+	} else {
+		entry.end();
+	}
+
+	await promise;
+}
+
+export function createTar(folder: FileSystemDirectoryHandle, callback?: (type: "directory" | "file", name: string) => void): ReadableStream {
+	const archive = tar.pack();
+
+	async function pack(pathPrefix: string, folder: FileSystemDirectoryHandle) {
+		for await (const [name, entry] of folder) {
+			if (callback) callback(entry.kind, name);
+
+			if (entry.kind == "file") {
+				const file = await entry.getFile();
+				const stream = file.stream();
+
+				await createEntry(archive, {
+					name: pathPrefix + name,
+					type: entry.kind,
+					size: file.size,
+				}, stream);
+			} else {
+				await createEntry(archive, {
+					name: pathPrefix + name,
+					type: entry.kind,
+				});
+
+				await pack(pathPrefix + name + "/", entry);
+			}
+		}
+	}
+	pack("", folder).then(() => archive.finalize());
+
+	return streamToWeb(archive);
 }
 
 export async function extractTar(
@@ -181,12 +251,14 @@ export const OpfsExplorer: Component<{
 
 	editing: FileSystemFileHandle | null,
 	uploading: boolean,
+	downloading: boolean,
 }> = function() {
 	this.path = rootFolder;
 	this.components = [];
 	this.entries = [];
 
 	this.uploading = false;
+	this.downloading = false;
 
 	this.css = `
 		display: flex;
@@ -289,14 +361,52 @@ export const OpfsExplorer: Component<{
 		this.path = this.path;
 		this.uploading = false;
 	};
+	const downloadArchive = async () => {
+		const dirName = this.components.at(-1) || "celeste-wasm"
+		const file = await showSaveFilePicker({
+			excludeAcceptAllOption: true,
+			suggestedName: dirName + ".tar",
+			types: [
+				{ description: "TAR archive (.tar)", accept: { "application/x-tar": ".tar" } },
+				{ description: "GZip compressed TAR archive (.tar.gz)", accept: { "application/x-gzip": ".tar.gz", "application/gzip": ".tar.gz" } }
+			]
+		});
+
+		this.downloading = true;
+
+		let tar = createTar(this.path, (type, name) => console.log(`tarring ${type} ${name}`));
+		if (file.name.endsWith(".gz")) tar = tar.pipeThrough(new CompressionStream("gzip"));
+
+		const fileStream = await file.createWritable();
+		await tar.pipeTo(fileStream);
+
+		this.downloading = false;
+	}
+	const uploadArchive = async () => {
+		const files = await showOpenFilePicker({ multiple: true });
+		this.uploading = true;
+		for (const file of files) {
+			let tar = await file.getFile().then(r=>r.stream());
+			if (file.name.endsWith(".gz")) tar = tar.pipeThrough(new DecompressionStream("gzip"));
+			await extractTar(tar, this.path, (type, name) => console.log(`untarring ${type} ${name}`));
+		}
+		this.uploading = false;
+	}
 
 	const uploadDisabled = use(this.uploading, x => x || PICKERS_UNAVAILABLE);
+	const downloadDisabled = use(this.downloading, x => x || PICKERS_UNAVAILABLE);
 
 	return (
 		<div>
 			<div class="path">
 				<h3>{use(this.components, x => (x.length == 0 ? "Root Directory" : "/" + x.join("/")))}</h3>
 				<div class="expand" />
+				<Button type="normal" icon="full" disabled={uploadDisabled} on:click={uploadArchive}>
+					<Icon icon={iconUnarchive} />
+				</Button>
+				<Button type="normal" icon="full" disabled={downloadDisabled} on:click={downloadArchive}>
+					<Icon icon={iconArchive} />
+				</Button>
 				<Button type="normal" icon="full" disabled={uploadDisabled} on:click={uploadFile}>
 					<Icon icon={iconUploadFile} />
 				</Button>
@@ -305,6 +415,7 @@ export const OpfsExplorer: Component<{
 				</Button>
 			</div>
 			{$if(use(this.uploading), <span>Uploading files...</span>)}
+			{$if(use(this.downloading), <span>Downloading files...</span>)}
 			<div class="entries">
 				{use(this.entries, x => x.map(x => {
 					const icon = x.entry.kind === "directory" ? iconFolder : iconDraft;
