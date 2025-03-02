@@ -1,8 +1,5 @@
 import { achievements, glowingAchievements } from "./achievementData";
 
-import glowOuter from "./steam-glow-outer.png";
-import glowInner from "./steam-glow-inner.png";
-
 export type Achievement = {
 	hidden: boolean;
 	unlocked_image: string;
@@ -124,7 +121,7 @@ export const Achievements: Component<
 			left: -10px;
 		}
 		.image .glow-root {
-			mask-image: url("${glowOuter}");
+			mask-image: url("steam-glow-outer.png");
 			mask-repeat: repeat;
 			mask-size: 100%;	
 		}
@@ -134,7 +131,7 @@ export const Achievements: Component<
 			animation-timing-function: linear;
 			animation-iteration-count: infinite;
 			animation-direction: reverse;
-			mask-image: url("${glowInner}");
+			mask-image: url("steam-glow-inner.png");
 			mask-repeat: repeat;
 			mask-size: 100%;
 		}

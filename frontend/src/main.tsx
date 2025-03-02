@@ -179,12 +179,14 @@ export const Main: Component<{}, {
 		}
 
 		.logs {
-			width: 100%;
 			display: flex;
 			flex-direction: column;
 
-			background: var(--bg-sub);
+			width: 100%;
 			height: 25em;
+			padding: 0 0.5em 0.5em 0.5em;
+
+			background: var(--bg-sub);
 		}
 
 		.resizer {
@@ -198,19 +200,6 @@ export const Main: Component<{}, {
 			margin: 0;
 		}
 	`;
-
-	this.mount = () => {
-		let main = this.root.querySelector(".main")!;
-		setInterval(() => {
-			if (main.clientWidth / main.clientHeight > 16 / 9) {
-				main.classList.add("tall");
-				main.classList.remove("wide");
-			} else {
-				main.classList.add("wide");
-				main.classList.remove("tall");
-			}
-		}, 100);
-	}
 
 	this.fsOpen = false;
 	this.achievementsOpen = false;
@@ -227,8 +216,8 @@ export const Main: Component<{}, {
 			<div class="game">
 				<GameView bind:canvas={use(this.canvas)} />
 			</div>
-			{$if(use(this.showLog),
-				<div class="logs" bind:this={use(this.logcontainer)}>
+			{$if(use(this.showLog), /* @ts-expect-error */
+				<>
 					<div class="resizer"
 						on:mousedown={(e: MouseEvent) => {
 							const startY = e.clientY;
@@ -243,10 +232,11 @@ export const Main: Component<{}, {
 							document.addEventListener("mousemove", onMouseMove);
 							document.addEventListener("mouseup", onMouseUp);
 						}}></div>
-					<LogView scrolling={true} />
-				</div>
+					<div class="logs" bind:this={use(this.logcontainer)}>
+						<LogView scrolling={true} />
+					</div>
+				</>
 			)}
-
 
 			<Dialog name="File System" bind:open={use(this.fsOpen)}>
 				<OpfsExplorer open={use(this.fsOpen)} />
