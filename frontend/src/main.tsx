@@ -25,6 +25,7 @@ export const Logo: Component<{}, {}> = function() {
 		font-size: 1.5rem;
 
 		font-family: var(--font-display);
+		color: white;
 
 		img {
 			image-rendering: pixelated;
@@ -45,13 +46,13 @@ export const Logo: Component<{}, {}> = function() {
 		}
 	`;
 	return (
-		<div>
+		<a href="https://github.com/MercuryWorkshop/celeste-wasm">
 			<img src="/app.ico" />
 			<span>{NAME}</span>
 			<div class="extras">
 				<span>v1.4.0.0</span>
 			</div>
-		</div>
+		</a>
 	)
 }
 
