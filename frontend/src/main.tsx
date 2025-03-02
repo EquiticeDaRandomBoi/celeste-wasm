@@ -63,13 +63,16 @@ const TopBar: Component<{
 	modInstallerOpen: boolean,
 }, { allowPlay: boolean, fps: HTMLElement }> = function() {
 	this.css = `
-		background: var(--bg-sub);
+		background: var(--bg);
 		padding: 1em;
 		border-bottom: 2px solid var(--surface1);
 		transition: background 200ms, color 200ms, border-color 200ms;
 		display: flex;
 		align-items: stretch;
+		width: 100%;
 		gap: 0.5rem;
+
+		flex: 0 0;
 
 		.group {
 			display: flex;
@@ -160,42 +163,27 @@ export const Main: Component<{}, {
 	this.css = `
 		width: 100%;
 		height: 100%;
-		background: black;
+		background: var(--bg-sub);
 		color: var(--fg);
 
 		display: flex;
 		flex-direction: column;
-		overflow: hidden;
+		align-items: center;
 
 		transition: background 200ms, color 200ms;
 
-		.main {
-			background: var(--bg);
-			flex: 1;
-			overflow: hidden;
+		.game {
+			aspect-ratio: 16 / 9;
+			flex: 0 1 100vh;
 		}
 
-		.logcontainer {
+		.logs {
+			width: 100%;
 			display: flex;
 			flex-direction: column;
 
 			background: black;
 			height: 25em;
-		}
-
-		.gameview {
-			aspect-ratio: 16 / 9;
-			margin: auto;
-		}
-
-		.tall .gameview {
-			height: 100%;
-			width: min-content;
-		}
-
-		.wide .gameview {
-			width: 100%;
-			height: min-content;
 		}
 
 		.resizer {
@@ -235,14 +223,11 @@ export const Main: Component<{}, {
 				bind:modInstallerOpen={use(this.modInstallerOpen)}
 				bind:showLog={use(this.showLog)}
 			/>
-			<div class="main">
-				<div class="gameview">
-					<GameView bind:canvas={use(this.canvas)} />
-				</div>
-				<div style="flex: 1; background: black" />
+			<div class="game">
+				<GameView bind:canvas={use(this.canvas)} />
 			</div>
 			{$if(use(this.showLog),
-				<div class="logcontainer" bind:this={use(this.logcontainer)}>
+				<div class="logs" bind:this={use(this.logcontainer)}>
 					<div class="resizer"
 						on:mousedown={(e: MouseEvent) => {
 							const startY = e.clientY;
