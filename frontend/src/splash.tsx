@@ -208,7 +208,7 @@ const Copy: Component<{
 				</p>
 			</div>) : null}
 			{this.os == "" ? (<div>
-				The Content directory for Steam installs of Celeste is usually located in one of these locations:
+				The directory for Steam installs of Celeste is usually located in one of these locations:
 				<ul>
 					<li><code>~/.steam/root/steamapps/common/Celeste</code></li>
 					<li><code>C:\Program Files (x86)\Steam\steamapps\common\Celeste</code></li>
@@ -218,7 +218,7 @@ const Copy: Component<{
 			{$if(use(this.copying), <Progress percent={use(this.percent)} />)}
 			<Button on:click={opfs} type="primary" icon="left" disabled={use(this.copying)}>
 				<Icon icon={iconFolderOpen} />
-				Select Celeste Content directory
+				Select Celeste directory
 			</Button>
 			{$if(use(this.status), <div class="error">{use(this.status)}</div>)}
 		</div>
