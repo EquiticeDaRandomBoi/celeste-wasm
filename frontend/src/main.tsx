@@ -159,7 +159,6 @@ export const Main: Component<{}, {
 	achievementsOpen: boolean,
 	modInstallerOpen: boolean,
 	logcontainer: HTMLDivElement,
-	showLog: boolean,
 }> = function() {
 	this.css = `
 		width: 100%;
@@ -193,7 +192,7 @@ export const Main: Component<{}, {
 			background: var(--surface1);
 			cursor: ns-resize;
 			width: 100%;
-			height: 2px;
+			flex: 0 0 0.25em;
 		}
 
 		.main h2 {
@@ -211,12 +210,12 @@ export const Main: Component<{}, {
 				bind:fsOpen={use(this.fsOpen)}
 				bind:achievementsOpen={use(this.achievementsOpen)}
 				bind:modInstallerOpen={use(this.modInstallerOpen)}
-				bind:showLog={use(this.showLog)}
+				bind:showLog={use(store.logs)}
 			/>
 			<div class="game">
 				<GameView bind:canvas={use(this.canvas)} />
 			</div>
-			{$if(use(this.showLog), /* @ts-expect-error */
+			{$if(use(store.logs), /* @ts-expect-error */
 				<>
 					<div class="resizer"
 						on:mousedown={(e: MouseEvent) => {

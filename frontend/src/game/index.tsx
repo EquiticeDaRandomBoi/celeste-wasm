@@ -12,13 +12,13 @@ export const LogView: Component<{ scrolling: boolean, }> = function() {
 		}
 
 		::-webkit-scrollbar {
-  		width: 10px;
+			width: 10px;
 		}
 		::-webkit-scrollbar-track {
-  		background: black; 
+			background: var(--surface3);
 		}
 		::-webkit-scrollbar-thumb {
-  		background: var(--surface0); 
+			background: var(--surface6);
 		}
 	`;
 
