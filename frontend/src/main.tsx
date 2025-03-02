@@ -160,7 +160,7 @@ export const Main: Component<{}, {
 	this.css = `
 		width: 100%;
 		height: 100%;
-		background: var(--bg);
+		background: black;
 		color: var(--fg);
 
 		display: flex;
@@ -170,6 +170,7 @@ export const Main: Component<{}, {
 		transition: background 200ms, color 200ms;
 
 		.main {
+			background: var(--bg);
 			flex: 1;
 			overflow: hidden;
 		}
@@ -198,10 +199,10 @@ export const Main: Component<{}, {
 		}
 
 		.resizer {
-			background: var(--surface0);
+			background: var(--surface1);
 			cursor: ns-resize;
 			width: 100%;
-			height: 0.5em;
+			height: 2px;
 		}
 
 		.main h2 {
@@ -238,6 +239,7 @@ export const Main: Component<{}, {
 				<div class="gameview">
 					<GameView bind:canvas={use(this.canvas)} />
 				</div>
+				<div style="flex: 1; background: black" />
 			</div>
 			{$if(use(this.showLog),
 				<div class="logcontainer" bind:this={use(this.logcontainer)}>

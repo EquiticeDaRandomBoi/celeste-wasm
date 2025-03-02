@@ -10,6 +10,16 @@ export const LogView: Component<{ scrolling: boolean, }> = function() {
 		.log {
 			word-break: break-all;
 		}
+
+		::-webkit-scrollbar {
+  		width: 10px;
+		}
+		::-webkit-scrollbar-track {
+  		background: black; 
+		}
+		::-webkit-scrollbar-thumb {
+  		background: var(--surface0); 
+		}
 	`;
 
 	const create = (color: string, log: string) => {
@@ -33,7 +43,7 @@ export const LogView: Component<{ scrolling: boolean, }> = function() {
 		}, 100);
 	};
 
-	return <div style={this.scrolling ? "overflow: scroll" : "overflow: hidden"} />
+	return <div style={this.scrolling ? "overflow: auto" : "overflow: hidden"} />
 }
 
 export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function() {
