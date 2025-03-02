@@ -80,6 +80,11 @@ public partial class Steam
     {
         return await ContentDownloader.steam3.DownloadSteamCloud(504230, 1000, "/remote/");
     }
+    [JSExport]
+    internal static async Task<bool> UploadSteamCloud()
+    {
+        return await ContentDownloader.steam3.UploadSteamCloud(504230, 1000, "/remote/");
+    }
 
     [JSExport]
     internal static async Task<bool> InitSteam(string username, string password, bool qr)
