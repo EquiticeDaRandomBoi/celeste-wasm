@@ -13,6 +13,7 @@ import iconFolderOpen from "@ktibow/iconset-material-symbols/folder-open";
 import iconTrophy from "@ktibow/iconset-material-symbols/trophy";
 import iconDownload from "@ktibow/iconset-material-symbols/download";
 import iconTerminal from "@ktibow/iconset-material-symbols/terminal";
+import { SteamCloud } from "./steam";
 
 export const STEAM_ENABLED = import.meta.env.VITE_STEAM_ENABLED;
 
@@ -60,6 +61,7 @@ const TopBar: Component<{
 	canvas: HTMLCanvasElement,
 	fsOpen: boolean,
 	showLog: boolean,
+	steamOpen: boolean,
 	achievementsOpen: boolean,
 	modInstallerOpen: boolean,
 }, { allowPlay: boolean, fps: HTMLElement }> = function() {
@@ -108,6 +110,9 @@ const TopBar: Component<{
 				<Button on:click={() => this.modInstallerOpen = true} icon="left" type="normal" disabled={false}>
 					<Icon icon={iconDownload} />
 					<span>Mods</span>
+				</Button>
+				<Button on:click={() => this.steamOpen = true} icon="full" type="normal" disabled={false}>
+					steam icon
 				</Button>
 				<Button on:click={() => this.achievementsOpen = true} icon="full" type="normal" disabled={false}>
 					<Icon icon={iconTrophy} />
@@ -158,6 +163,7 @@ export const Main: Component<{}, {
 	fsOpen: boolean,
 	achievementsOpen: boolean,
 	modInstallerOpen: boolean,
+	steamOpen: boolean,
 	logcontainer: HTMLDivElement,
 	showLog: boolean,
 }> = function() {
@@ -210,6 +216,7 @@ export const Main: Component<{}, {
 				canvas={use(this.canvas)}
 				bind:fsOpen={use(this.fsOpen)}
 				bind:achievementsOpen={use(this.achievementsOpen)}
+				bind:steamOpen={use(this.steamOpen)}
 				bind:modInstallerOpen={use(this.modInstallerOpen)}
 				bind:showLog={use(this.showLog)}
 			/>
@@ -237,7 +244,9 @@ export const Main: Component<{}, {
 					</div>
 				</>
 			)}
-
+			<Dialog name="Steam Cloud" bind:open={use(this.steamOpen)}>
+				<SteamCloud open={use(this.steamOpen)} />
+			</Dialog>
 			<Dialog name="File System" bind:open={use(this.fsOpen)}>
 				<OpfsExplorer open={use(this.fsOpen)} />
 			</Dialog>

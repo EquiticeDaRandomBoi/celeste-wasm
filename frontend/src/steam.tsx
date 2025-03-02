@@ -4,6 +4,35 @@ import { Button, Icon } from "./ui";
 
 import iconEncrypted from "@ktibow/iconset-material-symbols/encrypted";
 
+
+export const SteamCloud: Component<
+  {
+    open: boolean;
+  },
+  {
+  }
+> = function() {
+
+  this.css = `
+  height: 100%;
+  `;
+
+  return (
+    <div>
+      {$if(use(gameState.loginstate, l => l == 2),
+        <div>
+          <p>Logged Into Steam</p>
+        </div>,
+        <div>
+          <SteamLogin />
+        </div>
+      )}
+    </div>
+  )
+}
+
+
+
 export const SteamLogin: Component<{}, {
   username: string,
   password: string,

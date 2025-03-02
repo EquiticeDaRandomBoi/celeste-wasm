@@ -371,6 +371,12 @@ export async function play() {
 	gameState.playing = true;
 
 	gameState.initting = true;
+
+	if (STEAM_ENABLED && gameState.loginstate == 2) {
+		console.debug("Syncing Steam Cloud");
+		await exports.Steam.DownloadSteamCloud();
+	}
+
 	console.debug("Init...");
 	const before = performance.now();
 

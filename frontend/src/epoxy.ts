@@ -49,7 +49,7 @@ export async function createEpoxy() {
 	options.user_agent = navigator.userAgent;
 	options.udp_extension_required = false;
 
-	currentWispUrl = store.wispServer;
+	currentWispUrl = store.wispServer || "wss://anura.pro/";
 	currentClient = new EpoxyClient(currentWispUrl, options);
 }
 
