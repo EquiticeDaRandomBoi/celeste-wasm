@@ -50,23 +50,29 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function()
 	this.css = `
 		aspect-ratio: 16 / 9;
 		user-select: none;
-		display: grid;
-		grid-template-areas: "overlay";
+		position: relative;
 
 		transition: background 200ms, color 200ms;
 
-		div, canvas {
-			grid-area: overlay;
+		.gameoverlay, canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
 			width: 100%;
 			height: 100%;
-			# border: 2px solid var(--surface4);
+			/*border: 2px solid var(--surface4);*/
 			transition: background 200ms, color 200ms, border-color 200ms;
 		}
 		div.started, canvas.stopped {
 			visibility: hidden;
+			z-index: 0;
 		}
 
-		div {
+		canvas {
+			z-index: 1;
+		}
+
+		.gameoverlay.notrunning {
 			background: var(--surface1);
 			color: var(--surface6);
 			transition: background 200ms, color 200ms, border-color 200ms;
@@ -78,6 +84,12 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function()
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
+
+			z-index: 1;
+		}
+
+		.gameoverlay.loader {
+			z-index: 2;
 		}
 
 		canvas:fullscreen {
@@ -86,7 +98,7 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function()
 			background: black;
 		}
 	`;
-	const div = use(gameState.playing, x => x ? "started" : "stopped");
+	const div = use(gameState.playing, x => x ? "gameoverlay notrunning started" : "gameoverlay notrunning stopped");
 	const canvas = use(gameState.playing, x => x ? "canvas started" : "canvas stopped");
 
 	this.mount = () => {
@@ -96,10 +108,10 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function()
 
 	return (
 		<div>
+			{$if(use(gameState.initting), <div class="gameoverlay"><Loader /></div>)}
 			<div class={div}>
 				Game not running.
 			</div>
-			{$if(use(gameState.initting), <Loader />)}
 			<canvas
 				id="canvas"
 				class={canvas}

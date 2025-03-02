@@ -99,10 +99,16 @@ export const Loader: Component<{}, {
 
 		position: relative;
 
+		width: 100%;
+		height: 100%;
+
+		font-family: var(--font-display);
 		background-color: var(--background);
 		color: white;
 
 		overflow: hidden;
+
+		z-index: 10;
 
 		.overlay {
 			position: absolute;
@@ -110,7 +116,7 @@ export const Loader: Component<{}, {
 			left: 0;
 			width: 100%;
 			height: 100%;
-			z-index: 2;
+			z-index: 22;
 		}
 
 		.main {
@@ -142,7 +148,7 @@ export const Loader: Component<{}, {
 			background-size: cover;
 
 			opacity: 0.4;
-			z-index: 1;
+			z-index: 21;
 		}
 
 		.gear {
@@ -158,7 +164,7 @@ export const Loader: Component<{}, {
 
 			filter: blur(0.25em);
 
-			z-index: 0;
+			z-index: 20;
 		}
 
 		.case {
