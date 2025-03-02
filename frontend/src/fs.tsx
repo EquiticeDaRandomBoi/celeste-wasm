@@ -3,6 +3,7 @@ import { Button, Icon } from "./ui";
 import tar from "tar-stream";
 // @ts-expect-error
 import { fromWeb as streamFromWeb, toWeb as streamToWeb } from "streamx-webstream";
+import { h64 as XXH64 } from "xxhashjs";
 
 import iconFolder from "@ktibow/iconset-material-symbols/folder";
 import iconDraft from "@ktibow/iconset-material-symbols/draft";
@@ -16,6 +17,38 @@ import iconUploadFolder from "@ktibow/iconset-material-symbols/drive-folder-uplo
 export const PICKERS_UNAVAILABLE = !window.showDirectoryPicker || !window.showOpenFilePicker;
 
 export const rootFolder = await navigator.storage.getDirectory();
+
+export async function calculateCelesteHash(): Promise<string> {
+	const celesteFile = await rootFolder.getFileHandle("CustomCeleste.dll");
+	const celeste = await celesteFile.getFile().then(r => r.arrayBuffer());
+
+	const hash = XXH64();
+	hash.init(0);
+	hash.update(celeste);
+	const out = hash.digest();
+
+	return out.toString(16).toUpperCase().padStart(16, '0');
+}
+
+export async function replaceHashes(hash: string) {
+	const cacheDir = await recursiveGetDirectory(rootFolder, ["Celeste", "Mods", "Cache"]);
+	for await (const [name, file] of cacheDir.entries()) {
+		if (!name.endsWith(".sum") || file.kind !== "file") continue;
+
+		const contents = await file.getFile().then(r => r.text());
+		const split = contents.split("\n");
+
+		const old = split[0];
+		split[0] = hash;
+
+		const writable = await file.createWritable();
+		await writable.write(split.join("\n"));
+		await writable.close();
+		console.debug(`replaced "${name}": "${old}" -> "${split[0]}"`);
+	}
+}
+(self as any).calculateCelesteHash = calculateCelesteHash;
+(self as any).replaceHashes = replaceHashes;
 
 export async function copyFile(file: FileSystemFileHandle, to: FileSystemDirectoryHandle) {
 	const data = await file.getFile().then(r => r.stream());
@@ -220,19 +253,24 @@ export const OpfsExplorer: Component<{
 	useChange([this.path], async () => {
 		this.components = await rootFolder.resolve(this.path) || [];
 
-		this.entries = [];
+		let entries = [];
 		if (this.components.length > 0) {
-			this.entries = [...this.entries, {
+			entries.push({
 				name: "..",
 				entry: await recursiveGetDirectory(rootFolder, this.components.slice(0, this.components.length - 1)),
-			}]
+			})
 		}
 		for await (const [name, entry] of this.path) {
-			this.entries = [...this.entries, {
+			entries.push({
 				name,
 				entry
-			}];
+			});
 		}
+		entries.sort((a, b) => {
+			const kind = a.entry.kind.localeCompare(b.entry.kind);
+			return kind === 0 ? a.name.localeCompare(b.name) : kind;
+		});
+		this.entries = entries;
 	});
 
 	const uploadFile = async () => {

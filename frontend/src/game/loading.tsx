@@ -1,9 +1,11 @@
 import { LogView } from ".";
 import { NAME } from "../main";
+import { Icon } from "../ui";
+import iconSettings from "@ktibow/iconset-material-symbols/settings";
 
 // all the units are in vw so that it looks like it's in the game screen
 
-const splashState: Stateful<{
+export const splashState: Stateful<{
 	text: string,
 	progress: number,
 }> = $state({
@@ -27,7 +29,7 @@ export const JsSplash = {
 			const modName = commands[2];
 
 			splashState.progress = loadedMods / totalMods;
-			splashState.text = `[${loadedMods}/${totalMods}] Loaded mod ${modName}`;
+			splashState.text = `[${loadedMods}/${totalMods}] Loading mod ${modName}`;
 		} else if (message.startsWith("#finish")) {
 			commands = message.substring(7).split(";");
 
@@ -108,7 +110,7 @@ export const Loader: Component<{}, {
 			left: 0;
 			width: 100%;
 			height: 100%;
-			z-index: 1;
+			z-index: 2;
 		}
 
 		.main {
@@ -139,6 +141,22 @@ export const Loader: Component<{}, {
 			background-size: cover;
 
 			opacity: 0.4;
+			z-index: 1;
+		}
+
+		.gear {
+			color: color-mix(in srgb, var(--background), white 35%);
+			position: absolute;
+			top: 0;
+			right: 0;
+			width: min(100vw, 1280px);
+			height: min(100vw, 1280px);
+			transform: translate(50%, -50%);
+
+			animation: spin 10s infinite linear;
+
+			filter: blur(0.25em);
+
 			z-index: 0;
 		}
 
@@ -149,6 +167,10 @@ export const Loader: Component<{}, {
 		.large { font-size: min(max(22px, 4vw), 32px); }
 		.body { font-size: min(max(14px, 2vw), 20px); }
 		.smaller { font-size: min(max(10px, 1.5vw), 16px); }
+
+		@keyframes spin {
+			100% { transform: translate(50%, -50%) rotate(360deg); }
+		}
 	`;
 
 	return (
@@ -168,6 +190,7 @@ export const Loader: Component<{}, {
 			</div>
 			<Progress indeterminate={use(splashState.progress, x => x === -1)} progress={use(splashState.progress)} />
 			<div class="overlay bg" />
+			<Icon class="gear" icon={iconSettings} />
 		</div>
 	)
 }

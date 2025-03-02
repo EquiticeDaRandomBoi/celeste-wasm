@@ -120,16 +120,24 @@ export async function getDlls(): Promise<(readonly [string, string])[]> {
 		"Celeste.Wasm.mm.dll",
 
 		"MonoMod.Common.dll",
+		"MonoMod.Core.dll",
 		"MonoMod.Patcher.dll",
 		"MonoMod.ILHelpers.dll",
 		"MonoMod.Backports.dll",
 		"MonoMod.Utils.dll",
+		"MonoMod.RuntimeDetour.dll",
 		"Mono.Cecil.dll",
 		"System.Diagnostics.Process.dll",
 		"System.ComponentModel.Primitives.dll",
 		"System.Collections.dll",
 		"System.dll",
-		"Steamworks.NET.dll"
+		"Steamworks.NET.dll",
+		"Jdenticon.dll",
+		"YamlDotNet.dll",
+		"MAB.DotIgnore.dll",
+		"Newtonsoft.Json.dll",
+		"NLua.dll",
+		"KeraLua.dll",
 	];
 
 	return Object.entries(resources.resources.fingerprinting).map(x => [x[0] as string, x[1] as string] as const).filter(([_, v]) => whitelist.includes(v));
@@ -226,12 +234,7 @@ let libcurlresolver: any;
 export const loadedLibcurlPromise = new Promise(r => libcurlresolver = r);
 export async function preInit() {
 	console.debug("initializing dotnet");
-	const runtime = await dotnet.withRuntimeOptions([
-		"--jiterpreter-traces-enabled",
-		"--jiterpreter-stats-enabled",
-		"--jiterpreter-backward-branches-enabled",
-		"--jiterpreter-eliminate-null-checks",
-	]).withConfig({
+	const runtime = await dotnet.withConfig({
 		pthreadPoolInitialSize: 24,
 		pthreadPoolUnusedSize: 512,
 	}).create();
@@ -363,40 +366,47 @@ export async function initSteam(username: string | null, password: string | null
 export async function downloadApp() {
 	return await exports.Steam.DownloadApp();
 }
-const vsync = false;
+const SEAMLESSCOUNT = 10;
 
 export async function play() {
 	gameState.playing = true;
 
 	gameState.initting = true;
-	const before = performance.now();
 	console.debug("Init...");
+	const before = performance.now();
+
 	await exports.CelesteLoader.Init();
-	// this is needed so that fna fully inits
-	await exports.CelesteLoader.MainLoop();
+
+	// run some frames for seamless transition
+	for (let i = 0; i < SEAMLESSCOUNT; i++) {
+		console.debug(`SeamlessInit${i}...`);
+		await exports.CelesteLoader.MainLoop();
+	}
+
 	const after = performance.now();
 	console.debug(`Init : ${(after - before).toFixed(2)}ms`);
 	gameState.initting = false;
 
-	console.debug("MainLoop...");
-	while (true) {
+	const main = async () => {
 		const before = performance.now();
 		const ret = await exports.CelesteLoader.MainLoop();
 		const after = performance.now();
 
 		gameState.timebuf.add(after - before);
 
-		if (vsync) await new Promise(requestAnimationFrame);
+		if (!ret) {
+			console.debug("Cleanup...");
 
-		if (!ret)
-			break;
+			gameState.timebuf.clear();
+
+			await exports.CelesteLoader.Cleanup();
+			gameState.ready = false;
+			gameState.playing = false;
+
+			return;
+		}
+
+		requestAnimationFrame(main);
 	}
-
-	console.debug("Cleanup...");
-
-	gameState.timebuf.clear();
-
-	await exports.CelesteLoader.Cleanup();
-	gameState.ready = false;
-	gameState.playing = false;
+	requestAnimationFrame(main);
 }

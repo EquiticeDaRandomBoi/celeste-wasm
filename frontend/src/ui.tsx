@@ -119,7 +119,7 @@ export const Button: Component<{
 	)
 }
 
-export const Icon: Component<{ icon: IconifyIcon }, {}> = function() {
+export const Icon: Component<{ icon: IconifyIcon, class?: string }, {}> = function() {
 	// @ts-expect-error
 	this._leak = true;
 	this.mount = () => {
@@ -134,6 +134,7 @@ export const Icon: Component<{ icon: IconifyIcon }, {}> = function() {
 			height="1em"
 			viewBox={use`0 0 ${this.icon.width} ${this.icon.height}`}
 			xmlns="http://www.w3.org/2000/svg"
+			class={this.class || ""}
 		></svg>
 	);
 }

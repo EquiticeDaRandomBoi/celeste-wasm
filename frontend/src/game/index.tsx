@@ -1,7 +1,7 @@
-import { gameState, Log, loglisteners, preInit, TIMEBUF_SIZE } from "./dotnet";
+import { gameState, loglisteners, preInit, TIMEBUF_SIZE } from "./dotnet";
 import { Loader } from "./loading";
 
-export const LogView: Component<{ minimal: boolean, scrolling: boolean, }, { logbuf: Log[] }> = function() {
+export const LogView: Component<{ minimal: boolean, scrolling: boolean, }> = function() {
 	this.css = `
 		height: 100%;
 		.minimal, .regular {
@@ -21,9 +21,11 @@ export const LogView: Component<{ minimal: boolean, scrolling: boolean, }, { log
 			border-right: 2px solid var(--surface4);
 			background: var(--bg-sub);
 		}
-	`;
 
-	this.logbuf = [];
+		.log {
+			word-break: break-all;
+		}
+	`;
 
 	const create = (color: string, log: string) => {
 		const el = document.createElement("div");
@@ -35,21 +37,15 @@ export const LogView: Component<{ minimal: boolean, scrolling: boolean, }, { log
 
 	this.mount = () => {
 		const logroot = this.root.firstChild! as HTMLElement;
+		const frag = document.createDocumentFragment();
 
-		loglisteners.push((log) => { logroot.appendChild(create(log.color, log.log)); logroot.scrollTop = logroot.scrollHeight });
-
-		/*
-		loglisteners.push((x) => this.logbuf.push(x));
-		setTimeout(() => {
-			if (this.logbuf.length > 0) {
-				for (const log of this.logbuf) {
-					logroot.appendChild(create(log.color, log.log));
-				}
+		loglisteners.push((x) => frag.append(create(x.color, x.log)));
+		setInterval(() => {
+			if (frag.children.length > 0) {
+				logroot.appendChild(frag);
 				logroot.scrollTop = logroot.scrollHeight;
 			}
-			this.logbuf = [];
 		}, 100);
-		*/
 	};
 
 	return (
