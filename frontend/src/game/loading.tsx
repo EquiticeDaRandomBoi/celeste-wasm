@@ -180,7 +180,7 @@ export const Loader: Component<{}, {
 					Loading <span class="case">{NAME}</span>
 				</div>
 				<div class="smaller logs" bind:this={use(this.logs)}>
-					<LogView minimal={true} scrolling={false} />
+					<LogView scrolling={false} />
 				</div>
 				{$if(use(splashState.text, x => x.length > 0),
 					<div class="body modprogress">

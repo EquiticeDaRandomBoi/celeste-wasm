@@ -28,9 +28,13 @@ const App: Component<{}, {
 		}
 	`;
 
-	const next = () => {
-		this.el.addEventListener("animationend", this.el.remove);
-		this.el.style.animation = "fadeout 0.5s ease";
+	const next = (anim: boolean) => {
+		if (anim) {
+			this.el.addEventListener("animationend", this.el.remove);
+			this.el.style.animation = "fadeout 0.5s ease";
+		} else {
+			this.el.remove();
+		}
 	}
 
 	return (

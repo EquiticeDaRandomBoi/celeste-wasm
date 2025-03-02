@@ -132,7 +132,7 @@ export const SteamLogin: Component<{}, {
 
     {$if(use(gameState.loginstate, l => l == 3 || l == 1 || l == 2),
       <div class="logcontainer">
-        <LogView minimal={true} scrolling={true} />
+        <LogView scrolling={true} />
       </div>
     )}
 

@@ -286,7 +286,7 @@ export const Download: Component<{
 			)}
 
 			<div class="console">
-				<LogView minimal={true} scrolling={false} />
+				<LogView scrolling={false} />
 			</div>
 		</div>
 	)
@@ -339,7 +339,7 @@ try {
 } catch { }
 
 export const Splash: Component<{
-	"on:next": () => void,
+	"on:next": (animation: boolean) => void,
 }, {
 	next: "" | "copy" | "download" | "patch",
 }> = function() {
@@ -395,7 +395,7 @@ export const Splash: Component<{
 
 	if (initialHasContent) {
 		if (initialIsPatched) {
-			queueMicrotask(this["on:next"]);
+			queueMicrotask(() => this["on:next"](false));
 		} else {
 			this.next = "patch";
 		}
@@ -420,7 +420,7 @@ export const Splash: Component<{
 						} else if (x === "download") {
 							return <Download on:done={() => this.next = "patch"} />;
 						} else if (x === "patch") {
-							return <Patch on:done={this["on:next"]} />;
+							return <Patch on:done={() => this["on:next"](true)} />;
 						}
 					})}
 				</div>

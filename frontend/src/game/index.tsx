@@ -1,26 +1,10 @@
 import { gameState, loglisteners, preInit, TIMEBUF_SIZE } from "./dotnet";
 import { Loader } from "./loading";
 
-export const LogView: Component<{ minimal: boolean, scrolling: boolean, }> = function() {
+export const LogView: Component<{ scrolling: boolean, }> = function() {
 	this.css = `
-		height: 100%;
-		.minimal, .regular {
-			font-family: var(--font-mono);
-		}
-
-		.minimal {
-			height: 100%;
-		}
-
-		.regular {
-			height: 100%;
-			padding: 1em;
-
-			border-bottom: 2px solid var(--surface4);
-			border-left: 2px solid var(--surface4);
-			border-right: 2px solid var(--surface4);
-			background: var(--bg-sub);
-		}
+		flex: 1;
+		font-family: var(--font-mono);
 
 		.log {
 			word-break: break-all;
@@ -36,7 +20,7 @@ export const LogView: Component<{ minimal: boolean, scrolling: boolean, }> = fun
 	}
 
 	this.mount = () => {
-		const logroot = this.root.firstChild! as HTMLElement;
+		const logroot = this.root as HTMLElement;
 		const frag = document.createDocumentFragment();
 
 		loglisteners.push((x) => frag.append(create(x.color, x.log)));
@@ -48,11 +32,7 @@ export const LogView: Component<{ minimal: boolean, scrolling: boolean, }> = fun
 		}, 100);
 	};
 
-	return (
-		<div>
-			<div class={this.minimal ? "minimal" : "regular"} style={this.scrolling ? "overflow: scroll" : "overflow: hidden"} />
-		</div>
-	)
+	return <div style={this.scrolling ? "overflow: scroll" : "overflow: hidden"} />
 }
 
 export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function() {

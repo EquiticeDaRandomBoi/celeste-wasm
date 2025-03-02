@@ -14,7 +14,7 @@ import iconDownload from "@ktibow/iconset-material-symbols/download";
 import { ModInstaller } from "./modinstaller";
 
 export const STEAM_ENABLED = import.meta.env.VITE_STEAM_ENABLED;
-export const WISP_URL = import.meta.env.VITE_WISP_URL;
+export const WISP_URL = import.meta.env.VITE_WISP_URL || "wss://anura.pro/";
 
 export const NAME = "webleste";
 
@@ -175,6 +175,9 @@ export const Main: Component<{}, {
 		}
 
 		.logcontainer {
+			display: flex;
+			flex-direction: column;
+
 			background: black;
 			height: 25em;
 		}
@@ -222,8 +225,6 @@ export const Main: Component<{}, {
 		}, 100);
 	}
 
-
-
 	return (
 		<div>
 			<TopBar
@@ -254,7 +255,7 @@ export const Main: Component<{}, {
 							document.addEventListener("mousemove", onMouseMove);
 							document.addEventListener("mouseup", onMouseUp);
 						}}></div>
-					<LogView minimal={true} scrolling={true} />
+					<LogView scrolling={true} />
 				</div>
 			)}
 
