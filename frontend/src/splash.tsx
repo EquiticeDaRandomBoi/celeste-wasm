@@ -1,21 +1,13 @@
-import { Logo } from "./main";
+import { Logo, STEAM_ENABLED } from "./main";
 import { Button, Icon, Link } from "./ui";
-import { copyFolder, countFolder, PICKERS_UNAVAILABLE, rootFolder } from "./fs";
+import { copyFolder, countFolder, hasContent, PICKERS_UNAVAILABLE, rootFolder } from "./fs";
 
 import iconFolderOpen from "@ktibow/iconset-material-symbols/folder-open-outline";
 import iconDownload from "@ktibow/iconset-material-symbols/download";
 import iconEncrypted from "@ktibow/iconset-material-symbols/encrypted";
-import { downloadApp, gameState, initSteam } from "./game/dotnet";
-
-const DECRYPT_INFO = import.meta.env.VITE_DECRYPT_ENABLED ? {
-	key: import.meta.env.VITE_DECRYPT_KEY,
-	path: import.meta.env.VITE_DECRYPT_PATH,
-	compressed: import.meta.env.VITE_DECRYPT_PATH.endsWith(".gz"),
-	size: parseInt(import.meta.env.VITE_DECRYPT_SIZE),
-	count: parseInt(import.meta.env.VITE_DECRYPT_COUNT),
-} : null;
-
-(self as any).decrypt = DECRYPT_INFO;
+import { downloadApp, gameState, initSteam, PatchCeleste } from "./game/dotnet";
+import { SteamLogin } from "./steam";
+import { LogView } from "./game";
 
 const validateDirectory = async (directory: FileSystemDirectoryHandle) => {
 	if (directory.name != "Content") {
@@ -56,7 +48,7 @@ const Intro: Component<{
 				It needs around 0.6GB of memory and will probably not work on low-end devices.
 			</p>
 			<p>
-				You will need to own Celeste to play this. Make sure you have it downloaded and installed on your computer.
+				You will need to own Celeste to play this
 			</p>
 			<p>
 				The background is from <Link href="https://www.fangamer.com/products/celeste-desk-mat-skies">fangamer merch</Link>.
@@ -68,11 +60,11 @@ const Intro: Component<{
 					You will be unable to copy your Celeste assets to play or use the upload features in the filesystem viewer.
 				</div>
 				: null}
-			{DECRYPT_INFO ? null :
+			{STEAM_ENABLED ? null :
 				<div class="warning">
 					<span>This deployment of celeste-wasm does not have encrypted assets. You cannot download and decrypt them to play.</span>
 				</div>}
-			{PICKERS_UNAVAILABLE && !DECRYPT_INFO ?
+			{PICKERS_UNAVAILABLE && !STEAM_ENABLED ?
 				<div class="error">
 					You will have to switch browsers (to a Chromium-based one) to play as both methods of getting Celeste assets are unavailable.
 				</div>
@@ -84,7 +76,7 @@ const Intro: Component<{
 			</Button>
 			<Button on:click={() => this["on:next"]("download")} type="primary" icon="left" disabled={false}>
 				<Icon icon={iconDownload} />
-				{DECRYPT_INFO ? "Download and decrypt assets" : "Downloading and decrypting assets is disabled"}
+				{STEAM_ENABLED ? "Download assets with Steam Login" : "Download through Steam is disabled"}
 			</Button>
 		</div>
 	)
@@ -148,6 +140,7 @@ const Copy: Component<{
 		console.debug(`copy took ${(after - before).toFixed(2)}ms`);
 
 		await new Promise(r => setTimeout(r, 250));
+		await rootFolder.getFileHandle(".ContentExists", { create: true });
 		this["on:done"]();
 	}
 
@@ -209,177 +202,119 @@ export const Download: Component<{
 	"on:done": () => void,
 }, {
 	downloading: boolean,
+	downloadDisabled: boolean,
 	status: string,
 	percent: number,
 	input: HTMLInputElement,
 
-	username: string,
-	password: string,
 }> = function() {
-	this.username = "";
-	this.password = "";
-
 	this.css = `
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
+		gap: 2.5rem;
 		font-size: 15pt;
 
-		input[type="file"] {
-			display: none;
-		}
-
-		.methods {
-		  display: flex;
-		  gap: 1rem;
-		}
-		.methods > div {
-		  flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-
-      padding: 1rem;
-		}
-		input {
-		  color: var(--fg);
-		  background: var(--bg);
-		  border: 2px solid black;
-		  border-radius: 0.5em;
-		  padding: 0.25rem;
-
-		  font-family: Andy Bold;
-		  font-size: 18pt;
-		}
-
-		.spacer {
-		      flex: 1;
-		      margin-top: 0.5em;
-		      margin-bottom: 0.5em;
-		      border-bottom: 1px solid var(--fg);
-    }
-
-		h1, h3 {
-		  text-align: center;
-		  font-family: Andy Bold;
-      padding: 0;
-      margin: 0;
-		}
-		.logcontainer {
-		  font-size: initial;
-		}
-
-		.qrcontainer {
-		  display: flex;
-      justify-content: center;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-		}
-		.qrcontainer img {
-		  width: 40%;
+		.console {
+			font-size: initial;
+			height: 10em;
 		}
 	`;
 
-	const loginqr = async () => {
-		gameState.loginstate = 1;
-		let result = await initSteam(null, null, true);
-		if (!result) {
-			gameState.loginstate = 3;
-		} else {
-			gameState.loginstate = 2;
-		}
+	useChange([this.downloading, gameState.loginstate], () => {
+		this.downloadDisabled = this.downloading || gameState.loginstate != 2;
+	});
 
-	};
-
-	const loginpass = async () => {
-		gameState.loginstate = 1;
-		let result = await initSteam(this.username, this.password, false);
-		if (!result) {
-			this.username = "";
-			this.password = "";
-			gameState.loginstate = 3;
-		} else {
-			gameState.loginstate = 2;
-		}
-	};
 	const download = async () => {
 		this.downloading = true;
 		let result = await downloadApp();
+		this.downloading = false;
+		if (result) {
+			await rootFolder.getFileHandle(".ContentExists", { create: true });
+			this["on:done"]();
+		} else {
+			console.error("FAILED TO DOWNLOAD. TRY RELOADING");
+		}
 	};
 
 	return (
 		<div>
-			<h1>Steam Login</h1>
-			<div>
-				This will log into Steam through a proxy, so that it can download Terraria assets and achievement stats <br />
-				The account details are encrpyted on your device and never sent to a server. Still, beware of unofficial deployments
-			</div>
-
-			{$if(use(gameState.loginstate, l => l == 0 || l == 3),
-				<div class="methods">
-					<div class="tcontainer">
-						<h3>Username and Password</h3>
-						<input bind:value={use(this.username)} placeholder="Username" />
-						<input bind:value={use(this.password)} type="password" placeholder="Password" />
-						<Button type="primary" icon="left" disabled={use(this.downloading)} on:click={loginpass}>
-							<Icon icon={iconEncrypted} />
-							Log In with Username and Password
-						</Button>
-					</div>
-					<div class="tcontainer">
-						<h3>Steam Guard QR Code</h3>
-						Requires the Steam app on your phone to be installed. <br />
-						<div style="flex: 1"></div>
-						<Button type="primary" icon="left" disabled={use(this.downloading)} on:click={loginqr}>
-							<Icon icon={iconEncrypted} />
-							Log In with QR Code
-						</Button>
-					</div>
-				</div>
-			)}
-
-			{$if(use(gameState.loginstate, l => l == 3),
-				<div style="color: var(--error)">Failed to log in! Try again</div>
-			)}
-
-			{$if(use(gameState.loginstate, l => l == 3 || l == 1 || l == 2),
-				<div class="logcontainer">
-					<LogView />
-				</div>
-			)}
-
-			{$if(use(gameState.loginstate, l => l == 1),
-				<div class="qrcontainer">
-					<p>Since this uses a proxy, the steam app might complain about your location being wrong. Just select the location that you don't usually log in from if it asks</p>
-					{$if(use(gameState.qr),
-						<img src={use(gameState.qr)} />
-					)}
-
-					{$if(use(gameState.qr),
-						<div>Scan this QR code with the Steam app on your phone.</div>
-					)}
-
-				</div>
-			)}
-
-			{$if(use(gameState.loginstate, l => l == 2),
+			{$if(use(gameState.ready),
 				<div>
-					<Button type="primary" icon="left" disabled={use(this.downloading)} on:click={download}>
-						<Icon icon={iconEncrypted} />
-						Download Assets
-					</Button>
+					{$if(use(gameState.loginstate, l => l == 2),
+						<div>
+							<p>Logged into steam successfully!</p>
+							<Button type="primary" icon="left" disabled={use(this.downloadDisabled)} on:click={download}>
+								<Icon icon={iconEncrypted} />
+								Download Assets
+							</Button>
+						</div>,
+						<SteamLogin />
+					)}
+
+					{$if(use(this.downloading), <Progress percent={use(this.percent)} />)}
+				</div>,
+				<div class="loading">
+					<p>Initializing Connection to Steam...</p>
 				</div>
 			)}
 
-			{$if(use(this.downloading), <Progress percent={use(this.percent)} />)}
+			<div class="console">
+				<LogView minimal={true} scrolling={false} />
+			</div>
 		</div>
 	)
 }
+
+export const Patch: Component<{
+	"on:done": () => void,
+}, {
+	patching: boolean,
+}> = function() {
+	this.patching = false;
+	this.css = `
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		.console {
+			font-size: initial;
+			height: 10em;
+		}
+	`
+	const patch = async () => {
+		this.patching = true;
+		await PatchCeleste();
+		this.patching = false;
+		this["on:done"]();
+	}
+
+	return <div>
+		<p>We're going to patch Celeste with MonoMod for neccesary webassembly fixes. You also have the option to install the Everest Mod Loader</p>
+		<div>
+			<input type="checkbox" id="installEverest" />
+			<label for="installEverest">Install Everest Mod Loader?</label>
+		</div>
+
+		<Button type="primary" icon="left" on:click={patch} disabled={use(this.patching)}>
+			Patch Celeste
+		</Button>
+
+		<div class="console">
+			<LogView minimal={true} scrolling={false} />
+		</div>
+	</div>
+}
+
+const initialHasContent = await hasContent();
+let initialIsPatched = false;
+try {
+	await rootFolder.getFileHandle("CustomCeleste.dll", { create: false });
+	initialIsPatched = true;
+} catch { }
+
 export const Splash: Component<{
 	"on:next": () => void,
 }, {
-	next: "" | "copy" | "download",
+	next: "" | "copy" | "download" | "patch",
 }> = function() {
 	this.css = `
 		position: relative;
@@ -431,7 +366,15 @@ export const Splash: Component<{
 		}
 	`;
 
-	this.next = "";
+	if (initialHasContent) {
+		if (initialIsPatched) {
+			this["on:next"]();
+		} else {
+			this.next = "patch";
+		}
+	} else {
+		this.next = "";
+	}
 
 	return (
 		<div>
@@ -446,10 +389,11 @@ export const Splash: Component<{
 						if (!x) {
 							return <Intro on:next={(x) => this.next = x} />;
 						} else if (x === "copy") {
-							return <Copy on:done={this["on:next"]} />;
-						} else {
-							console.log("what");
-							return <Download on:done={this["on:next"]} />;
+							return <Copy on:done={() => this.next = "patch"} />;
+						} else if (x === "download") {
+							return <Download on:done={() => this.next = "patch"} />;
+						} else if (x === "patch") {
+							return <Patch on:done={this["on:next"]} />;
 						}
 					})}
 				</div>

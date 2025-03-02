@@ -5,8 +5,6 @@ import { Splash } from "./splash";
 import { store } from "./store";
 import { hasContent } from "./fs";
 
-const initialHasContent = await hasContent();
-
 const App: Component<{}, {
 	el: HTMLElement
 	showInstructions: boolean,
@@ -38,11 +36,9 @@ const App: Component<{}, {
 
 	return (
 		<div id="app" class={use(store.theme)}>
-			{initialHasContent ? null :
-				<div id="splash" bind:this={use(this.el)}>
-					<Splash on:next={next} />
-				</div>
-			}
+			<div id="splash" bind:this={use(this.el)}>
+				<Splash on:next={next} />
+			</div>
 			<div id="main">
 				<Main />
 			</div>

@@ -13,6 +13,9 @@ import iconTrophy from "@ktibow/iconset-material-symbols/trophy";
 import iconDownload from "@ktibow/iconset-material-symbols/download";
 import { ModInstaller } from "./modinstaller";
 
+export const STEAM_ENABLED = import.meta.env.VITE_STEAM_ENABLED;
+export const WISP_URL = import.meta.env.VITE_WISP_URL;
+
 export const NAME = "webleste";
 
 export const Logo: Component<{}, {}> = function() {

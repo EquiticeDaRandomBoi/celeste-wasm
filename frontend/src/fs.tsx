@@ -65,6 +65,7 @@ export async function hasContent(): Promise<boolean> {
 				return false;
 			}
 		}
+		await rootFolder.getFileHandle(".ContentExists", { create: false });
 		return true;
 	} catch {
 		return false;

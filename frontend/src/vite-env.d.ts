@@ -1,11 +1,8 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-	readonly VITE_DECRYPT_ENABLED: string
-	readonly VITE_DECRYPT_PATH: string
-	readonly VITE_DECRYPT_KEY: string
-	readonly VITE_DECRYPT_SIZE: string
-	readonly VITE_DECRYPT_COUNT: string
+	readonly VITE_STEAM_ENABLED: boolean;
+	readonly WISP_URL: boolean;
 }
 
 interface ImportMeta {

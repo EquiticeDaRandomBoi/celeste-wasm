@@ -4,6 +4,7 @@ import { libcurl } from "libcurl.js";
 import { rootFolder } from "../fs";
 import { SteamJS } from "../achievements";
 import { JsSplash } from "./loading";
+import { STEAM_ENABLED, WISP_URL } from "../main";
 
 export type Log = { color: string, log: string };
 export const TIMEBUF_SIZE = 120;
@@ -134,8 +135,6 @@ export async function getDlls(): Promise<(readonly [string, string])[]> {
 	return Object.entries(resources.resources.fingerprinting).map(x => [x[0] as string, x[1] as string] as const).filter(([_, v]) => whitelist.includes(v));
 }
 
-const wisp_url = "wss://wisp.run/";
-
 // the funny custom rsa
 // https://github.com/MercuryWorkshop/wispcraft/blob/main/src/connection/crypto.ts
 function encryptRSA(data: Uint8Array, n: bigint, e: bigint): Uint8Array {
@@ -212,6 +211,17 @@ export async function downloadEverest() {
 	console.log("Successfully downloaded Everest");
 }
 
+export async function wispSanityCheck() {
+	let r;
+	try {
+		r = await libcurl.fetch("https://google.com");
+	} catch (e) {
+		console.error(e);
+	}
+
+	if (!r || !r.ok) throw new Error("wisp sanity check failed");
+}
+
 let libcurlresolver: any;
 export const loadedLibcurlPromise = new Promise(r => libcurlresolver = r);
 export async function preInit() {
@@ -232,11 +242,12 @@ export async function preInit() {
 	console.log("loading libcurl");
 	// TODO: replace with epoxy
 	await libcurl.load_wasm("https://cdn.jsdelivr.net/npm/libcurl.js@0.7.0/libcurl.wasm");
-	libcurl.set_websocket(wisp_url);
+	libcurl.set_websocket(WISP_URL);
+	await wispSanityCheck();
 
 	window.WebSocket = new Proxy(WebSocket, {
 		construct(t, a, n) {
-			if (a[0] === wisp_url)
+			if (a[0] === WISP_URL)
 				return Reflect.construct(t, a, n);
 
 			return new libcurl.WebSocket(...a);
@@ -318,6 +329,19 @@ export async function preInit() {
 	await exports.CelesteLoader.PreInit();
 	console.debug("dotnet initialized");
 
+
+	if (STEAM_ENABLED) {
+		await exports.Steam.Init();
+		if (await exports.Steam.InitSteamSaved()) {
+			console.log("Steam saved login success");
+			gameState.loginstate = 2;
+		}
+	}
+
+	gameState.ready = true;
+};
+
+export async function PatchCeleste() {
 	try {
 		await (await (await rootFolder.getDirectoryHandle("Celeste")).getDirectoryHandle("Everest")).getFileHandle("Celeste.Mod.mm.dll", { create: false });
 	} catch {
@@ -329,17 +353,8 @@ export async function preInit() {
 		await exports.Patcher.ExtractEverest();
 	}
 
-	console.log("attempting to patch celeste");
 	await exports.Patcher.PatchCeleste();
-	await exports.Steam.Init();
-
-	if (await exports.Steam.InitSteamSaved()) {
-		console.log("Steam saved login success");
-		gameState.loginstate = 2;
-	}
-
-	gameState.ready = true;
-};
+}
 
 export async function initSteam(username: string | null, password: string | null, qr: boolean) {
 	return await exports.Steam.InitSteam(username, password, qr);
