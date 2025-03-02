@@ -174,7 +174,7 @@ export const Main: Component<{}, {
 
 		.game {
 			aspect-ratio: 16 / 9;
-			flex: 0 1 100vh;
+			flex: 0 1 min(calc(9 * 100vw / 16), 100vh);
 		}
 
 		.logs {
