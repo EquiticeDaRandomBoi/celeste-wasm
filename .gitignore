@@ -12,7 +12,7 @@ obj
 /node_modules
 /frontend/public/_framework
 /frontend/public/content
-/dist
+/frontend/dist
 
 .env.local
 .DS_Store

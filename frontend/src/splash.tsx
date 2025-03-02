@@ -5,7 +5,7 @@ import { copyFile, copyFolder, countFolder, hasContent, PICKERS_UNAVAILABLE, roo
 import iconFolderOpen from "@ktibow/iconset-material-symbols/folder-open-outline";
 import iconDownload from "@ktibow/iconset-material-symbols/download";
 import iconEncrypted from "@ktibow/iconset-material-symbols/encrypted";
-import { downloadApp, gameState, initSteam, PatchCeleste } from "./game/dotnet";
+import { downloadApp, gameState, PatchCeleste } from "./game/dotnet";
 import { SteamLogin } from "./steam";
 import { LogView } from "./game";
 
@@ -326,7 +326,7 @@ export const Patch: Component<{
 		</Button>
 
 		<div class="console">
-			<LogView minimal={true} scrolling={false} />
+			<LogView scrolling={false} />
 		</div>
 	</div>
 }
