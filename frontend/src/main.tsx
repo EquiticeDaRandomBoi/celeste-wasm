@@ -1,8 +1,9 @@
 import { gameState, play, FpsView, GameView, LogView } from "./game/index";
-import { Button, Dialog, Icon, Link } from "./ui";
+import { Button, Dialog, Icon } from "./ui";
 import { store } from "./store";
 import { OpfsExplorer } from "./fs";
 import { Achievements } from "./achievements";
+import { ModInstaller } from "./modinstaller";
 
 import iconPlayArrow from "@ktibow/iconset-material-symbols/play-arrow";
 import iconFullscreen from "@ktibow/iconset-material-symbols/fullscreen";
@@ -11,7 +12,7 @@ import iconDarkMode from "@ktibow/iconset-material-symbols/dark-mode";
 import iconFolderOpen from "@ktibow/iconset-material-symbols/folder-open";
 import iconTrophy from "@ktibow/iconset-material-symbols/trophy";
 import iconDownload from "@ktibow/iconset-material-symbols/download";
-import { ModInstaller } from "./modinstaller";
+import iconTerminal from "@ktibow/iconset-material-symbols/terminal";
 
 export const STEAM_ENABLED = import.meta.env.VITE_STEAM_ENABLED;
 
@@ -128,7 +129,7 @@ const TopBar: Component<{
 							this.showLog = true;
 						}
 					}}>
-					log icon
+					<Icon icon={iconTerminal} />
 				</Button>
 				<Button on:click={async () => {
 					try {
