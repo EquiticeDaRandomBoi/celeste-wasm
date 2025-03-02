@@ -13,7 +13,7 @@ export const LogView: Component<{ minimal: boolean, scrolling: boolean, }, { log
 		}
 
 		.regular {
-			height: 16rem;
+			height: 100%;
 			padding: 1em;
 
 			border-bottom: 2px solid var(--surface4);
@@ -72,7 +72,7 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function()
 			grid-area: overlay;
 			width: 100%;
 			height: 100%;
-			border: 2px solid var(--surface4);
+			# border: 2px solid var(--surface4);
 			transition: background 200ms, color 200ms, border-color 200ms;
 		}
 		div.started, canvas.stopped {

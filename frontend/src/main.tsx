@@ -58,6 +58,7 @@ export const Logo: Component<{}, {}> = function() {
 const TopBar: Component<{
 	canvas: HTMLCanvasElement,
 	fsOpen: boolean,
+	showLog: boolean,
 	achievementsOpen: boolean,
 	modInstallerOpen: boolean,
 }, { allowPlay: boolean, fps: HTMLElement }> = function() {
@@ -119,6 +120,17 @@ const TopBar: Component<{
 				}} icon="full" type="normal" disabled={false}>
 					<Icon icon={use(store.theme, x => x === "light" ? iconDarkMode : iconLightMode)} />
 				</Button>
+				<Button
+					icon="full" type="normal" disabled={false}
+					on:click={() => {
+						if (this.showLog) {
+							this.showLog = false;
+						} else {
+							this.showLog = true;
+						}
+					}}>
+					log icon
+				</Button>
 				<Button on:click={async () => {
 					try {
 						await this.canvas.requestFullscreen({ navigationUI: "hide" });
@@ -137,44 +149,13 @@ const TopBar: Component<{
 	)
 }
 
-const BottomBar: Component<{}, {}> = function() {
-	this.css = `
-		background: var(--bg-sub);
-		color: var(--fg3);
-		border-top: 2px solid var(--surface1);
-		padding: 0.5rem;
-		font-size: 0.8rem;
-		transition: background 200ms, color 200ms, border-color 200ms;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-
-		span {
-			text-align: center;
-		}
-
-		@media (max-width: 750px) {
-			& {
-				flex-direction: column;
-				gap: 0.5rem;
-			}
-		}
-	`;
-
-	return (
-		<div>
-			<span>Ported by <Link href="https://github.com/r58playz">r58Playz</Link></span>
-			<span>All game assets and code belong to <Link href="https://exok.com/">Extremely OK Games, Ltd.</Link> All rights reserved.</span>
-			<span>Check out the project on <Link href="https://github.com/MercuryWorkshop/celeste-wasm/tree/threads-v2">GitHub!</Link></span>
-		</div>
-	)
-}
-
 export const Main: Component<{}, {
 	canvas: HTMLCanvasElement,
 	fsOpen: boolean,
 	achievementsOpen: boolean,
 	modInstallerOpen: boolean,
+	logcontainer: HTMLDivElement,
+	showLog: boolean,
 }> = function() {
 	this.css = `
 		width: 100%;
@@ -184,18 +165,40 @@ export const Main: Component<{}, {
 
 		display: flex;
 		flex-direction: column;
-		overflow: scroll;
+		overflow: hidden;
 
 		transition: background 200ms, color 200ms;
 
 		.main {
 			flex: 1;
-			display: flex;
-			flex-direction: column;
-			padding: 1rem 0;
+			overflow: hidden;
+		}
 
+		.logcontainer {
+			background: black;
+			height: 25em;
+		}
+
+		.gameview {
+			aspect-ratio: 16 / 9;
 			margin: auto;
-			width: min(1300px, calc(100% - 2rem));
+		}
+
+		.tall .gameview {
+			height: 100%;
+			width: min-content;
+		}
+
+		.wide .gameview {
+			width: 100%;
+			height: min-content;
+		}
+
+		.resizer {
+			background: var(--surface0);
+			cursor: ns-resize;
+			width: 100%;
+			height: 0.5em;
 		}
 
 		.main h2 {
@@ -206,6 +209,21 @@ export const Main: Component<{}, {
 	this.fsOpen = false;
 	this.achievementsOpen = false;
 
+	this.mount = () => {
+		let main = this.root.querySelector(".main")!;
+		setInterval(() => {
+			if (main.clientWidth / main.clientHeight > 16 / 9) {
+				main.classList.add("tall");
+				main.classList.remove("wide");
+			} else {
+				main.classList.add("wide");
+				main.classList.remove("tall");
+			}
+		}, 100);
+	}
+
+
+
 	return (
 		<div>
 			<TopBar
@@ -213,11 +231,34 @@ export const Main: Component<{}, {
 				bind:fsOpen={use(this.fsOpen)}
 				bind:achievementsOpen={use(this.achievementsOpen)}
 				bind:modInstallerOpen={use(this.modInstallerOpen)}
+				bind:showLog={use(this.showLog)}
 			/>
 			<div class="main">
-				<GameView bind:canvas={use(this.canvas)} />
-				<LogView minimal={false} scrolling={true} />
+				<div class="gameview">
+					<GameView bind:canvas={use(this.canvas)} />
+				</div>
 			</div>
+			{$if(use(this.showLog),
+				<div class="logcontainer" bind:this={use(this.logcontainer)}>
+					<div class="resizer"
+						on:mousedown={(e: MouseEvent) => {
+							const startY = e.clientY;
+							const startHeight = this.logcontainer.clientHeight;
+							const onMouseMove = (e: MouseEvent) => {
+								this.logcontainer.style.height = `${startHeight + startY - e.clientY}px`;
+							}
+							const onMouseUp = () => {
+								document.removeEventListener("mousemove", onMouseMove);
+								document.removeEventListener("mouseup", onMouseUp);
+							}
+							document.addEventListener("mousemove", onMouseMove);
+							document.addEventListener("mouseup", onMouseUp);
+						}}></div>
+					<LogView minimal={true} scrolling={true} />
+				</div>
+			)}
+
+
 			<Dialog name="File System" bind:open={use(this.fsOpen)}>
 				<OpfsExplorer open={use(this.fsOpen)} />
 			</Dialog>
@@ -227,7 +268,6 @@ export const Main: Component<{}, {
 			<Dialog name="Mod Installer" bind:open={use(this.modInstallerOpen)}>
 				<ModInstaller open={use(this.modInstallerOpen)} />
 			</Dialog>
-			<BottomBar />
 		</div>
 	);
 }

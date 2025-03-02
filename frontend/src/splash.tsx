@@ -395,7 +395,7 @@ export const Splash: Component<{
 
 	if (initialHasContent) {
 		if (initialIsPatched) {
-			this["on:next"]();
+			queueMicrotask(this["on:next"]);
 		} else {
 			this.next = "patch";
 		}
