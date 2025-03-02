@@ -1,13 +1,16 @@
-import { Logo, STEAM_ENABLED } from "./main";
+import { Logo, NAME, STEAM_ENABLED } from "./main";
 import { Button, Icon, Link } from "./ui";
-import { copyFile, copyFolder, countFolder, hasContent, PICKERS_UNAVAILABLE, rootFolder } from "./fs";
+import { copyFile, copyFolder, countFolder, extractTar, hasContent, PICKERS_UNAVAILABLE, rootFolder, TAR_TYPES } from "./fs";
+import { downloadApp, gameState, PatchCeleste } from "./game/dotnet";
+import { SteamLogin } from "./steam";
+import { LogView } from "./game";
 
 import iconFolderOpen from "@ktibow/iconset-material-symbols/folder-open-outline";
 import iconDownload from "@ktibow/iconset-material-symbols/download";
 import iconEncrypted from "@ktibow/iconset-material-symbols/encrypted";
-import { downloadApp, gameState, PatchCeleste } from "./game/dotnet";
-import { SteamLogin } from "./steam";
-import { LogView } from "./game";
+import iconArchive from "@ktibow/iconset-material-symbols/archive";
+import iconUnarchive from "@ktibow/iconset-material-symbols/unarchive";
+import iconFolderZip from "@ktibow/iconset-material-symbols/folder-zip";
 
 const validateDirectory = async (directory: FileSystemDirectoryHandle) => {
 	let content;
@@ -40,7 +43,7 @@ const validateDirectory = async (directory: FileSystemDirectoryHandle) => {
 };
 
 const Intro: Component<{
-	"on:next": (type: "copy" | "download") => void,
+	"on:next": (type: "copy" | "extract" | "download") => void,
 }, {}> = function() {
 	this.css = `
 		display: flex;
@@ -73,12 +76,12 @@ const Intro: Component<{
 				<div class="error">
 					Your browser does not support the
 					{' '}<Link href="https://developer.mozilla.org/en-US/docs/Web/API/Window/showDirectoryPicker">File System Access API</Link>.{' '}
-					You will be unable to copy your Celeste assets to play or use the upload features in the filesystem viewer.
+					You will be unable to copy your Celeste assets or extract a {NAME} archive to play or use the upload features in the filesystem viewer.
 				</div>
 				: null}
 			{STEAM_ENABLED ? null :
 				<div class="warning">
-					<span>This deployment of celeste-wasm does not have encrypted assets. You cannot download and decrypt them to play.</span>
+					<span>This deployment of {NAME} does not have steam download support. You cannot download assets from steam to play.</span>
 				</div>}
 			{PICKERS_UNAVAILABLE && !STEAM_ENABLED ?
 				<div class="error">
@@ -90,7 +93,11 @@ const Intro: Component<{
 				<Icon icon={iconFolderOpen} />
 				{PICKERS_UNAVAILABLE ? "Copying local Celeste assets is unsupported" : "Copy local Celeste assets"}
 			</Button>
-			<Button on:click={() => this["on:next"]("download")} type="primary" icon="left" disabled={false}>
+			<Button on:click={() => this["on:next"]("extract")} type="primary" icon="left" disabled={PICKERS_UNAVAILABLE}>
+				<Icon icon={iconUnarchive} />
+				{PICKERS_UNAVAILABLE ? `Extracting ${NAME} archive is unsupported` : `Extract ${NAME} archive`}
+			</Button>
+			<Button on:click={() => this["on:next"]("download")} type="primary" icon="left" disabled={!STEAM_ENABLED}>
 				<Icon icon={iconDownload} />
 				{STEAM_ENABLED ? "Download assets with Steam Login" : "Download through Steam is disabled"}
 			</Button>
@@ -114,6 +121,80 @@ const Progress: Component<{ percent: number }, {}> = function() {
 
 	return (
 		<div><div class="bar" style={use`width:${this.percent}%`} /></div>
+	)
+}
+
+const Extract: Component<{
+	"on:done": () => void,
+}, {
+	extracting: boolean,
+	status: string,
+	percent: number,
+}> = function() {
+	this.css = `
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+
+		/* hacky */
+		.center svg {
+			transform: translateY(15%);
+		}
+	`;
+
+	const opfs = async () => {
+		const files = await showOpenFilePicker({
+			excludeAcceptAllOption: true,
+			types: TAR_TYPES,
+		});
+		const fileHandle = files[0];
+
+		const file = await fileHandle.getFile();
+
+		let parsedSize = 0;
+		const fileSize = file.size;
+
+		const stream = file.stream();
+		const reader = stream.getReader();
+		const self = this;
+		let progressStream = new ReadableStream({
+			async pull(controller) {
+				const { value, done } = await reader.read();
+
+				if (!value || done) {
+					controller.close();
+				} else {
+					controller.enqueue(value);
+
+					parsedSize += value.byteLength;
+					self.percent = parsedSize / fileSize * 100;
+				}
+			},
+		});
+
+		this.extracting = true;
+
+		if (fileHandle.name.endsWith(".gz")) progressStream = progressStream.pipeThrough(new DecompressionStream("gzip"));
+		await extractTar(progressStream, rootFolder, (type, name) => console.log(`untarred ${type} ${name}`));
+
+		this.extracting = false;
+
+		this["on:done"]();
+	}
+
+	return (
+		<div>
+			<p class="center">
+				Select a {NAME} exported tar archive of the root directory.
+				You can create this by clicking the archive button (<Icon icon={iconArchive} />) in the filesystem explorer while in the root directory.
+			</p>
+			{$if(use(this.extracting), <Progress percent={use(this.percent)} />)}
+			<Button on:click={opfs} type="primary" icon="left" disabled={use(this.extracting)}>
+				<Icon icon={iconFolderZip} />
+				Select {NAME} archive
+			</Button>
+			{$if(use(this.status), <div class="error">{use(this.status)}</div>)}
+		</div>
 	)
 }
 
@@ -189,23 +270,11 @@ const Copy: Component<{
 			{this.os == "win" ? (<div>
 				The directory for Steam installs of Celeste is usually located in <code>C:\Program Files (x86)\Steam\steamapps\common\Celeste</code>.
 			</div>) : null}
-			{this.os == "darwin" ? (
-				<div>
-					<p>
-						The directory for Steam installs of Celeste is usually located in <code>~/Library/Application Support/Steam/steamapps/common/Celeste/Celeste.app/Contents/Resources</code>.
-					</p>
-					<p class="warning">
-						If you get an error stating it can't open the folder because it "contains system files", try copying it to another location first.
-					</p>
-				</div>
-			) : null}
+			{this.os == "darwin" ? (<div>
+				The directory for Steam installs of Celeste is usually located in <code>~/Library/Application Support/Steam/steamapps/common/Celeste/Celeste.app/Contents/Resources</code>.
+			</div>) : null}
 			{this.os == "linux" ? (<div>
-				<p>
-					The directory for Steam installs of Celeste is usually located in <code>~/.steam/root/steamapps/common/Celeste</code>.
-				</p>
-				<p class="warning">
-					If you get an error stating it can't open the folder because it "contains system files", try copying it to another location first.
-				</p>
+				The directory for Steam installs of Celeste is usually located in <code>~/.steam/root/steamapps/common/Celeste</code>.
 			</div>) : null}
 			{this.os == "" ? (<div>
 				The directory for Steam installs of Celeste is usually located in one of these locations:
@@ -215,6 +284,9 @@ const Copy: Component<{
 					<li><code>~/Library/Application Support/Steam/steamapps/common/Celeste/Celeste.app/Contents/Resources</code></li>
 				</ul>
 			</div>) : null}
+			<div class="warning">
+				If you get an error stating it can't open the folder because it "contains system files", try copying it to another location first.
+			</div>
 			{$if(use(this.copying), <Progress percent={use(this.percent)} />)}
 			<Button on:click={opfs} type="primary" icon="left" disabled={use(this.copying)}>
 				<Icon icon={iconFolderOpen} />
@@ -341,10 +413,13 @@ try {
 export const Splash: Component<{
 	"on:next": (animation: boolean) => void,
 }, {
-	next: "" | "copy" | "download" | "patch",
+	next: "intro" | "copy" | "extract" | "download" | "patch",
 }> = function() {
 	this.css = `
 		position: relative;
+
+		width: 100%;
+		height: 100%;
 
 		.splash, .blur, .main {
 			position: absolute;
@@ -356,20 +431,20 @@ export const Splash: Component<{
 
 		.splash {
 			object-fit: cover;
-			z-index: 1;
+			z-index: 101;
 		}
 
 		.blur {
 			backdrop-filter: blur(0.5vw);
 			background-color: color-mix(in srgb, var(--bg) 40%, transparent);
-			z-index: 2;
+			z-index: 102;
 		}
 
 		.main {
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			z-index: 3;
+			z-index: 103;
 		}
 
 		.container {
@@ -400,7 +475,7 @@ export const Splash: Component<{
 			this.next = "patch";
 		}
 	} else {
-		this.next = "";
+		this.next = "intro";
 	}
 
 	return (
@@ -413,10 +488,12 @@ export const Splash: Component<{
 						<Logo />
 					</div>
 					{use(this.next, x => {
-						if (!x) {
+						if (x === "intro") {
 							return <Intro on:next={(x) => this.next = x} />;
 						} else if (x === "copy") {
 							return <Copy on:done={() => this.next = "patch"} />;
+						} else if (x === "extract") {
+							return <Extract on:done={() => this["on:next"](true)} />
 						} else if (x === "download") {
 							return <Download on:done={() => this.next = "patch"} />;
 						} else if (x === "patch") {

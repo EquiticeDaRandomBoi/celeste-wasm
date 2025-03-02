@@ -11,7 +11,7 @@ const App: Component<{}, {
 	this.css = `
 		position: relative;
 
-		div {
+		#splash, #main {
 			position: absolute;
 			width: 100%;
 			height: 100%;
@@ -19,7 +19,7 @@ const App: Component<{}, {
 			left: 0;
 		}
 		#splash {
-			z-index: 1;
+			z-index: 100;
 		}
 
 		@keyframes fadeout {

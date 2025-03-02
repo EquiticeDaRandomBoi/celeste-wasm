@@ -20,6 +20,11 @@ export const PICKERS_UNAVAILABLE = !window.showDirectoryPicker || !window.showOp
 
 export const rootFolder = await navigator.storage.getDirectory();
 
+export const TAR_TYPES = [
+	{ description: "TAR archive (.tar)", accept: { "application/x-tar": ".tar" } } as FilePickerAcceptType,
+	{ description: "GZip compressed TAR archive (.tar.gz)", accept: { "application/x-gzip": ".tar.gz", "application/gzip": ".tar.gz" } } as FilePickerAcceptType
+];
+
 export async function calculateCelesteHash(): Promise<string> {
 	const celesteFile = await rootFolder.getFileHandle("CustomCeleste.dll");
 	const celeste = await celesteFile.getFile().then(r => r.arrayBuffer());
@@ -366,10 +371,7 @@ export const OpfsExplorer: Component<{
 		const file = await showSaveFilePicker({
 			excludeAcceptAllOption: true,
 			suggestedName: dirName + ".tar",
-			types: [
-				{ description: "TAR archive (.tar)", accept: { "application/x-tar": ".tar" } },
-				{ description: "GZip compressed TAR archive (.tar.gz)", accept: { "application/x-gzip": ".tar.gz", "application/gzip": ".tar.gz" } }
-			]
+			types: TAR_TYPES,
 		});
 
 		this.downloading = true;
@@ -386,7 +388,7 @@ export const OpfsExplorer: Component<{
 		const files = await showOpenFilePicker({ multiple: true });
 		this.uploading = true;
 		for (const file of files) {
-			let tar = await file.getFile().then(r=>r.stream());
+			let tar = await file.getFile().then(r => r.stream());
 			if (file.name.endsWith(".gz")) tar = tar.pipeThrough(new DecompressionStream("gzip"));
 			await extractTar(tar, this.path, (type, name) => console.log(`untarring ${type} ${name}`));
 		}
