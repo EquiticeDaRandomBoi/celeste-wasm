@@ -1,10 +1,10 @@
 import { RingBuffer } from "ring-buffer-ts";
 import { DotnetHostBuilder } from "./dotnetdefs";
-import { libcurl } from "libcurl.js";
 import { rootFolder } from "../fs";
 import { SteamJS } from "../achievements";
 import { JsSplash } from "./loading";
-import { STEAM_ENABLED, WISP_URL } from "../main";
+import { STEAM_ENABLED } from "../main";
+import { epoxyFetch, EpxWs, getWispUrl } from "../epoxy";
 
 export type Log = { color: string, log: string };
 export const TIMEBUF_SIZE = 10;
@@ -222,7 +222,7 @@ export async function downloadEverest() {
 export async function wispSanityCheck() {
 	let r;
 	try {
-		r = await libcurl.fetch("https://google.com");
+		r = await epoxyFetch("https://google.com");
 	} catch (e) {
 		console.error(e);
 	}
@@ -242,18 +242,16 @@ export async function preInit() {
 	runtime.setModuleImports("SteamJS", SteamJS);
 	runtime.setModuleImports("JsSplash", JsSplash);
 
-	console.log("loading libcurl");
-	// TODO: replace with epoxy
-	await libcurl.load_wasm("https://cdn.jsdelivr.net/npm/libcurl.js@0.7.0/libcurl.wasm");
-	libcurl.set_websocket(WISP_URL);
+	console.log("loading epoxy");
 	await wispSanityCheck();
 
 	window.WebSocket = new Proxy(WebSocket, {
 		construct(t, a, n) {
-			if (a[0] === WISP_URL)
+			if (a[0] === getWispUrl())
 				return Reflect.construct(t, a, n);
 
-			return new libcurl.WebSocket(...a);
+			// @ts-expect-error
+			return new EpxWs(...a);
 		}
 	});
 
@@ -264,7 +262,6 @@ export async function preInit() {
 
 
 	window.fetch = async (...args) => {
-
 		// don't try native for steam depots
 		if (typeof args[0] !== "string" || !args[0].includes("/depot/")) {
 			try {
@@ -288,7 +285,8 @@ export async function preInit() {
 			// }
 		}
 
-		return await libcurl.fetch(...args);
+		// @ts-expect-error
+		return await epoxyFetch(...args);
 	}
 	libcurlresolver();
 
@@ -315,6 +313,7 @@ export async function preInit() {
 
 	(self as any).wasm = {
 		Module: runtime.Module,
+		// @ts-expect-error
 		FS: runtime.Module.FS,
 		dotnet,
 		runtime,

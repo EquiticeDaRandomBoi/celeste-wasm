@@ -1,8 +1,8 @@
-import { libcurl } from "libcurl.js";
 import { loadedLibcurlPromise } from "./game/index";
 import { Button } from "./ui";
 import iconDownload from "@ktibow/iconset-material-symbols/download";
 import { rootFolder } from "./fs";
+import { epoxyFetch } from "./epoxy";
 
 type Mod = {
   Screenshots: string[],
@@ -51,7 +51,7 @@ export const ModInstaller: Component<
       for (let i = 0; i < e.Screenshots.length; i++) {
         let url = e.Screenshots[i];
         e.Screenshots[i] = "";
-        libcurl.fetch(url).then(b => b.blob()).then(blob => {
+        epoxyFetch(url).then(b => b.blob()).then(blob => {
           let url = URL.createObjectURL(blob);
           e.Screenshots[i] = url;
           e.Screenshots = e.Screenshots;
@@ -78,9 +78,10 @@ export const ModInstaller: Component<
       return;
     } catch (e) { }
 
-    let resp = await libcurl.fetch(mod.Files[0].URL);
+    let resp = await epoxyFetch(mod.Files[0].URL);
     let modfile = await mods.getFileHandle(mod.Files[0].Name, { create: true });
     let writable = await modfile.createWritable();
+	// @ts-expect-error
     await resp.body.pipeTo(writable);
 
     console.log("Downloaded mod");

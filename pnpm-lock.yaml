@@ -11,6 +11,9 @@ importers:
       '@ktibow/iconset-material-symbols':
         specifier: ^0.0.1733470085
         version: 0.0.1733470085
+      '@mercuryworkshop/epoxy-tls':
+        specifier: 2.1.17-1
+        version: 2.1.17-1
       '@types/xxhashjs':
         specifier: ^0.2.4
         version: 0.2.4
@@ -20,9 +23,6 @@ importers:
       events:
         specifier: ^3.3.0
         version: 3.3.0
-      libcurl.js:
-        specifier: ^0.7.0
-        version: 0.7.0
       ring-buffer-ts:
         specifier: ^1.2.0
         version: 1.2.0
@@ -216,6 +216,9 @@ packages:
   '@ktibow/iconset-material-symbols@0.0.1733470085':
     resolution: {integrity: sha512-9hFC5MjiPbLiTMVbKNIHjZCrGerg5huqZzFHvDvLkhCDH5jg7ELneaAmq3vcxHE8qwODzm4ivgnMth/70/1cOg==}
 
+  '@mercuryworkshop/epoxy-tls@2.1.17-1':
+    resolution: {integrity: sha512-8aKjqfcbQUBNo2ug0i4cdOlCr3BJ9xwseDKs5KApOZ+4K8T7AXipWjQzVJzmwNkCYN0wAe/GBp8w8u9eXwrF0A==}
+
   '@rollup/rollup-android-arm-eabi@4.29.1':
     resolution: {integrity: sha512-ssKhA8RNltTZLpG6/QNkCSge+7mBQGUqJRisZ2MDQcEGaK93QESEgWK2iOpIDZ7k9zPVkG5AS3ksvD5ZWxmItw==}
     cpu: [arm]
@@ -357,9 +360,6 @@ packages:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
-
-  libcurl.js@0.7.0:
-    resolution: {integrity: sha512-lhwNH8GbLDy6ss3DOkEOlkV7i3TUHNmb7s8lBMzDUfN4Z5DuKEk7KBN1bqp4Riw+iZSYWgMTCzU8uoF5jYBITA==}
 
   magic-string@0.25.9:
     resolution: {integrity: sha512-RmF0AsMzgt25qzqqLc1+MbHmhdx0ojF2Fvs4XnOqz2ZOBXzzkEwc/dJQZCYHAn7v1jbVOjAZfK8msRn4BxO4VQ==}
@@ -554,6 +554,8 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
+  '@mercuryworkshop/epoxy-tls@2.1.17-1': {}
+
   '@rollup/rollup-android-arm-eabi@4.29.1':
     optional: true
 
@@ -672,8 +674,6 @@ snapshots:
 
   fsevents@2.3.3:
     optional: true
-
-  libcurl.js@0.7.0: {}
 
   magic-string@0.25.9:
     dependencies:

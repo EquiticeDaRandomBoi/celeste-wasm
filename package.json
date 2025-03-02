@@ -9,10 +9,10 @@
 	},
 	"dependencies": {
 		"@ktibow/iconset-material-symbols": "^0.0.1733470085",
+		"@mercuryworkshop/epoxy-tls": "2.1.17-1",
 		"@types/xxhashjs": "^0.2.4",
 		"dreamland": "^0.0.25",
 		"events": "^3.3.0",
-		"libcurl.js": "^0.7.0",
 		"ring-buffer-ts": "^1.2.0",
 		"rollup-plugin-node-polyfills": "^0.2.1",
 		"streamx-webstream": "^1.2.12",
