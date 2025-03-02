@@ -4,22 +4,22 @@ import { Button, Icon } from "./ui";
 
 import iconEncrypted from "@ktibow/iconset-material-symbols/encrypted";
 
+const steamState: Stateful<{
+	login: number,
+	qr: string,
+}> = $state({
+	login: 0,
+	qr: ""
+});
 
-export const SteamCloud: Component<
-	{
-		open: boolean;
-	},
-	{
-	}
-> = function() {
-
+export const SteamCloud: Component<{}> = function() {
 	this.css = `
-  height: 100%;
-  `;
+		height: 100%;
+	`;
 
 	return (
 		<div>
-			{$if(use(gameState.loginstate, l => l == 2),
+			{$if(use(steamState.login, l => l == 2),
 				<div>
 					<p>Logged Into Steam</p>
 				</div>,
@@ -104,25 +104,25 @@ export const SteamLogin: Component<{}, {
 	this.password = "";
 
 	const loginqr = async () => {
-		gameState.loginstate = 1;
+		steamState.login = 1;
 		let result = await initSteam(null, null, true);
 		if (!result) {
-			gameState.loginstate = 3;
+			steamState.login = 3;
 		} else {
-			gameState.loginstate = 2;
+			steamState.login = 2;
 		}
 
 	};
 
 	const loginpass = async () => {
-		gameState.loginstate = 1;
+		steamState.login = 1;
 		let result = await initSteam(this.username, this.password, false);
 		if (!result) {
 			this.username = "";
 			this.password = "";
-			gameState.loginstate = 3;
+			steamState.login = 3;
 		} else {
-			gameState.loginstate = 2;
+			steamState.login = 2;
 		}
 	};
 
@@ -133,7 +133,7 @@ export const SteamLogin: Component<{}, {
 			The account details are encrpyted on your device and never sent to a server. Still, beware of unofficial deployments
 		</div>
 
-		{$if(use(gameState.loginstate, l => l == 0 || l == 3),
+		{$if(use(steamState.login, l => l == 0 || l == 3),
 			<div class="methods">
 				<div class="tcontainer">
 					<h3>Username and Password</h3>
@@ -156,24 +156,24 @@ export const SteamLogin: Component<{}, {
 			</div>
 		)}
 
-		{$if(use(gameState.loginstate, l => l == 3),
+		{$if(use(steamState.login, l => l == 3),
 			<div style="color: var(--error)">Failed to log in! Try again</div>
 		)}
 
-		{$if(use(gameState.loginstate, l => l == 3 || l == 1 || l == 2),
+		{$if(use(steamState.login, l => l == 3 || l == 1 || l == 2),
 			<div class="logcontainer">
 				<LogView scrolling={true} />
 			</div>
 		)}
 
-		{$if(use(gameState.loginstate, l => l == 1),
+		{$if(use(steamState.login, l => l == 1),
 			<div class="qrcontainer">
 				<p>Since this uses a proxy, the steam app might complain about your location being wrong. Just select the location that you don't usually log in from if it asks</p>
-				{$if(use(gameState.qr),
-					<img src={use(gameState.qr)} />
+				{$if(use(steamState.qr),
+					<img src={use(steamState.qr)} />
 				)}
 
-				{$if(use(gameState.qr),
+				{$if(use(steamState.qr),
 					<div>Scan this QR code with the Steam app on your phone.</div>
 				)}
 

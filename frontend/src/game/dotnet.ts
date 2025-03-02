@@ -12,16 +12,12 @@ export const gameState: Stateful<{
 	ready: boolean,
 	initting: boolean,
 	playing: boolean,
-	loginstate: number,
-	qr: string,
 
 	timebuf: RingBuffer<number>,
 }> = $state({
 	ready: false,
 	initting: false,
 	playing: false,
-	loginstate: 0,
-	qr: "",
 
 	timebuf: new RingBuffer<number>(TIMEBUF_SIZE)
 });

@@ -375,6 +375,7 @@ export const Patch: Component<{
 		flex-direction: column;
 		gap: 1rem;
 		.console {
+			display: flex;
 			font-size: initial;
 			height: 10em;
 		}
