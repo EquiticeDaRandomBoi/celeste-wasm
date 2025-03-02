@@ -25,7 +25,7 @@ export const Logo: Component<{}, {}> = function() {
 		font-size: 1.5rem;
 
 		font-family: var(--font-display);
-		color: white;
+		color: var(--fg);
 
 		img {
 			image-rendering: pixelated;
@@ -183,7 +183,7 @@ export const Main: Component<{}, {
 			display: flex;
 			flex-direction: column;
 
-			background: black;
+			background: var(--bg-sub);
 			height: 25em;
 		}
 
