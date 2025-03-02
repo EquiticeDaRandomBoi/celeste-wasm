@@ -1,6 +1,7 @@
 import epoxyInit, { EpoxyClient, EpoxyClientOptions, EpoxyHandlers, EpoxyWebSocket, info as epoxyInfo } from "@mercuryworkshop/epoxy-tls/epoxy";
 import EPOXY_PATH from "../../node_modules/@mercuryworkshop/epoxy-tls/full/epoxy.wasm?url"
 import { store } from "./store";
+import { getEventListeners } from "events";
 
 export let epoxyVersion = epoxyInfo.version + epoxyInfo.commit + epoxyInfo.release;
 
@@ -84,6 +85,15 @@ export class EpxWs extends EventTarget {
 
 	ws?: EpoxyWebSocket;
 
+	binaryType: "blob" | "arraybuffer" = "blob";
+
+	bufferedAmount: number = 0;
+
+	onopen?: (evt: Event) => void;
+	onclose?: (evt: Event) => void;
+	onmessage?: (evt: Event) => void;
+	onerror?: (evt: Event) => void;
+
 	constructor(remote: string | URL, protocols: string | string[] | undefined = []) {
 		super();
 
@@ -95,23 +105,31 @@ export class EpxWs extends EventTarget {
 
 			const event = new Event("open")
 			this.dispatchEvent(event);
+			if (this.onopen) this.onopen(event);
 		};
 
 		const onmessage = async (payload: Uint8Array) => {
-			const event = new MessageEvent("message", { data: payload });
+			let data;
+			if (this.binaryType === "blob") data = new Blob([payload]);
+			else if (this.binaryType === "arraybuffer") data = payload.buffer;
+
+			const event = new MessageEvent("message", { data, });
 			this.dispatchEvent(event);
+			if (this.onmessage) this.onmessage(event);
 		};
 
 		const onclose = (code: number, reason: string) => {
 			this.readyState = WebSocketFields.CLOSED;
 			const event = new CloseEvent("close", { code, reason })
 			this.dispatchEvent(event);
+			if (this.onclose) this.onclose(event);
 		};
 
 		const onerror = () => {
 			this.readyState = WebSocketFields.CLOSED;
 			const event = new Event("error");
 			this.dispatchEvent(event);
+			if (this.onerror) this.onerror(event);
 		};
 
 		(async () => {
@@ -139,17 +157,14 @@ export class EpxWs extends EventTarget {
 		let data = args[0];
 		if (data.buffer) data = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
 
-		this.ws.send(data);
+		this.bufferedAmount++;
+		this.ws.send(data).then(() => {
+			this.bufferedAmount--;
+		});
 	}
 
 	close(code: number, reason: string) {
-		if (this.readyState === WebSocketFields.CONNECTING || !this.ws) {
-			throw new DOMException(
-				"Failed to execute 'close' on 'WebSocket': Still in CONNECTING state."
-			);
-		}
-
-		this.ws.close(code, reason);
+		this.ws?.close(code, reason);
 	}
 }
 
