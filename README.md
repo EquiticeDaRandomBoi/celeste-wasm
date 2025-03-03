@@ -1,6 +1,6 @@
 <img src="public/app.ico" width=100 align="left">
 
-<h1>celeste-wasm (threads port)</h1>
+<h1>Webleste</h1>
 
 <br>
 
@@ -17,7 +17,7 @@ This "fork" will be merged into [the original](https://github.com/mercuryWorksho
 2. Install dotnet 9.0 (must be 9.0 specifically)
 3. Install the mono-devel package on your distro
 4. run `sudo dotnet workload restore` in this dir
-5. run `make serve` for a dev server and `make build` for a release build
+5. run `make serve` for a dev server and `make publish` for a release build
 
 to enable the download/decrypt feature:
 1. create a tar archive (optionally gzip compressed) of the Celeste directory
