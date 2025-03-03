@@ -4,7 +4,8 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
 		<ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
-		<Nullable>enable</Nullable>
+		<Nullable>disable</Nullable>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
 
 		<AssemblyName>CelesteLoader</AssemblyName>
 
