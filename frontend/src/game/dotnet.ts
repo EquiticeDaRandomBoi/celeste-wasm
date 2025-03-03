@@ -5,6 +5,7 @@ import { SteamJS } from "../achievements";
 import { JsSplash } from "./loading";
 import { STEAM_ENABLED } from "../main";
 import { epoxyFetch, EpxWs, getWispUrl } from "../epoxy";
+import { steamState } from "../steam";
 
 export type Log = { color: string, log: string };
 export const TIMEBUF_SIZE = 10;
@@ -303,7 +304,7 @@ export async function preInit() {
 	runtime.setModuleImports("depot.js", {
 		newqr: (qr: string) => {
 			console.log("QR DATA" + qr);
-			gameState.qr = qr;
+			steamState.qr = qr;
 		}
 	});
 
@@ -332,7 +333,7 @@ export async function preInit() {
 		await exports.Steam.Init();
 		if (await exports.Steam.InitSteamSaved()) {
 			console.log("Steam saved login success");
-			gameState.loginstate = 2;
+			steamState.login = 2;
 		}
 	}
 
@@ -368,7 +369,7 @@ export async function play() {
 
 	gameState.initting = true;
 
-	if (STEAM_ENABLED && gameState.loginstate == 2) {
+	if (STEAM_ENABLED && steamState.login == 2) {
 		console.debug("Syncing Steam Cloud");
 		await exports.Steam.DownloadSteamCloud();
 	}

@@ -1,7 +1,6 @@
 import epoxyInit, { EpoxyClient, EpoxyClientOptions, EpoxyHandlers, EpoxyWebSocket, info as epoxyInfo } from "@mercuryworkshop/epoxy-tls/epoxy";
 import EPOXY_PATH from "../../node_modules/@mercuryworkshop/epoxy-tls/full/epoxy.wasm?url"
 import { store } from "./store";
-import { getEventListeners } from "events";
 
 export let epoxyVersion = epoxyInfo.version + epoxyInfo.commit + epoxyInfo.release;
 

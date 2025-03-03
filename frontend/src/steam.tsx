@@ -12,7 +12,9 @@ export const steamState: Stateful<{
 	qr: ""
 });
 
-export const SteamCloud: Component<{}> = function() {
+export const SteamCloud: Component<{
+	open: boolean
+}> = function() {
 	this.css = `
 		height: 100%;
 	`;
