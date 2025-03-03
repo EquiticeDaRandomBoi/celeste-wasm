@@ -4,7 +4,7 @@ import { Button, Icon } from "./ui";
 
 import iconEncrypted from "@ktibow/iconset-material-symbols/encrypted";
 
-const steamState: Stateful<{
+export const steamState: Stateful<{
 	login: number,
 	qr: string,
 }> = $state({

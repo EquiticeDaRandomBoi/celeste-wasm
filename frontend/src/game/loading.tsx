@@ -52,7 +52,7 @@ const Progress: Component<{ indeterminate: boolean, progress: number }> = functi
 		left: 0;
 		width: 100%;
 		height: calc(1vw / 2);
-		z-index: 2;
+		z-index: 22;
 		overflow: hidden;
 
 		.value {

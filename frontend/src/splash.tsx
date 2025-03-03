@@ -2,7 +2,7 @@ import { Logo, NAME, STEAM_ENABLED } from "./main";
 import { Button, Icon, Link } from "./ui";
 import { copyFile, copyFolder, countFolder, extractTar, hasContent, PICKERS_UNAVAILABLE, rootFolder, TAR_TYPES } from "./fs";
 import { downloadApp, gameState, PatchCeleste } from "./game/dotnet";
-import { SteamLogin } from "./steam";
+import { SteamLogin, steamState } from "./steam";
 import { LogView } from "./game";
 
 import iconFolderOpen from "@ktibow/iconset-material-symbols/folder-open-outline";
@@ -319,8 +319,8 @@ export const Download: Component<{
 		}
 	`;
 
-	useChange([this.downloading, gameState.loginstate], () => {
-		this.downloadDisabled = this.downloading || gameState.loginstate != 2;
+	useChange([this.downloading, steamState.login], () => {
+		this.downloadDisabled = this.downloading || steamState.login != 2;
 	});
 
 	const download = async () => {
@@ -339,7 +339,7 @@ export const Download: Component<{
 		<div>
 			{$if(use(gameState.ready),
 				<div>
-					{$if(use(gameState.loginstate, l => l == 2),
+					{$if(use(steamState.login, l => l == 2),
 						<div>
 							<p>Logged into steam successfully!</p>
 							<Button type="primary" icon="left" disabled={use(this.downloadDisabled)} on:click={download}>
