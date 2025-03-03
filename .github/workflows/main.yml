@@ -42,3 +42,10 @@ jobs:
         run: |
           cd loader && dotnet workload restore && cd ..
           make build 
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: webleste-loader
+          path: frontend/dist/
+          compression-level: 6
+
