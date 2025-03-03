@@ -13,28 +13,14 @@ This "fork" will be merged into [the original](https://github.com/mercuryWorksho
 - You may encounter issues on firefox.
 
 ## I want to build this
-1. clone [FNA](https://github.com/FNA-XNA/FNA) version 25.02 (with submodules) in the parent dir (`../`)
-2. clone [this MonoMod fork](https://github.com/r58playz/MonoMod) in the parent dir
-3. apply (`git apply ...`) `FNA.patch` to FNA
+1. Ensure node and pnpm exist and `pnpm i`
+2. Install dotnet 9.0 (must be 9.0 specifically)
+3. Install the mono-devel package on your distro
 4. run `sudo dotnet workload restore` in this dir
-5. run `make serve` for a dev server and `make publish` for a release build
+5. run `make serve` for a dev server and `make build` for a release build
 
 to enable the download/decrypt feature:
-1. create a tar archive (optionally gzip compressed) of the Content directory
-2. run `python3 tools/xor.py path/to/archive.tar.gz path/to/key > archive.xor.tar.gz`
-3. optionally split the archive into chunks - these chunks must have a suffix of `.CHUNKNUM` where `CHUNKNUM` is a number starting from 0
-    - if you do not split the archive, give it a suffix of `.0`
-4. pass these env vars to `make serve` or `make publish`:
-    - `VITE_DECRYPT_ENABLED=1`
-    - `VITE_DECRYPT_KEY`: path to the key from within the Content folder
-    - `VITE_DECRYPT_PATH`: path to the archive relative to the http root
-    - `VITE_DECRYPT_SIZE`: total size of the archive (after compression if you did that)
-    - `VITE_DECRYPT_COUNT`: total number of chunks - set this to 1 if you did not split the archive
-    - these vars can also be placed in a `.env.local` - see [Vite docs](https://vite.dev/guide/env-and-mode)
-
-**main improvements that need to be done:**
-- fix freezes due to fmod
-- fix freeze when removing controller while in a level
+1. create a tar archive (optionally gzip compressed) of the Celeste directory
 
 ## I want to port this to a newer version of celeste (once it exists)
 1. fix any issues with the hooks
