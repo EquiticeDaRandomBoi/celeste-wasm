@@ -87,7 +87,7 @@ export const ModInstaller: Component<
   }
 
   this.mount = async () => {
-    loadFrom("https://maddie480.ovh/celeste/gamebanana-featured");
+    //loadFrom("https://maddie480.ovh/celeste/gamebanana-featured");
   };
 
 

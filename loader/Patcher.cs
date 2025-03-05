@@ -154,8 +154,12 @@ public partial class Patcher
 
             modder.Log("Installing WASM patches");
             modder.MapDependencies();
+			modder.DependencyMap[modder.Module].Add(wasmMod);
+
             modder.AutoPatch();
         }
+
+		Module.AssemblyReferences.Add(wasmMod.Assembly.Name);
     }
 
     public void write(string path)

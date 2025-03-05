@@ -14,10 +14,11 @@ namespace Celeste.Mod
             private static extern void orig_InitMMFlags(MonoModder modder);
             private static void InitMMFlags(MonoModder modder)
             {
+                orig_InitMMFlags(modder);
+
                 modder.DependencyDirs.Add("/bin/");
                 modder.Mods.Add(ModuleDefinition.ReadModule("/bin/Celeste.Wasm.mm.dll"));
-
-                orig_InitMMFlags(modder);
+				modder.RemovePatchReferences = false;
             }
 
             [MonoModIgnore]

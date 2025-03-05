@@ -9,5 +9,6 @@
 		<PackageReference Include="Mono.Cecil" Version="0.11.6" />
 		<ProjectReference Include="..\MonoMod\src\MonoMod.Patcher\MonoMod.Patcher.csproj" />
 		<ProjectReference Include="..\FNA\FNA.Core.csproj" />
+		<PackageReference Include="DnsOverHttps" Version="1.2.2" />
 	</ItemGroup>
 </Project>

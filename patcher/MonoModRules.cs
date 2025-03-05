@@ -1,6 +1,7 @@
 using Mono.Cecil;
 using MonoMod.InlineRT;
 using System.Collections.Generic;
+using System;
 
 namespace MonoMod
 {
@@ -20,8 +21,22 @@ namespace MonoMod
 
         static MonoModRules()
         {
+            Console.WriteLine($"[Celeste.Wasm] Loaded into module {MonoModRule.Modder.Module}");
             MonoModRule.Modder.Log($"[Celeste.Wasm] Loaded into module {MonoModRule.Modder.Module}");
             MonoModRule.Modder.PostProcessors += FMODPostProcessor;
+
+            HackRelinkType("System.Net.Sockets.Socket", typeof(Celeste.Wasm.WasmSocket));
+            HackRelinkType("System.Net.Sockets.NetworkStream", typeof(Celeste.Wasm.WasmNetworkStream));
+        }
+
+        // hacky relink without copying the type
+        public static void HackRelinkType(string source, Type dest)
+        {
+            MonoModRule.RelinkType(source, dest.FullName);
+            foreach (var member in dest.GetMembers())
+            {
+                MonoModRule.RelinkMember($"{source}::{member.Name}", dest.FullName, member.Name);
+            }
         }
 
         public static void FMODPostProcessor(MonoModder modder)

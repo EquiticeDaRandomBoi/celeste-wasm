@@ -1,4 +1,4 @@
-STATICS_RELEASE=f1de2b29-0957-4396-a601-ca06c10aaa16
+STATICS_RELEASE=5f80812f-ae61-472e-84e1-b310df27ed9a
 DOTNETFLAGS=--nodereuse:false
 
 statics:
@@ -32,6 +32,7 @@ emsdk:
 	./emsdk/emsdk activate 3.1.56
 	python3 ./sanitizeemsdk.py "$(shell realpath ./emsdk/)"
 	patch -p1 --directory emsdk/upstream/emscripten/ < emsdk.patch
+	rm -rvf emsdk/upstream/emscripten/cache/*
 
 clean:
 	rm -rvf statics loader/obj loader/bin frontend/public/_framework nuget MonoMod NLua FNA SteamKit2.WASM emsdk || true

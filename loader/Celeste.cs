@@ -35,7 +35,9 @@ public static partial class CelesteLoader
             {
                 CallPinvokeFixers();
                 Console.WriteLine("fixed pinvoke");
-				Console.WriteLine("initted js splash");
+
+				Environment.SetEnvironmentVariable("FNA_PLATFORM_BACKEND", "SDL3");
+				Environment.SetEnvironmentVariable("MONOMOD_DEPENDENCY_REMOVE_PATCH", "0");
             }
             catch (Exception e)
             {
@@ -48,6 +50,7 @@ public static partial class CelesteLoader
 
     static Game game;
     static Assembly celeste;
+	static FieldInfo RunApplication;
 
     [JSExport]
     internal static Task Init()
@@ -123,6 +126,8 @@ public static partial class CelesteLoader
 
             game = (Game)GameConstructor.Invoke([]);
             Console.WriteLine($"CELESTE CREATED");
+			RunApplication = Celeste.GetField("RunApplication", BindingFlags.NonPublic | BindingFlags.Instance);
+			Console.WriteLine($"RUNAPPLICATION FOUND");
         }
         catch (Exception e)
         {
@@ -164,6 +169,6 @@ public static partial class CelesteLoader
             Console.Error.WriteLine(e);
             return (Task<bool>)Task.FromException(e);
         }
-        return Task.FromResult(game.RunApplication);
+        return Task.FromResult((bool)RunApplication.GetValue(game));
     }
 }

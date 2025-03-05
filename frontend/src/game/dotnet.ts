@@ -4,7 +4,7 @@ import { rootFolder } from "../fs";
 import { SteamJS } from "../achievements";
 import { JsSplash } from "./loading";
 import { STEAM_ENABLED } from "../main";
-import { epoxyFetch, EpxWs, getWispUrl } from "../epoxy";
+import { epoxyFetch, EpxTcpWs, EpxWs, getWispUrl } from "../epoxy";
 import { steamState } from "../steam";
 
 export type Log = { color: string, log: string };
@@ -87,12 +87,6 @@ useChange([gameState.playing], () => {
 	} catch (err) { console.log("keyboard lock error:", err); }
 });
 
-document.addEventListener("keydown", (e: KeyboardEvent) => {
-	if (gameState.playing && ["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Tab"].includes(e.code)) {
-		e.preventDefault();
-	}
-});
-
 const wasm = await eval(`import("/_framework/dotnet.js")`);
 const dotnet: DotnetHostBuilder = wasm.dotnet;
 let exports: any;
@@ -135,6 +129,7 @@ export async function getDlls(): Promise<(readonly [string, string])[]> {
 		"Newtonsoft.Json.dll",
 		"NLua.dll",
 		"KeraLua.dll",
+		"DnsOverHttps.dll",
 	];
 
 	return Object.entries(resources.resources.fingerprinting).map(x => [x[0] as string, x[1] as string] as const).filter(([_, v]) => whitelist.includes(v));
@@ -217,6 +212,7 @@ export async function downloadEverest() {
 }
 
 export async function wispSanityCheck() {
+	return;
 	let r;
 	try {
 		r = await epoxyFetch("https://google.com");
@@ -244,8 +240,11 @@ export async function preInit() {
 
 	window.WebSocket = new Proxy(WebSocket, {
 		construct(t, a, n) {
-			if (a[0] === getWispUrl())
+			const url = new URL(a[0]);
+			if (a[0] === getWispUrl() || url.host === location.host)
 				return Reflect.construct(t, a, n);
+			if (url.hostname.startsWith("__celestewasm_wisp_proxy_ws__"))
+				return new EpxTcpWs(url.pathname.substring(1), url.hostname.replace("__celestewasm_wisp_proxy_ws__", "")); 
 
 			// @ts-expect-error
 			return new EpxWs(...a);

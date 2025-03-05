@@ -1,4 +1,4 @@
-import epoxyInit, { EpoxyClient, EpoxyClientOptions, EpoxyHandlers, EpoxyWebSocket, info as epoxyInfo } from "@mercuryworkshop/epoxy-tls/epoxy";
+import epoxyInit, { EpoxyClient, EpoxyClientOptions, EpoxyHandlers, EpoxyIoStream, EpoxyWebSocket, info as epoxyInfo } from "@mercuryworkshop/epoxy-tls/epoxy";
 import EPOXY_PATH from "../../node_modules/@mercuryworkshop/epoxy-tls/full/epoxy.wasm?url"
 import { store } from "./store";
 
@@ -49,7 +49,7 @@ export async function createEpoxy() {
 	options.user_agent = navigator.userAgent;
 	options.udp_extension_required = false;
 
-	currentWispUrl = store.wispServer || "wss://anura.pro/";
+	currentWispUrl = store.wispServer;
 	currentClient = new EpoxyClient(currentWispUrl, options);
 }
 
@@ -77,6 +77,139 @@ const WebSocketFields = {
 };
 
 // from bare-mux
+export class EpxTcpWs extends EventTarget {
+	url: string;
+	readyState: number = WebSocketFields.CONNECTING;
+
+	ws?: WritableStreamDefaultWriter;
+
+	binaryType: "blob" | "arraybuffer" = "blob";
+
+	bufferedAmount: number = 0;
+
+	onopen?: (evt: Event) => void;
+	onclose?: (evt: Event) => void;
+	onmessage?: (evt: Event) => void;
+	onerror?: (evt: Event) => void;
+
+	realOnClose: (code: number, reason: string) => void;
+
+	constructor(remote: string | URL, type: string) {
+		super();
+
+		console.log("tcpws", remote.toString(), type);
+
+		this.url = remote.toString();
+
+		const onopen = () => {
+			this.readyState = WebSocketFields.OPEN;
+
+			const event = new Event("open")
+			this.dispatchEvent(event);
+
+			if (this.onopen) this.onopen(event);
+		};
+
+		const onmessage = async (payload: Uint8Array) => {
+			let data;
+			if (this.binaryType === "blob") data = new Blob([payload]);
+			else if (this.binaryType === "arraybuffer") data = payload.buffer;
+
+			const event = new MessageEvent("message", { data, });
+			this.dispatchEvent(event);
+			if (this.onmessage) this.onmessage(event);
+		};
+
+		const onclose = (code: number, reason: string) => {
+			this.readyState = WebSocketFields.CLOSED;
+			const event = new CloseEvent("close", { code, reason })
+			this.dispatchEvent(event);
+			if (this.onclose) this.onclose(event);
+		};
+		this.realOnClose = onclose;
+
+		const onerror = () => {
+			this.readyState = WebSocketFields.CLOSED;
+			const event = new Event("error");
+			this.dispatchEvent(event);
+			if (this.onerror) this.onerror(event);
+		};
+
+		if (!["tcp", "udp", "tls"].includes(type)) throw "invalid";
+
+		(async () => {
+			await tryInit();
+
+			let ws: EpoxyIoStream = null!;
+			try {
+				if (type === "tcp") {
+					ws = await currentClient.connect_tcp(remote);
+				} else if (type === "udp") {
+					ws = await currentClient.connect_udp(remote);
+				} else if (type === "tls") {
+					ws = await currentClient.connect_tls(remote);
+				}
+			} catch (err) {
+				console.error(err);
+				onerror();
+				return;
+			}
+
+			this.ws = ws.write.getWriter();
+
+			const reader = ws.read.getReader();
+
+			this.readyState = WebSocketFields.OPEN;
+			onopen();
+			let errored = false;
+			while (true) {
+				try {
+					const { value, done } = await reader.read();
+					if (done || !value) break;
+
+					onmessage(value);
+				} catch (err) {
+					onerror();
+					console.error(err);
+					errored = true;
+					break;
+				}
+			}
+			this.readyState = WebSocketFields.CLOSED;
+			onclose(errored ? 1011 : 1000, errored ? "epoxy.ts errored" : "normal");
+		})();
+	}
+
+	send(...args: any[]) {
+		if (this.readyState === WebSocketFields.CONNECTING || !this.ws) {
+			throw new DOMException(
+				"Failed to execute 'send' on 'WebSocket': Still in CONNECTING state."
+			);
+		}
+
+		let data = args[0];
+		if (data.buffer) data = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
+
+		this.bufferedAmount++;
+		this.ws.write(data).then(() => {
+			this.bufferedAmount--;
+		});
+	}
+
+	close(_: number, __: string) {
+		if (this.readyState !== WebSocketFields.OPEN) return;
+
+		console.log("closing");
+		this.readyState = WebSocketFields.CLOSING;
+
+		this.ws?.close().then(x => console.log("really closed", x));
+
+		console.log("closed");
+		this.readyState = WebSocketFields.CLOSED;
+		this.realOnClose(1000, "normal");
+	}
+}
+
 export class EpxWs extends EventTarget {
 	url: string;
 	readyState: number = WebSocketFields.CONNECTING;
@@ -142,7 +275,13 @@ export class EpxWs extends EventTarget {
 				protos = protocols;
 			}
 
-			this.ws = await currentClient.connect_websocket(handlers, remote, protos, {});
+			try {
+				this.ws = await currentClient.connect_websocket(handlers, remote, protos, {});
+			} catch (err) {
+				console.error(err);
+				onerror();
+				return;
+			}
 		})();
 	}
 
