@@ -14,16 +14,19 @@ int mount_opfs() {
 	return ret;
 }
 
-int mount_fetch(char *src, char *dst) {
-	backend_t fetch = wasmfs_create_fetch_backend(src);
-	printf("mount_fetch: created fetch backend for \"%s\"\n", dst);
-	int ret = wasmfs_create_file(dst, 0777, fetch);
-	printf("mount_fetch: mounted fetch backend for \"%s\"\n", dst);
+backend_t fetch_backend = NULL;
 
-	if (ret >= 0) {
+int mount_fetch(char *srcdir, char *dstdir) {
+	if (!fetch_backend) fetch_backend = wasmfs_create_fetch_backend(srcdir);
+	return wasmfs_create_directory(dstdir, 0777, fetch_backend);
+}
+
+int mount_fetch_file(char *path) {
+	if (!fetch_backend) return -1;
+
+	int ret = wasmfs_create_file(path, 0777, fetch_backend);
+	if (ret >= 0)
 		return close(ret);
-	}
-
 	return ret;
 }
 

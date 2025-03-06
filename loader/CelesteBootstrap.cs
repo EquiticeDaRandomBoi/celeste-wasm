@@ -23,7 +23,9 @@ public static partial class CelesteBootstrap
     [DllImport("Emscripten")]
     public extern static int mount_opfs();
     [DllImport("Emscripten")]
-    public extern static int mount_fetch(string src, string dst);
+    public extern static int mount_fetch(string srcdir, string dstdir);
+    [DllImport("Emscripten")]
+    public extern static int mount_fetch_file(string path);
 
     private static void TryCreateDirectory(string path)
     {
@@ -41,14 +43,16 @@ public static partial class CelesteBootstrap
 
         // mono.cecil searches in /bin for some dlls
         Directory.CreateDirectory("/bin");
+		mount_fetch("_framework/", "/fetchdlls/");
         foreach (var dll in dlls)
         {
             Console.WriteLine($"Mounting {dll.RealName}");
-            int ret = mount_fetch($"/_framework/{dll.RealName}", $"/bin/{dll.MappedName}");
+            int ret = mount_fetch_file($"/fetchdlls/{dll.RealName}");
             if (ret != 0)
             {
-                throw new Exception($"Failed to mount {dll.MappedName}: error code {ret}");
+                throw new Exception($"Failed to mount {dll.RealName}: error code {ret}");
             }
+			File.CreateSymbolicLink($"/bin/{dll.MappedName}", $"/fetchdlls/{dll.RealName}");
         }
     }
 
