@@ -1,7 +1,7 @@
 import { Logo, NAME, STEAM_ENABLED } from "./main";
 import { Button, Icon, Link } from "./ui";
 import { copyFile, copyFolder, countFolder, extractTar, hasContent, PICKERS_UNAVAILABLE, rootFolder, TAR_TYPES } from "./fs";
-import { downloadApp, gameState, PatchCeleste } from "./game/dotnet";
+import { downloadApp, downloadsFolder, gameState, PatchCeleste, pickDownloadsFolder } from "./game/dotnet";
 import { SteamLogin, steamState } from "./steam";
 import { LogView } from "./game";
 
@@ -335,6 +335,11 @@ export const Download: Component<{
 		}
 	};
 
+	const downloadscuffed = async () => {
+		await pickDownloadsFolder();
+		await download();
+	}
+
 	return (
 		<div>
 			{$if(use(gameState.ready),
@@ -346,6 +351,10 @@ export const Download: Component<{
 								<Icon icon={iconEncrypted} />
 								Download Assets
 							</Button>
+							<Button type="primary" icon="left" disabled={use(this.downloadDisabled)} on:click={downloadscuffed}>
+								<Icon icon={iconEncrypted} />
+								Download Assets (scuffed) (chrome os only)
+							</Button>
 						</div>,
 						<SteamLogin />
 					)}
@@ -353,7 +362,7 @@ export const Download: Component<{
 					{$if(use(this.downloading), <Progress percent={use(this.percent)} />)}
 				</div>,
 				<div class="loading">
-					<p>Initializing Connection to Steam...</p>
+					<p>Initializing Connection to Steam... ?</p>
 				</div>
 			)}
 

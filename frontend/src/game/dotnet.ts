@@ -223,13 +223,20 @@ export async function wispSanityCheck() {
 	if (!r || !r.ok) throw new Error("wisp sanity check failed");
 }
 
+let downloadsFolder: FileSystemDirectoryHandle | null = null;
+
+export async function pickDownloadsFolder() {
+	let d = await showDirectoryPicker();
+	downloadsFolder = d;
+}
+
 let libcurlresolver: any;
 export const loadedLibcurlPromise = new Promise(r => libcurlresolver = r);
 export async function preInit() {
 	console.debug("initializing dotnet");
 	const runtime = await dotnet.withConfig({
 		pthreadPoolInitialSize: 24,
-		pthreadPoolUnusedSize: 512,
+		// pthreadPoolUnusedSize: 512,
 	}).create();
 
 	runtime.setModuleImports("SteamJS", SteamJS);
@@ -244,7 +251,7 @@ export async function preInit() {
 			if (a[0] === getWispUrl() || url.host === location.host)
 				return Reflect.construct(t, a, n);
 			if (url.hostname.startsWith("__celestewasm_wisp_proxy_ws__"))
-				return new EpxTcpWs(url.pathname.substring(1), url.hostname.replace("__celestewasm_wisp_proxy_ws__", "")); 
+				return new EpxTcpWs(url.pathname.substring(1), url.hostname.replace("__celestewasm_wisp_proxy_ws__", ""));
 
 			// @ts-expect-error
 			return new EpxWs(...a);
@@ -264,21 +271,21 @@ export async function preInit() {
 				return await nativefetch(...args);
 			} catch (e) {
 			}
-		} else {
-			// let last = args[0].split("/").pop()!;
-			// dl.download = "cross origin lol";
-			// dl.href = args[0];
-			// dl.click();
-			//
-			// while (true) {
-			// 	try {
-			// 		let file = await downloads.getFileHandle(last, { create: false });
-			// 		let h = await file.getFile();
-			// 		console.log("got file", last);
-			// 		return new Response(h.stream());
-			// 	} catch { }
-			// 	await new Promise(r => setTimeout(r, 100));
-			// }
+		} else if (downloadsFolder != null) {
+			let last = args[0].split("/").pop()!;
+			dl.download = "cross origin lol";
+			dl.href = args[0];
+			dl.click();
+
+			while (true) {
+				try {
+					let file = await downloadsFolder.getFileHandle(last, { create: false });
+					let h = await file.getFile();
+					console.log("got file", last);
+					return new Response(h.stream());
+				} catch { }
+				await new Promise(r => setTimeout(r, 100));
+			}
 		}
 
 		// @ts-expect-error
@@ -376,12 +383,12 @@ export async function play() {
 	console.debug("Init...");
 	const before = performance.now();
 
-	await exports.CelesteLoader.Init();
+	if (!await exports.CelesteLoader.Init()) throw new Error("CelesteLoader.Init() Failed!");
 
 	// run some frames for seamless transition
 	for (let i = 0; i < SEAMLESSCOUNT; i++) {
 		console.debug(`SeamlessInit${i}...`);
-		await exports.CelesteLoader.MainLoop();
+		if (!await exports.CelesteLoader.MainLoop()) throw new Error("CelesteLoader.MainLoop() Failed!");
 	}
 
 	const after = performance.now();
