@@ -273,6 +273,12 @@ export async function preInit() {
 			}
 		} else if (downloadsFolder != null) {
 			let last = args[0].split("/").pop()!;
+			try {
+				let file = await downloadsFolder.getFileHandle(last, { create: false });
+				let h = await file.getFile();
+				console.log("got file cached", last);
+				return new Response(h.stream());
+			} catch { }
 			dl.download = "cross origin lol";
 			dl.href = args[0];
 			dl.click();

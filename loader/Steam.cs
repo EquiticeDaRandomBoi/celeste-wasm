@@ -41,10 +41,10 @@ public partial class Steam
         ContentDownloader.Config.InstallDirectory = "/libsdl/";
 
         ContentDownloader.Config.VerifyAll = false;
-        ContentDownloader.Config.MaxServers = 20;
+        ContentDownloader.Config.MaxServers = 5;
 
 
-        ContentDownloader.Config.MaxDownloads = 21;
+        ContentDownloader.Config.MaxDownloads = 5;
         ContentDownloader.Config.LoginID = null;
 
         return true;
