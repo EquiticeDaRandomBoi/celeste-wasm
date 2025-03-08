@@ -1,7 +1,7 @@
 import { Logo, NAME, STEAM_ENABLED } from "./main";
 import { Button, Icon, Link } from "./ui";
 import { copyFile, copyFolder, countFolder, extractTar, hasContent, PICKERS_UNAVAILABLE, rootFolder, TAR_TYPES } from "./fs";
-import { downloadApp, downloadsFolder, gameState, PatchCeleste, pickDownloadsFolder } from "./game/dotnet";
+import { downloadApp, gameState, PatchCeleste, pickDownloadsFolder } from "./game/dotnet";
 import { SteamLogin, steamState } from "./steam";
 import { LogView } from "./game";
 
@@ -85,7 +85,7 @@ const Intro: Component<{
 				</div>}
 			{PICKERS_UNAVAILABLE && !STEAM_ENABLED ?
 				<div class="error">
-					You will have to switch browsers (to a Chromium-based one) to play as both methods of getting Celeste assets are unavailable.
+					You will have to switch browsers (to a Chromium-based one) to play as all methods of getting Celeste assets are unavailable.
 				</div>
 				: null}
 
