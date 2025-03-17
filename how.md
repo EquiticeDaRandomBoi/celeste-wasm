@@ -12,46 +12,108 @@ thanks r58 for figuring most of this stuff out and bomberfish for making a cool 
 
 ## Terraria
 
-Without knowing much about C# in general we figured a good place to start was setting up a development environment for modding  
-Let's open up Terraria.exe with `ilspycmd` and try to get a project going.
+Without knowing much about C# in general we figured a good place to start was setting up a development environment for modding. In theory, all we needed to do was decompile the game, change the target to webassembly, and then recompile it.
+Running `ilspycmd` on Terraria.exe failed to decompile at first because it depended on a `ReLogic.dll` dependency that couldn't be found. It turned out that the library dll was actually embedded inside the game binary and had to be [extracted manually]
 
-After removing the platform specific code for windows and adding back the assembly references for dependencies, the project recompiles and launches on linux.
+After putting `ReLogic.dll` into the library path, decompilation succeeded, and after removing the platform specific code for windows and adding back the assembly references for dependencies, the project recompiles and launches on linux.
 
-Install the wasm sdk, then we can change the build type to a web project
+Now that we knew the decompilation was good, I created a project file for the new code targetting WASM and configuring emscripten.
 
 ```
 <Project Sdk="Microsoft.NET.Sdk.WebAssembly">
+<PropertyGroup>
+		<StartupObject>Program</StartupObject>
+		<EmccExtraLDFlags>-sMIN_WEBGL_VERSION=2 -sWASMFS</EmccExtraLDFlags>
+		<EmccEnvironment>web,worker</EmccEnvironment>
+</PropertyGroup>
 <ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.3" />
 		<PackageReference Include="DotNetZip" Version="1.16.0" />
 		<PackageReference Include="MP3Sharp" Version="1.0.5" />
 		<PackageReference Include="NVorbis" Version="0.10.5" />
-
+</ItemGroup>
+</Project>
 ```
 
-All of the project code compiles without issue, but FNA is partially written in c++ and needs to be linked against its native components. The web target isn't officially supported by FNA, but its native components compile without issue under emscripten's opengl emulation layer. fortunately someone already made a tool for this
+Somewhat surprisingly, all of the project code compiles without issue, but FNA is partially written in c++ and needs to be linked against its native components. The web target isn't officially supported by FNA, but its native components compile without issue under emscripten's opengl emulation layer. Fortunately, [FNA-WASM-BUILD]() does this for us
 
-add the reference to the project
-
+The archive files from the build system can be added with `<NativeFileReference>` and then will automatically get linked together with the rest of the runtime during emscripten compilation.
 ```
-		<!-- FNA -->
-		<NativeFileReference Include="SDL3.a" />
-		<NativeFileReference Include="FNA3D.a" />
-		<NativeFileReference Include="libmojoshader.a" />
-		<NativeFileReference Include="FAudio.a" />
+<!-- FNA -->
+<NativeFileReference Include="SDL3.a" />
+<NativeFileReference Include="FNA3D.a" />
+<NativeFileReference Include="libmojoshader.a" />
+<NativeFileReference Include="FAudio.a" />
 ```
 
-and it launches  
+Now we have to get the game assets into the emscripten environment. Since we compiled with -sWASMFS, this part is pretty easy, since it uses the browser's [Origin Private File System](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system) for the site, and we can simply ask the user to select their game directory with `window.showDirectoryPicker()`, then copy the files into the site.
+
+After a [quick patch to FNA](https://github.com/MercuryWorkshop/terraria-wasm/blob/master/FNA.patch) to resolve a generics issue, the game launched.
+
 image of relogic logo
 
-but threads aren't supported so it aborts at runtime. set wasmenablethreads
+After trying to enter a world though, the game immediately crashes after trying to create a new thread, which was not supported in .NET 8.0 wasm.
 
-with threads, all code runs inside web workers. the "main" thread is the deputy thread.
+We knew that they would be supported in the next version, so we waited about a month for NET 9.0 to get a stable release before continuing. Once it was packaged, we added the `<WasmEnableThreads>true</WasmEnableThreads>` option to the project and recompiled, but FNA failed to initialize.
 
-sdl2 does not have good offscreencanvas support
+In threaded mode, *all* code runs inside web workers, not just the secondary threads. What would usually be called the "main" thread is running on `dotnet-worker-001`, referred to as the "deputy thread".
 
-add wrap_fna.fish explanation here
+Since FNA intializes in the worker, it can't find the canvas on the DOM thread. This is solved by the browser's `OffscreenCanvas` API, but we were still working with SDL2, which didn't support it, and FNA didn't work with SDL3 at the time we wrote this.
+
+
+We wrote a [fish script](https://github.com/r58Playz/FNA-WASM-Build/blob/b05cbc703753c917499bf955091f62c3b845ba8f/wrap_fna.fish) that would automatically parse every single method from FNA3D's exported symbols (FNA's native C component), and automatically compile and export a wrapper method method that would use `emscripten_proxy_sync` to proxy the call from `dotnet-worker-001` to the DOM thread.
+
+For example,  `FNA3D_Device* FNA3D_CreateDevice(FNA3D_PresentationParameters *presentationParameters,uint8_t debugMode);`
+
+The script automatically generates a C file containing the wrapper method, `WRAP_FNA3D_CreateDevice`
+
+```c
+FNA3D_Device* WRAP_FNA3D_CreateDevice(FNA3D_PresentationParameters *presentationParameters,uint8_t debugMode)
+{
+	// $func: `FNA3D_Device* FNA3D_CreateDevice(FNA3D_PresentationParameters *presentationParameters,uint8_t debugMode)`
+	// $ret: `FNA3D_Device*`
+	// $name: `FNA3D_CreateDevice`
+	// $args: `FNA3D_PresentationParameters *presentationParameters,uint8_t debugMode`
+	// $argsargs: `presentationParameters,debugMode`
+	// $argc: `2`
+	//
+	// return FNA3D_CreateDevice(presentationParameters,debugMode);
+	FNA3D_Device* wrap_ret;
+	WRAP__struct_FNA3D_CreateDevice wrap_struct = {
+		.presentationParameters = presentationParameters,
+		.debugMode = debugMode,
+		.WRAP_RET = &wrap_ret
+	};
+	if (!emscripten_proxy_sync(emscripten_proxy_get_system_queue(), emscripten_main_runtime_thread_id(), WRAP__MAIN__FNA3D_CreateDevice, (void*)&wrap_struct)) {
+		emscripten_run_script("console.error('wrap.fish: failed to proxy FNA3D_CreateDevice')");
+		assert(0);
+	}
+	return wrap_ret;
+}
+```
+And the wrapper is compiled in with the rest of FNA3D.
+
+Then in the FNA C# code, where the native C is linked to, we replace the PInvoke binding:
+
+```csharp
+[DllImport(FNA3D, EntryPoint = "FNA3D_CreateDevice", CallingConvention = CallingConvention.Cdecl)]`
+public static extern IntPtr FNA3D_CreateDevice(...);
+```
+...With one that calls our wrapper instead
+```csharp
+[DllImport(FNA3D, EntryPoint = "WRAP_FNA3D_CreateDevice", CallingConvention = CallingConvention.Cdecl)]`
+public static extern IntPtr FNA3D_CreateDevice(...);
+```
+Ensuring that all the native calls to SDL went through the DOM thread instead of C#'s "main" deputy thread.
+
+Okay. That was a lot. Does it work?
+
+
+
+
+(fmod is not open source, have to open archive)
+
 
 at first we just committed the entire source code into a private repository
 
