@@ -13,13 +13,16 @@ thanks r58 for figuring most of this stuff out and bomberfish for making a cool 
 ## Terraria
 
 Without knowing much about C# in general we figured a good place to start was setting up a development environment for modding. In theory, all we needed to do was decompile the game, change the target to webassembly, and then recompile it.
+
+## Setting up a project
+
 Running `ilspycmd` on Terraria.exe failed to decompile at first because it depended on a `ReLogic.dll` dependency that couldn't be found. It turned out that the library dll was actually embedded inside the game binary and had to be [extracted manually]
 
 After putting `ReLogic.dll` into the library path, decompilation succeeded, and after removing the platform specific code for windows and adding back the assembly references for dependencies, the project recompiles and launches on linux.
 
 Now that we knew the decompilation was good, I created a project file for the new code targetting WASM and configuring emscripten.
 
-```
+```xml
 <Project Sdk="Microsoft.NET.Sdk.WebAssembly">
 <PropertyGroup>
 		<StartupObject>Program</StartupObject>
@@ -39,7 +42,8 @@ Now that we knew the decompilation was good, I created a project file for the ne
 Somewhat surprisingly, all of the project code compiles without issue, but FNA is partially written in c++ and needs to be linked against its native components. The web target isn't officially supported by FNA, but its native components compile without issue under emscripten's opengl emulation layer. Fortunately, [FNA-WASM-BUILD]() does this for us
 
 The archive files from the build system can be added with `<NativeFileReference>` and then will automatically get linked together with the rest of the runtime during emscripten compilation.
-```
+
+```xml
 <!-- FNA -->
 <NativeFileReference Include="SDL3.a" />
 <NativeFileReference Include="FNA3D.a" />
@@ -47,7 +51,12 @@ The archive files from the build system can be added with `<NativeFileReference>
 <NativeFileReference Include="FAudio.a" />
 ```
 
-Now we have to get the game assets into the emscripten environment. Since we compiled with -sWASMFS, this part is pretty easy, since it uses the browser's [Origin Private File System](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system) for the site, and we can simply ask the user to select their game directory with `window.showDirectoryPicker()`, then copy the files into the site.
+Now, it fully builds and generates web output, and we can try and get the game running.
+
+## Running the game
+Everything now compiles, but for the game to actually launch we have to get the game assets into the emscripten environment. Since we compiled with -sWASMFS, this part is pretty easy, since it uses the browser's [Origin Private File System](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system) for the site, and we can simply ask the user to select their game directory with `window.showDirectoryPicker()`, then copy the files into the site.
+
+image here
 
 After a [quick patch to FNA](https://github.com/MercuryWorkshop/terraria-wasm/blob/master/FNA.patch) to resolve a generics issue, the game launched.
 
@@ -61,6 +70,8 @@ In threaded mode, *all* code runs inside web workers, not just the secondary thr
 
 Since FNA intializes in the worker, it can't find the canvas on the DOM thread. This is solved by the browser's `OffscreenCanvas` API, but we were still working with SDL2, which didn't support it, and FNA didn't work with SDL3 at the time we wrote this.
 
+## FNA Proxy
+If we couldn't run the game on the main thread, and we couldn't transfer the canvas over to the worker, the only option left was to proxy the OpenGL calls to the main thread.
 
 We wrote a [fish script](https://github.com/r58Playz/FNA-WASM-Build/blob/b05cbc703753c917499bf955091f62c3b845ba8f/wrap_fna.fish) that would automatically parse every single method from FNA3D's exported symbols (FNA's native C component), and automatically compile and export a wrapper method method that would use `emscripten_proxy_sync` to proxy the call from `dotnet-worker-001` to the DOM thread.
 
