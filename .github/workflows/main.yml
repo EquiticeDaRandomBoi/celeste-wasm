@@ -2,6 +2,9 @@ name: Build
 
 on: 
   workflow_dispatch:
+  push:
+    branches:
+      - threads-v2
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -48,4 +51,21 @@ jobs:
           name: webleste-loader
           path: frontend/dist/
           compression-level: 6
+  deployr58:
+    name: Deploy to celeste-threads.r58playz.dev
+    runs-on: ubuntu-latest
+    needs: build
 
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: webleste-loader
+          path: dist/
+      - name: Publish
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: celeste-wasm-threads
+          directory: dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

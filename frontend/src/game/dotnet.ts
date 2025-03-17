@@ -389,7 +389,7 @@ export async function play() {
 	console.debug("Init...");
 	const before = performance.now();
 
-	if (!await exports.CelesteLoader.Init()) throw new Error("CelesteLoader.Init() Failed!");
+	await exports.CelesteLoader.Init();
 
 	// run some frames for seamless transition
 	for (let i = 0; i < SEAMLESSCOUNT; i++) {
