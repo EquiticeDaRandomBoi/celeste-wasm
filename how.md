@@ -120,24 +120,31 @@ Ensuring that all the native calls to SDL went through the DOM thread instead of
 
 Okay. That was a lot. Does it work?
 
+deadlock thanks to pthreadpoolsize
 
+add the first screenshot of it working (with the star reactions) 
 
+# celeste
 
 (fmod is not open source, have to open archive)
 
 
 at first we just committed the entire source code into a private repository
 
-# celeste
+initial release, st mode?
+
+r58 redid the whole thing for high seas using the newly released net9
 
  \-sWASMFS  
 Celeste is also FNA, so we went through the same process
 
 This time FNA needed to be patched
 
-However, by this time SDL3 was stable so we didn’t need the proxy hack
+we patched w/proxies at first but sdl3 released right as we were dealing with deadlocks
 
-And now we have a proper system for applying patches too
+so we gave up the patch system and switched to sdl3 and some emscripten hacks
+
+And now we have a proper system for applying patches too, monomod.patcher (move section here?)
 
 Celeste is great but what about everest?  
 A mod loader is generally built around two components, a patched version of the game that provides an api, and a method of loading code at runtime and modifying behavior
@@ -178,6 +185,112 @@ This works because all functions run through the coreclr jit and  have correspon
 However, Mono WASM does not work this way. It runs in mostly interpreted mode with a limited “jit-traces” engine called the jiterpreter, meaning not every method will have corresponding native code, and even if it did \- WebAssembly modules are read only, you can add new code at runtime, but you can’t just hot patch existing code to mess with the internal state. WebAssembly is AOT compiled to native code on module instantiation
 
 Instead we have to do a fully managed detour instead of a native one
+
+monomod runtimedetour compiles fine, doesn't run: "OS kind Unknown not supported"
+
+after adding runtime detection for emscripten and using linux detour factory, attempts to detour but doesn't actually do anything
+
+adding il to the fn pointer makes mono freak out, turns out the ptr is actually a struct called `InterpMethod` that has all the wasm metadata
+
+if we bruteforce search for the il and modify it the interp uses it
+
+searching through the code, `mono_method_get_header_internal` is what was needed, has a pointer to the il code
+
+later we found out this leaks memory
+
+we tried using this to "swizzle" functions for detours but eventually didn't get far
+breaks when it crosses a boundary / return to js
+
+we found https://phrack.org/issues/70/6 which is basically what we needed!
+
+so we decided to focus on using ilbytes to detour with this plan :
+
+in the patch il:
+insert an ldarg for each argument in the original method
+calli a dyn method that's generated at hook creation (sys.reflection.emit) with the exact same signature as the original method
+ret
+
+in the dyn method:
+ldarg every argument into an array, load the correct this value
+restore the original IL and invalidate the original method
+call the hook function with the array, the this value, and a delegate for the original method
+
+we were having issues with mono asserting when calling the func, invalid metadata token
+
+set func type to wrapper and wrapper type to other and then set wrapper data to ptr to a signature
+
+this gave us a working detour system!! however we later find out that it is ST + interp only so not that useful
+
+as with Everything C, it had memory corruption that we found out when trying to clean up code
+
+we tried to make our own monomod.core but it was weird and not stable
+
+instead we replaced the detour provider because everything was interfaces (rare oop win?)
+
+we faced more issues with the weird hacky detours but we were eventually able to get a basic poc of monomod on wasm
+https://github.com/r58Playz/MonoMod/commit/b354a4ca7398f89f9f9f6f97f3fb8c4a16509c4b
+
+
+now it was time to deal with mt, functions weren't getting detoured properly in mt 
+
+we needed to repatch to make the fn a wrapper on all threads because they have their own monoimage
+
+instead we just decided to patch the runtime, we knew how to replace it because of the debugging we had to do
+
+```
+diff --git a/src/mono/mono/mini/interp/transform.c b/src/mono/mono/mini/interp/transform.c
+index 4b1865b83..58ebf36a4 100644
+--- a/src/mono/mono/mini/interp/transform.c
++++ b/src/mono/mono/mini/interp/transform.c
+@@ -3489,7 +3489,9 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
+ 	if (target_method == NULL) {
+ 		if (calli) {
+ 			CHECK_STACK_RET(td, 1, FALSE);
+-			if (method->wrapper_type != MONO_WRAPPER_NONE)
++			if (token == 0xF0F0F0F0)
++				csignature = method->signature;
++			else if (method->wrapper_type != MONO_WRAPPER_NONE)
+ 				csignature = (MonoMethodSignature *)mono_method_get_wrapper_data (method, token);
+ 			else {
+ 				csignature = mono_metadata_parse_signature_checked (image, token, error);
+```
+
+
+## hot reloading (move this?)
+
+procedurline tries to hook a function that is way too tiny for our jump patch and crashes
+
+we need to completely rethink the way we replace il
+
+turns out mono already has a way to replace fns, hot reloading (used for debugging/fast dev cycles)
+
+we lucked out, this is a "mono component" meaning we can completely replace it at link time with our own impl
+
+it uses a g_hash_table to store ptrs to detoured code and look them up when mono wants to run a method
+
+we just add a fn to the table and then tell mono to recompile the same way we did earlier
+
+this doesn't work on runtime generated fns 
+
+having a tiny runtime generated fn is pretty rare so it's an edge case we don't care about
+
+replaced the detour system again with more oop interfaces to allow multiple "il detour backends"
+
+this lets us use hot reload whenever possible and fall back to the old overwrite
+
+## monomod.patcher (move?)
+
+monomod.patcher works perfectly on wasm, we just need to expose copies of the dlls to the c# so it can read and relink with it
+
+our first solution was using wasmfs fetch files and a service worker (dllsw) to redirect dlls to the "cachebusted" hash versions that dotnet uses
+
+this sucked. really sucked. a ton. too many bugs to count.
+
+instead we just decided to fetch the mappings once in the page and then use symlinks to redirect the dlls (should have done this first)
+
+this was slow. and deadlocky. and didn't work on chromebooks because deadlock.
+
+so we redid it to mount fetch backend once (turns out it makes a worker per fetch backend. obviously it's gonna deadlock at least once in like 30 files) 
 
 # Everest
 
@@ -228,3 +341,13 @@ This is an error during code generation, so it’s something that would have als
 Hey you know what time it is. Let’s clone mono again and start recompiling with some new debug prints  
 \[machelpers.cs\]  
 Awesome. Fuck mac. Lets delete that file
+
+# net10
+net10 preview 1 just released with threads and jiterpereter support, it probably improves perf for celeste wasm
+
+easy port to net 10, even monomod works perfectly after updating runtime patches
+
+perf improves a lot while loading, but regressions prevent sj from loading
+
+
+... present day ..
