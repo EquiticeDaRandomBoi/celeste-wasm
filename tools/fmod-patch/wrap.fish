@@ -1,6 +1,6 @@
-set FUNCS $(grep -r 'F_API' headers | grep -v '#define' | string split ':' -f 2 | tr -s " " | sed -e 's/;//' -e 's/ (/(/' -e 's/ $//')
+set FUNCS $(grep -r 'F_API' $argv[1] | grep -v '#define' | string split ':' -f 2 | tr -s " " | sed -e 's/;//' -e 's/ (/(/' -e 's/ $//')
 
-for header in headers/*.h
+for header in $argv[1]/*.h
 	echo "#include \"$header\""
 end
 echo "#include <emscripten/proxying.h>"
