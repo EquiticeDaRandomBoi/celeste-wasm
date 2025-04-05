@@ -161,9 +161,7 @@ We also wanted to get Celeste working, since the person who shared the initial s
 
 Celeste is also written in FNA, so we went through more or less the same process that we took to get Terraria compiled.
 
-At this point, the SDL3 tooling was stable enough for us to upgrade, giving us access to `OffscreenCanvas`, so we would no longer need the proxy hack.
-
-Since nothing is ever *that* simple, we still needed to [patch emscripten](https://github.com/MercuryWorkshop/celeste-wasm/blob/threads-v2/Makefile#L52) to work around some bugs. nothing is ever without jank :)
+At this point, the SDL3 tooling was stable enough for us to upgrade, giving us access to `OffscreenCanvas`, so we would no longer need the proxy hack. Naturally, we still needed to [patch emscripten](https://github.com/MercuryWorkshop/celeste-wasm/blob/threads-v2/Makefile#L52) to work around some bugs. nothing is ever without jank :)
 
 We had another dependency issue though: Celeste uses the proprietary [FMOD](https://www.fmod.com) library for game audio instead of FAudio like Terraria.
 
@@ -205,7 +203,7 @@ Oversimplifying a little, the process MonoMod uses to hook into functions on des
 - Copy the original method’s IL bytecode into a new controlled method with modifications  
 - Call MethodBase.GetFunctionPointer() or "thunk" the runtime to retrieve pointers to the executable regions in memory that the jit code is held in  
 - Ask the OS kernel to disable write protection on the pages of memory where the jitted code is  
-- [Writes the bytes for a long jmp](https://github.com/MonoMod/MonoMod/blob/reorganize/src/MonoMod.Core/Platforms/Architectures/x86\_64Arch.cs\#L266  ) (`0xFF 0x25 + pointer`) into the start of the function to redirect the control flow back into MonoMod.  
+- [Write the bytes for a long jmp](https://github.com/MonoMod/MonoMod/blob/reorganize/src/MonoMod.Core/Platforms/Architectures/x86_64Arch.cs#L266  ) (`0xFF 0x25 + pointer`) into the start of the function to redirect the control flow back into MonoMod.  
 - Force the JIT code for the new modified method to generate and move the control flow there.
 
 This works because on desktop, all functions run through the CoreCLR JIT before they're executed, so all functions are guaranteed to have corresponding native code regions before they're even executed.
@@ -214,17 +212,21 @@ However, Mono WASM does not work this way. It runs in mostly interpreted mode wi
 
 And even if it did - WebAssembly modules are *read only*, you can add new code at runtime, but you can’t just hot patch existing code to mess with the internal state. WebAssembly is AOT compiled to native code on module instantiation, so it would be infeasible to allow runtime modification while keeping internal guarantees.
 
-Instead we have to do a fully managed detour instead of a native one
+So instead of creating a detour by modifying raw assembly, what if we just disabled the jiterpreter and modified the IL bytecode? Since it's all interpreted on the fly, we should just be able to mess with the instructions loaded into memory.
 
-monomod runtimedetour compiles fine, doesn't run: "OS kind Unknown not supported"
+To check the feasibility, I ran a simple test: run `MethodBase.GetILAsByteArray()`, then brute force search for those bytes in the webassembly memory and replace them with a bytecode NOP (`0x00 0x2A`)
 
-after adding runtime detection for emscripten and using linux detour factory, attempts to detour but doesn't actually do anything
+image
 
-adding il to the fn pointer makes mono freak out, turns out the ptr is actually a struct called `InterpMethod` that has all the wasm metadata
+Now if we could just find the bytecode pointer programmatically...
 
-if we bruteforce search for the il and modify it the interp uses it
+There was the address from `MethodBase.GetFunctionPointer()`, but it wasn't anywhere near the code address, and it definitely wasn't a native code region like on desktop. Eventually we realized that it was a pointer to the mono runtime's [internal `InterpMethod` struct](https://github.com/dotnet/runtime/blob/a2e1d21bb4faf914363968b812c990329ba92d8e/src/mono/mono/mini/interp/interp-internals.h#L121).
 
-searching through the code, `mono_method_get_header_internal` is what was needed, has a pointer to the il code
+Since it would be easier to work with the structs in c, we added a new c file to the project with `<NativeFileReference>` and copied in the mono headers. Sure enough, when we passed in the address from GetFunctionPointer, we could read `ptr->method->name` and extract metadata from the function. Even with this though, we couldn't find the actual code pointer, as it was in a hash table that we didn't have the pointer to.
+
+Suddenly, r58playz noticed something really cool: since everything was eventually compiling to a single `.wasm` file, the c program that we had just created was linked in the same step as the mono runtime itself. This meant that we could access any internal mono function or object just by name. We were more or less executing code inside the runtime itself.
+
+With our new ability to call any internal function, we found `mono_method_get_header_internal`, and calling it with the pointer we found earlier finally allowed us to get to the code region.
 
 later we found out this leaks memory
 
