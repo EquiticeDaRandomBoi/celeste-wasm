@@ -8,7 +8,7 @@ import { epoxyFetch, EpxTcpWs, EpxWs, getWispUrl } from "../epoxy";
 import { steamState } from "../steam";
 
 export type Log = { color: string, log: string };
-export const TIMEBUF_SIZE = 10;
+export const TIMEBUF_SIZE = 60;
 export const gameState: Stateful<{
 	ready: boolean,
 	initting: boolean,
@@ -352,7 +352,7 @@ export async function preInit() {
 	gameState.ready = true;
 };
 
-export async function PatchCeleste() {
+export async function PatchCeleste(installEverest: boolean) {
 	try {
 		await (await (await rootFolder.getDirectoryHandle("Celeste")).getDirectoryHandle("Everest")).getFileHandle("Celeste.Mod.mm.dll", { create: false });
 	} catch {
@@ -364,7 +364,7 @@ export async function PatchCeleste() {
 		await exports.Patcher.ExtractEverest();
 	}
 
-	await exports.Patcher.PatchCeleste();
+	await exports.Patcher.PatchCeleste(installEverest);
 }
 
 export async function initSteam(username: string | null, password: string | null, qr: boolean) {

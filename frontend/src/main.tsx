@@ -60,7 +60,7 @@ export const Logo: Component<{}, {}> = function() {
 const TopBar: Component<{
 	canvas: HTMLCanvasElement,
 	fsOpen: boolean,
-	showLog: boolean,
+	showLog: number,
 	steamOpen: boolean,
 	achievementsOpen: boolean,
 	modInstallerOpen: boolean,
@@ -132,11 +132,7 @@ const TopBar: Component<{
 				<Button
 					icon="full" type="normal" disabled={false}
 					on:click={() => {
-						if (this.showLog) {
-							this.showLog = false;
-						} else {
-							this.showLog = true;
-						}
+						this.showLog = -this.showLog;
 					}}>
 					<Icon icon={iconTerminal} />
 				</Button>
@@ -188,7 +184,6 @@ export const Main: Component<{}, {
 			flex-direction: column;
 
 			width: 100%;
-			height: 25em;
 			padding: 0 0.5em 0.5em 0.5em;
 
 			background: var(--bg-sub);
@@ -204,10 +199,18 @@ export const Main: Component<{}, {
 		.main h2 {
 			margin: 0;
 		}
+
+		.expand { flex: 1; }
 	`;
 
 	this.fsOpen = false;
 	this.achievementsOpen = false;
+
+	this.mount = () => {
+		useChange([store.logs], x => {
+			this.logcontainer.style.height = `${x}px`;
+		});
+	}
 
 	return (
 		<div>
@@ -222,18 +225,22 @@ export const Main: Component<{}, {
 			<div class="game">
 				<GameView bind:canvas={use(this.canvas)} />
 			</div>
-			{$if(use(store.logs), /* @ts-expect-error */
+			<div class="expand" />
+			{$if(use(store.logs, x => x > 0), /* @ts-expect-error */
 				<>
 					<div class="resizer"
 						on:mousedown={(e: MouseEvent) => {
 							const startY = e.clientY;
 							const startHeight = this.logcontainer.clientHeight;
+							let height: number;
 							const onMouseMove = (e: MouseEvent) => {
-								this.logcontainer.style.height = `${startHeight + startY - e.clientY}px`;
+								height = startHeight + startY - e.clientY;
+								this.logcontainer.style.height = `${height}px`;
 							}
 							const onMouseUp = () => {
 								document.removeEventListener("mousemove", onMouseMove);
 								document.removeEventListener("mouseup", onMouseUp);
+								store.logs = height;
 							}
 							document.addEventListener("mousemove", onMouseMove);
 							document.addEventListener("mouseup", onMouseUp);
