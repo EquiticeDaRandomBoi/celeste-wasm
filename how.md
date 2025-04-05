@@ -10,15 +10,27 @@ Starting with .NET 5, Microsoft released Blazor in an attempt to take over the f
 
 thanks r58 for figuring most of this stuff out and bomberfish for making a cool ui
 
-## Terraria
+# Terraria
 
 Without knowing much about C# in general we figured a good place to start was setting up a development environment for modding. In theory, all we needed to do was decompile the game, change the target to webassembly, and then recompile it.
 
 ## Setting up a project
 
-Running `ilspycmd` on Terraria.exe failed to decompile at first because it depended on a `ReLogic.dll` dependency that couldn't be found. It turned out that the library dll was actually embedded inside the game binary and had to be [extracted manually]
+Running `ilspycmd` on Terraria.exe, decompilation *failed* because of a missing `ReLogic.dll`. It turned out that the library was actually embedded into the game itself as a resource.
 
-After putting `ReLogic.dll` into the library path, decompilation succeeded, and after removing the platform specific code for windows and adding back the assembly references for dependencies, the project recompiles and launches on linux.
+That's.. odd, but we can extract it from the binary pretty easily. Easiest way is just to create a new c# project and dynamically load in the assembly..
+
+```cs
+Assembly assembly = Assembly.LoadFile("Terraria.exe");
+```
+And then since all the terraria code is loaded, we can just extract it the same way the game does!
+```cs
+Stream? stream = assembly.GetManifestResourceStream("Terraria.Libraries.NET.ReLogic.dll");
+FileStream outstream = File.OpenWrite("ReLogic.dll");
+stream.CopyTo(outstream);
+```
+
+After putting `ReLogic.dll` into the library path, decompilation succeeded, and after installing all the dependencies Terraria uses, the project recompiles and launches on linux.
 
 Now that we knew the decompilation was good, I created a project file for the new code targetting WASM and configuring emscripten.
 
@@ -39,7 +51,7 @@ Now that we knew the decompilation was good, I created a project file for the ne
 </Project>
 ```
 
-Somewhat surprisingly, all of the project code compiles without issue, but FNA is partially written in c++ and needs to be linked against its native components. The web target isn't officially supported by FNA, but its native components compile without issue under emscripten's opengl emulation layer. Fortunately, [FNA-WASM-BUILD]() does this for us
+Somewhat surprisingly, all of the project code compiles without issue, but the FNA engine is partially written in c++ and needs to be linked against its native components. The web target isn't officially supported by FNA, but its native components compile without issue under emscripten's opengl emulation layer. This process is automated by [FNA-WASM-BUILD](https://github.com/r58Playz/FNA-WASM-Build).
 
 The archive files from the build system can be added with `<NativeFileReference>` and then will automatically get linked together with the rest of the runtime during emscripten compilation.
 
@@ -54,7 +66,7 @@ The archive files from the build system can be added with `<NativeFileReference>
 Now, it fully builds and generates web output, and we can try and get the game running.
 
 ## Running the game
-Everything now compiles, but for the game to actually launch we have to get the game assets into the emscripten environment. Since we compiled with -sWASMFS, this part is pretty easy, since it uses the browser's [Origin Private File System](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system) for the site, and we can simply ask the user to select their game directory with `window.showDirectoryPicker()`, then copy the files into the site.
+Everything now compiles, but for the game to actually launch we have to get the game assets into the environment. Since everything goes through emscripten's filesystem emulation, this part is pretty easy, since it uses the browser's [Origin Private File System](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system) for the site, and we can simply ask the user to select their game directory with `window.showDirectoryPicker()`, then mount it in the emscripten filesystem.
 
 image here
 
@@ -64,22 +76,36 @@ image of relogic logo
 
 After trying to enter a world though, the game immediately crashes after trying to create a new thread, which was not supported in .NET 8.0 wasm.
 
-We knew that they would be supported in the next version, so we waited about a month for NET 9.0 to get a stable release before continuing. Once it was packaged, we added the `<WasmEnableThreads>true</WasmEnableThreads>` option to the project and recompiled, but FNA failed to initialize.
+We knew that they would be supported in the next version, so we waited about a month for NET 9.0 to get a stable release before continuing. Once it was packaged, we added the `<WasmEnableThreads>true</WasmEnableThreads>` option to the project and recompiled.
 
-In threaded mode, *all* code runs inside web workers, not just the secondary threads. What would usually be called the "main" thread is running on `dotnet-worker-001`, referred to as the "deputy thread".
+This time though, FNA failed to initialize.
 
-Since FNA intializes in the worker, it can't find the canvas on the DOM thread. This is solved by the browser's `OffscreenCanvas` API, but we were still working with SDL2, which didn't support it, and FNA didn't work with SDL3 at the time we wrote this.
+It turns out that in NET threaded mode, *all* code runs inside web workers, not just the secondary threads. What would usually be called the "main" thread is actually running on `dotnet-worker-001`, referred to as the "deputy thread".
+
+This is an issue since FNA is solely in the worker, and the `<canvas>` can only be accessed on the DOM thread. This is solved by the browser's `OffscreenCanvas` API, but we were still working with SDL2, which didn't support it, and FNA didn't work with SDL3 at the time we wrote this.
 
 ## FNA Proxy
 If we couldn't run the game on the main thread, and we couldn't transfer the canvas over to the worker, the only option left was to proxy the OpenGL calls to the main thread.
 
 We wrote a [fish script](https://github.com/r58Playz/FNA-WASM-Build/blob/b05cbc703753c917499bf955091f62c3b845ba8f/wrap_fna.fish) that would automatically parse every single method from FNA3D's exported symbols (FNA's native C component), and automatically compile and export a wrapper method method that would use `emscripten_proxy_sync` to proxy the call from `dotnet-worker-001` to the DOM thread.
 
-For example,  `FNA3D_Device* FNA3D_CreateDevice(FNA3D_PresentationParameters *presentationParameters,uint8_t debugMode);`
+Let's look at the native method `FNA3D_Device* FNA3D_CreateDevice(FNA3D_PresentationParameters *presentationParameters,uint8_t debugMode);`, the first one that gets called
 
 The script automatically generates a C file containing the wrapper method, `WRAP_FNA3D_CreateDevice`
 
 ```c
+typedef struct {
+	FNA3D_PresentationParameters *presentationParameters;
+	uint8_t debugMode;
+	FNA3D_Device* *WRAP_RET;
+} WRAP__struct_FNA3D_CreateDevice;
+void WRAP__MAIN__FNA3D_CreateDevice(void *wrap_struct_ptr) {
+	WRAP__struct_FNA3D_CreateDevice *wrap_struct = (WRAP__struct_FNA3D_CreateDevice*)wrap_struct_ptr;
+	*(wrap_struct->WRAP_RET) = FNA3D_CreateDevice(
+		wrap_struct->presentationParameters,
+		wrap_struct->debugMode
+	);
+}
 FNA3D_Device* WRAP_FNA3D_CreateDevice(FNA3D_PresentationParameters *presentationParameters,uint8_t debugMode)
 {
 	// $func: `FNA3D_Device* FNA3D_CreateDevice(FNA3D_PresentationParameters *presentationParameters,uint8_t debugMode)`
@@ -120,31 +146,38 @@ Ensuring that all the native calls to SDL went through the DOM thread instead of
 
 Okay. That was a lot. Does it work?
 
+uh.. okay. sure. i guess i'll just implement crypto myself.
 
+Now does it work?
 
-
-(fmod is not open source, have to open archive)
 
 
 at first we just committed the entire source code into a private repository
 
 # celeste
+We also wanted to get Celeste working, since the person who shared the initial snippet had never released their work publicly. We thought that we could get it running, and maybe also get the Everest mod loader running with the game.
 
- \-sWASMFS  
-Celeste is also FNA, so we went through the same process
+Celeste is also written in FNA, so we went through more or less the same process that we took to get Terraria compiled.
 
-This time FNA needed to be patched
+At this point, the SDL3 tooling was stable enough for us to upgrade, giving us access to `OffscreenCanvas`, so we would no longer need the proxy hack.
 
-However, by this time SDL3 was stable so we didn’t need the proxy hack
+We had another dependency issue though: Celeste uses [FMOD]() for audio instead of FAudio like Terraria.
+
+FMOD *does* provide emscripten builds, distributed as archive files, but as luck would have it- it also didn't like being run in a worker. We could use the wrap script again, but it isn't open source, so we couldn't just recompile it like we did for FNA. But, since we weren't modifying the native code itself, we could just extract the `.o` files from the FMOD build, and insert the codegenned c compiled as an object.
+
+After a couple of patches that aren't worth mentioning here:
+
+image
 
 And now we have a proper system for applying patches too
 
-Celeste is great but what about everest?  
+Okay cool. Now Everest. I wanna play the [strawberry jam](https://gamebanana.com/mods/424541) mod on my chromebook.
+
 A mod loader is generally built around two components, a patched version of the game that provides an api, and a method of loading code at runtime and modifying behavior
 
-Both are provided by MonoMod, an instrumentation framework
+Both are provided by MonoMod, an instrumentation framework for c# specifically built for game modding. 
 
-the patcher part modifies the game on disk, so no problem there. but the runtime modifications use RuntimeDetour, which is very not supported on webassembly 
+the patcher part modifies the game on disk, so no problem there. but the runtime modifications use a module called `RuntimeDetour`, which is very not supported on WebAssembly.
 
 I’ll explain how we ported it to NET's WASM SDK, but first it will help to take a little detour (haha) into the history of .NET Core
 
@@ -156,26 +189,26 @@ Microsoft [bought out Xamarin](https://blogs.microsoft.com/blog/2016/02/24/micro
 
 This left the original mono project to fall behind, and eventually was left up to the wine project to maintain, leaving it as yet another example of Microsoft's [Embrace, Extend, Extingish](https://en.wikipedia.org/wiki/Embrace,_extend,_and_extinguish) strategy.
 
-What does this mean for us? The browser runtime is actually just regular Mono inside emscripten with bits of .NET Core merged in, whereas outside of the browser, code runs on the new CoreCLR runtime. With Ahead-Of-Time Compilation disabled, it's running in full interpreted mode, reading IL on the fly.
+What does this mean for us? Microsoft's browser NET runtime is actually just regular Mono compiled to emscripten, with bits of .NET Core merged in. Outside of the browser though, Mono isn't used at all, since code runs on the new CoreCLR runtime.
 
-# MonoMod
+# MonoMod.RuntimeDetour
+Everest mods use this
 
-The module works with Function Detouring, a term usually associated game cheating
+Internally, it's powered by function detouring, a common tool for game modding/cheating. Typically though, it's associated with unmanaged languages like c/c++. It works a little differently in a language like c#.
 
-CoreCLR has a JIT engine that compiles every function to native machine code before function execution
+Oversimplifying a little, the process MonoMod uses to hook into functions on desktop is:
 
-Oversimplifying a little, MonoMod on desktop hooks into functions by:
+- Copy the original method’s IL bytecode into a new controlled method with modifications  
+- Call MethodBase.GetFunctionPointer() or "thunk" the runtime to retrieve pointers to the executable regions in memory that the jit code is held in  
+- Ask the OS kernel to disable write protection on the pages of memory where the jitted code is  
+- [Writes the bytes for a long jmp](https://github.com/MonoMod/MonoMod/blob/reorganize/src/MonoMod.Core/Platforms/Architectures/x86\_64Arch.cs\#L266  ) (`0xFF 0x25 + pointer`) into the start of the function to redirect the control flow back into MonoMod.  
+- Force the JIT code for the new modified method to generate and move the control flow there.
 
-- Copy the original method’s bytecode into a new controlled method with modifications  
-- Call MethodBase.GetFunctionPointer() or thunk the runtime to retrieve pointers to the executable regions in memory that the jit code is held in  
-- Ask the kernel to disable write protection on the pages of memory where the jitted code is  
-- Writes the bytes for a long jmp (`0xFF 0x25 + pointer`) into the start of the function to redirect the control flow back into MonoMod.  
-- Force the JIT code for the new modified method to generate and move the control flow there
+This works because on desktop, all functions run through the CoreCLR JIT before they're executed, so all functions are guaranteed to have corresponding native code regions before they're even executed.
 
-https://github.com/MonoMod/MonoMod/blob/reorganize/src/MonoMod.Core/Platforms/Architectures/x86\_64Arch.cs\#L266  
-This works because all functions run through the coreclr jit and  have corresponding native code regions
+However, Mono WASM does not work this way. It runs in mostly interpreted mode with a limited “jit-traces” engine called the "jiterpreter", meaning not every method will have corresponding native code.
 
-However, Mono WASM does not work this way. It runs in mostly interpreted mode with a limited “jit-traces” engine called the jiterpreter, meaning not every method will have corresponding native code, and even if it did \- WebAssembly modules are read only, you can add new code at runtime, but you can’t just hot patch existing code to mess with the internal state. WebAssembly is AOT compiled to native code on module instantiation
+And even if it did - WebAssembly modules are *read only*, you can add new code at runtime, but you can’t just hot patch existing code to mess with the internal state. WebAssembly is AOT compiled to native code on module instantiation, so it would be infeasible to allow runtime modification while keeping internal guarantees.
 
 Instead we have to do a fully managed detour instead of a native one
 
