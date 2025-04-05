@@ -1,6 +1,6 @@
 # Porting Terraria and Celeste to WebAssembly
 
-I’ve always been interested in weird things running in the browser, so when I saw an old post of someone running a half working copy of the game Celeste in the browser, I knew I had to try and recreate it myself.
+I've always been interested in weird things running in the browser, so when I saw an old post of someone running a half working copy of the game Celeste in the browser, I knew I had to try and recreate it myself.
 
 Both Celeste and Terraria were written using XNA, a proprietary low level C# game "engine" developed and subsequently abandoned by Microsoft. It was eventually replaced with the community maintained FNA library, including a SDL backend and greater platform support.
 
@@ -89,7 +89,7 @@ If we couldn't run the game on the main thread, and we couldn't transfer the can
 
 We wrote a [fish script](https://github.com/r58Playz/FNA-WASM-Build/blob/b05cbc703753c917499bf955091f62c3b845ba8f/wrap_fna.fish) that would automatically parse every single method from FNA3D's exported symbols (FNA's native C component), and automatically compile and export a wrapper method method that would use `emscripten_proxy_sync` to proxy the call from `dotnet-worker-001` to the DOM thread.
 
-Let's look at the native method `FNA3D_Device* FNA3D_CreateDevice(FNA3D_PresentationParameters *presentationParameters,uint8_t debugMode);`, the first one that gets called
+Let's look at the native method `FNA3D_Device* FNA3D_CreateDevice(FNA3D_PresentationParameters *presentationParameters,uint8_t debugMode);`, the first one that gets called in any program
 
 The script automatically generates a C file containing the wrapper method, `WRAP_FNA3D_CreateDevice`
 
@@ -181,7 +181,7 @@ Both are provided by MonoMod, an instrumentation framework for c# specifically b
 
 the patcher part modifies the game on disk, so no problem there. but the runtime modifications use a module called `RuntimeDetour`, which is very not supported on WebAssembly.
 
-I’ll explain how we ported it to NET's WASM SDK, but first it will help to take a little detour (haha) into the history of .NET Core
+I'll explain how we ported it to NET's WASM SDK, but first it will help to take a little detour (haha) into the history of .NET Core
 
 # netcore
 
@@ -200,7 +200,7 @@ Internally, it's powered by function detouring, a common tool for game modding/c
 
 Oversimplifying a little, the process MonoMod uses to hook into functions on desktop is:
 
-- Copy the original method’s IL bytecode into a new controlled method with modifications  
+- Copy the original method's IL bytecode into a new controlled method with modifications  
 - Call MethodBase.GetFunctionPointer() or "thunk" the runtime to retrieve pointers to the executable regions in memory that the jit code is held in  
 - Ask the OS kernel to disable write protection on the pages of memory where the jitted code is  
 - [Write the bytes for a long jmp](https://github.com/MonoMod/MonoMod/blob/reorganize/src/MonoMod.Core/Platforms/Architectures/x86_64Arch.cs#L266  ) (`0xFF 0x25 + pointer`) into the start of the function to redirect the control flow back into MonoMod.  
@@ -210,7 +210,7 @@ This works because on desktop, all functions run through the CoreCLR JIT before 
 
 However, Mono WASM does not work this way. It runs in mostly interpreted mode with a limited “jit-traces” engine called the "jiterpreter", meaning not every method will have corresponding native code.
 
-And even if it did - WebAssembly modules are *read only*, you can add new code at runtime, but you can’t just hot patch existing code to mess with the internal state. WebAssembly is AOT compiled to native code on module instantiation, so it would be infeasible to allow runtime modification while keeping internal guarantees.
+And even if it did - WebAssembly modules are *read only*, you can add new code at runtime, but you can't just hot patch existing code to mess with the internal state. WebAssembly is AOT compiled to native code on module instantiation, so it would be infeasible to allow runtime modification while keeping internal guarantees.
 
 So instead of creating a detour by modifying raw assembly, what if we just disabled the jiterpreter and modified the IL bytecode? Since it's all interpreted on the fly, we should just be able to mess with the instructions loaded into memory.
 
@@ -220,7 +220,7 @@ image
 
 Now if we could just find the bytecode pointer programmatically...
 
-There was the address from `MethodBase.GetFunctionPointer()`, but it wasn't anywhere near the code address, and it definitely wasn't a native code region like on desktop. Eventually we realized that it was a pointer to the mono runtime's [internal `InterpMethod` struct](https://github.com/dotnet/runtime/blob/a2e1d21bb4faf914363968b812c990329ba92d8e/src/mono/mono/mini/interp/interp-internals.h#L121).
+There was the address from `MethodBase.GetFunctionPointer()`, but it wasn't anywhere near the code, and it definitely wasn't a native code region like on desktop. Eventually we realized that it was a pointer to the mono runtime's [internal `InterpMethod` struct](https://github.com/dotnet/runtime/blob/a2e1d21bb4faf914363968b812c990329ba92d8e/src/mono/mono/mini/interp/interp-internals.h#L121).
 
 Since it would be easier to work with the structs in c, we added a new c file to the project with `<NativeFileReference>` and copied in the mono headers. Sure enough, when we passed in the address from GetFunctionPointer, we could read `ptr->method->name` and extract metadata from the function. Even with this though, we couldn't find the actual code pointer, as it was in a hash table that we didn't have the pointer to.
 
@@ -228,64 +228,53 @@ Suddenly, r58playz noticed something really cool: since everything was eventuall
 
 With our new ability to call any internal function, we found `mono_method_get_header_internal`, and calling it with the pointer we found earlier finally allowed us to get to the code region.
 
-later we found out this leaks memory
+Now we just needed to find out what bytes to inject into the method that would let us override the control flow in a way that's compatible with monomod.
 
-we tried using this to "swizzle" functions for detours but eventually didn't get far
-breaks when it crosses a boundary / return to js
+By looking at the MSIL documentation and [this post](https://phrack.org/issues/70/6) we were eventually able to come up with something that worked:
 
-we found https://phrack.org/issues/70/6 which is basically what we needed!
+- insert one `ldarg.i` (`0xFE 0x0X`) corresponding to each argument in the original method
+- call `System.Reflection.Emit` to generate a new dynamic function with the exact same signature as the original method
+- insert an `ldc.i4` (`0x20 <int32>`) and put in the delegate pointer for the function we just created
+- finally, insert `calli` (`0x29`) to jump to the dynamic method
+- add a return (`0x2A`) to prevent executing the rest of the function 
 
-so we decided to focus on using ilbytes to detour with this plan :
+Once the hooked function is called, it runs our dynamic method, which will:
+- `ldarg` each argument and store it in a temporary array
+- call into our c method, restoring the original IL and invalidating the source method
+- run the mod's hook function and return to monomod
 
-in the patch il:
-insert an ldarg for each argument in the original method
-calli a dyn method that's generated at hook creation (sys.reflection.emit) with the exact same signature as the original method
-ret
+Calling the function would make Mono assert at runtime though. It turns out that we need to load a "metadata token" to determine the method's signature before we run `calli`, and since the dynamic method is technically in a different assembly, it wouldn't be able to resolve it by default.
 
-in the dyn method:
-ldarg every argument into an array, load the correct this value
-restore the original IL and invalidate the original method
-call the hook function with the array, the this value, and a delegate for the original method
+This was a simple fix though, since the dyn method has the same signature as the original one, we just had to clone the parent method's metadata in C and insert it into the internal mono hash table. 
+This gave us a working detour system, but it turned out that last step broke in multithreaded mode, since each thread had it's own struct that needed to be modified.
 
-we were having issues with mono asserting when calling the func, invalid metadata token
+There's probably a bypass for that, but at this point we figured it would just be easier to patch the runtime itself. After all, it's not like we have to worry about a user's individual setup, it's all running on the web.
 
-set func type to wrapper and wrapper type to other and then set wrapper data to ptr to a signature
+Here's a simple patch, it would just clone the caller's signature when it saw our magic token `(0xF0F0F0F0)`, and we wouldn't need to mess with any tables
 
-this gave us a working detour system!! however we later find out that it is ST + interp only so not that useful
-
-as with Everything C, it had memory corruption that we found out when trying to clean up code
-
-we tried to make our own monomod.core but it was weird and not stable
-
-instead we replaced the detour provider because everything was interfaces (rare oop win?)
-
-we faced more issues with the weird hacky detours but we were eventually able to get a basic poc of monomod on wasm
-https://github.com/r58Playz/MonoMod/commit/b354a4ca7398f89f9f9f6f97f3fb8c4a16509c4b
-
-
-now it was time to deal with mt, functions weren't getting detoured properly in mt 
-
-we needed to repatch to make the fn a wrapper on all threads because they have their own monoimage
-
-instead we just decided to patch the runtime, we knew how to replace it because of the debugging we had to do
-
-```
-diff --git a/src/mono/mono/mini/interp/transform.c b/src/mono/mono/mini/interp/transform.c
-index 4b1865b83..58ebf36a4 100644
+```diff
 --- a/src/mono/mono/mini/interp/transform.c
 +++ b/src/mono/mono/mini/interp/transform.c
 @@ -3489,7 +3489,9 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
  	if (target_method == NULL) {
  		if (calli) {
- 			CHECK_STACK_RET(td, 1, FALSE);
 -			if (method->wrapper_type != MONO_WRAPPER_NONE)
 +			if (token == 0xF0F0F0F0)
 +				csignature = method->signature;
 +			else if (method->wrapper_type != MONO_WRAPPER_NONE)
  				csignature = (MonoMethodSignature *)mono_method_get_wrapper_data (method, token);
  			else {
- 				csignature = mono_metadata_parse_signature_checked (image, token, error);
 ```
+
+Then, after recompiling dotnet, we could just put the patched sdk into the NuGet folder and have dotnet build the webassembly with our custom runtime.
+
+Naturally, as with Everything C, we had somehow managed to trigger some memory corruption that the runtime wasn't happy about. But we got everything polished up eventually.
+
+Now that we had a functional detour factory that worked in WebAssembly, we could slot it into MonoMod and start compiling everest.
+
+# Everest
+
+Finally, we could start loading mods at runtime
 
 
 ## hot reloading (move this?)
@@ -322,22 +311,19 @@ instead we just decided to fetch the mappings once in the page and then use syml
 
 this was slow. and deadlocky. and didn't work on chromebooks because deadlock.
 
-so we redid it to mount fetch backend once (turns out it makes a worker per fetch backend. obviously it's gonna deadlock at least once in like 30 files) 
+so we redid it to mount fetch backend once (turns out it makes a worker per fetch backend. obviously it's gonna deadlock at least once in like 30 files)
 
-# Everest
-
-Now that we had a proper way to hook into functions at runtime we could start injecting the everest mod loader into celeste.
+## race to strawberry jam
 
 But years later and no one really uses blazor, so despite a pretty good effort on the parts of the .NET maintainers the web support is best considered a beta. A not-insignificant amount of time was spent working around \[.NET bugs\](https://github.com/dotnet/runtime/issues/112262)
 
-Finally, we could start loading mods at runtime  
 Surprisingly, the rest of the mod compatibility issues were actually just subtle differences between the Mono Runtime and CoreCLR. No one plays Celeste on mono so no one noticed it.
 
 First issue was a mod tripping a mono error during some reflection.
 
-Again, the easiest way to get around this was just to patch the runtime. We’re already running a modified sdk anyway, one more hackfix can’t hurt.
+Again, the easiest way to get around this was just to patch the runtime. We're already running a modified sdk anyway, one more hackfix can't hurt.
 
-FrostHelper won’t load because the class override isn’t valid? Well it is now.
+FrostHelper won't load because the class override isn't valid? Well it is now.
 
 ```
 --- a/src/mono/mono/metadata/class-setup-vtable.c
@@ -368,9 +354,9 @@ The static initializer issue was also just fixed by bypassing a check in the vta
 
 Oh! Thats not good. We kinda need AOT
 
-This is an error during code generation, so it’s something that would have also happened at runtime during interpreted mode if the function was used. So something else is tripping up 
+This is an error during code generation, so it's something that would have also happened at runtime during interpreted mode if the function was used. So something else is tripping up 
 
-Hey you know what time it is. Let’s clone mono again and start recompiling with some new debug prints  
+Hey you know what time it is. Let's clone mono again and start recompiling with some new debug prints  
 \[machelpers.cs\]  
 Awesome. Fuck mac. Lets delete that file
 
