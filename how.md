@@ -151,11 +151,6 @@ uh.. okay. sure. i guess i'll just implement crypto myself.
 Now does it work?
 
 # celeste
-
-
-at first we just committed the entire source code into a private repository
-
-# celeste
 We also wanted to get Celeste working, since the person who shared the initial snippet had never released their work publicly. We thought that we could get it running, and maybe also get the Everest mod loader running with the game.
 
 
@@ -171,7 +166,7 @@ After a couple of patches that aren't worth mentioning here:
 
 image
 
-And now we have a proper system for applying patches too, monomod.patcher (move section here?)
+This time, we used a [proper diff system]
 
 Okay cool. Now Everest. I wanna play the [strawberry jam](https://gamebanana.com/mods/424541) mod on my chromebook.
 
@@ -274,48 +269,84 @@ Now that we had a functional detour factory that worked in WebAssembly, we could
 
 # Everest
 
-Finally, we could start loading mods at runtime
+So far, we've just been porting games by decompiling, editing source, then making a new project with all the celeste code included and recompiling. How is that going to work with everest? It patches the celeste binary's bytecode itself, and we can't just use that as the base for decompilation because the patcher's output can't be translated to normal c#.
 
+What we could do though is load the game binary at runtime, instead of compiling it with the project. The project we compile to wasm would just be a stub loader, and we could load any celeste binary.
+```cs
+Assembly celeste = Assembly.LoadFrom("/libsdl/Celeste.exe");
+var Celeste = celeste.GetType("Celeste.Celeste");
+celeste.GetType("Celeste.RunThread").GetMethod("WaitAll").Invoke(null, []);
+```
+It feels a little weird to be talking about running an *exe file* in the browser, but since it's really just CIL bytecode inside a PE32 container, there's no reason it shouldn't work. And since we have dependencies directly added to the loader project, the runtime will find our web FNA before the real game's desktop FNA, so the game will call our libraries with no need for patching.
 
-## hot reloading (move this?)
+Of course, the game won't work, since we needed patches in a few places to get it to run in the browser without crashing. 
 
-procedurline tries to hook a function that is way too tiny for our jump patch and crashes
+but we just made a whole framework for modifying functions at runtime! we can just use that
 
-we need to completely rethink the way we replace il
+all we need to do now is instantiate a `Hook` for the functions we need to patch, then make our changes
 
-turns out mono already has a way to replace fns, hot reloading (used for debugging/fast dev cycles)
+Here's an example hook, we need to force the window buffer to a specific size after the screen initializes, which we can do by finding `ApplyScreen` on the dynamically loaded assembly and running our code after it
 
-we lucked out, this is a "mono component" meaning we can completely replace it at link time with our own impl
+```cs
+Hook hook = new Hook(Celeste.GetMethod("ApplyScreen"), (Action<object> orig, object self) => {
+	var Engine = celeste.GetType("Monocle.Engine");
+    var Graphics = Engine.GetProperty("Graphics", BindingFlags.Public | BindingFlags.Static);
+	orig(self);
 
-it uses a g_hash_table to store ptrs to detoured code and look them up when mono wants to run a method
+	GraphicsDeviceManager graphics = (GraphicsDeviceManager)Graphics.GetValue(null);
+	if (graphics == null) throw new Exception("Failed to get GraphicsDeviceManager");
 
-we just add a fn to the table and then tell mono to recompile the same way we did earlier
+	graphics.PreferredBackBufferWidth = 1920;
+	graphics.PreferredBackBufferHeight = 1080;
+	graphics.IsFullScreen = false;
+	graphics.ApplyChanges();
+});
+```
 
-this doesn't work on runtime generated fns 
+Now that the loader doesn't care where the code comes from, we can just swap out `Celeste.exe` with the patched version from an everest install. 
 
-having a tiny runtime generated fn is pretty rare so it's an edge case we don't care about
+image
 
-replaced the detour system again with more oop interfaces to allow multiple "il detour backends"
+everest loads but there was one more step in getting mods to run
 
-this lets us use hot reload whenever possible and fall back to the old overwrite
+we couldn't load mods though because we needed monomod
 
-## monomod.patcher (move?)
+wait. what is it patching at runtime for
 
-monomod.patcher works perfectly on wasm, we just need to expose copies of the dlls to the c# so it can read and relink with it
+well that's simple. everest uses monomod to modify the mod's calls to monomod
 
-our first solution was using wasmfs fetch files and a service worker (dllsw) to redirect dlls to the "cachebusted" hash versions that dotnet uses
+monomod.patcher should just work at runtime, it's just the thing that patches il binaries on disk. we needed to load up the dependencies thought
 
-this sucked. really sucked. a ton. too many bugs to count.
+but the deps were all webcil
 
-instead we just decided to fetch the mappings once in the page and then use symlinks to redirect the dlls (should have done this first)
+convert the webcil back to dlls, load them all up to the fs.
 
-this was slow. and deadlocky. and didn't work on chromebooks because deadlock.
+now that mm patcher worked, we converted the Hook patches to aot patches
 
-so we redid it to mount fetch backend once (turns out it makes a worker per fetch backend. obviously it's gonna deadlock at least once in like 30 files)
+we could even install everest all in the browser by downloading the everest dll directly from github and running the patcher again
+
+our patching system went from 
+uploading entire source code to a git repo -> automated diff generation of `.patch` files -> hooking functions with RuntimeDetour -> patching Celeste.exe bytecode in the browser before the game starts
+
+and now we're not hosting any Celeste IP, since all proprietary code gets loaded externally
+
+and now finally, mods and custom maps work
+
+image
+
 
 ## race to strawberry jam
 
-But years later and no one really uses blazor, so despite a pretty good effort on the parts of the .NET maintainers the web support is best considered a beta. A not-insignificant amount of time was spent working around \[.NET bugs\](https://github.com/dotnet/runtime/issues/112262)
+The Strawberry Jam mod uses over 60 individual mods. Most would load fine, but a lot didn't.
+
+we had to get all of them working.
+ 
+
+Here's a fun issue - one of the mods (procedureline) tries to RuntimeDetour a function that's so small that the bytes of our jump patch overflow the code buffer. For cases like these, we found out how to abuse mono's hot reload module to replace function bodies instead of directly modifying the memory.
+
+another one, apparently wasm .NET is just straight up broken in a lot of cases. it makes sense, it's a pretty niche thing. the main use case is the Blazor web framework, and no one really uses it, not even microsoft. here's [another .NET bug](https://github.com/dotnet/runtime/issues/112262) we had to work around
+
+But years later and no one really uses blazor, so despite a pretty good effort on the parts of the .NET maintainers the web support is best considered a beta. A not-insignificant amount of time was spent working around 
 
 Surprisingly, the rest of the mod compatibility issues were actually just subtle differences between the Mono Runtime and CoreCLR. No one plays Celeste on mono so no one noticed it.
 
