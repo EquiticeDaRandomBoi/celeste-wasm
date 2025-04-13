@@ -198,7 +198,7 @@ Oversimplifying a little, the process MonoMod uses to hook into functions on des
 - Copy the original method's IL bytecode into a new controlled method with modifications  
 - Call MethodBase.GetFunctionPointer() or "thunk" the runtime to retrieve pointers to the executable regions in memory that the jit code is held in  
 - Ask the OS kernel to disable write protection on the pages of memory where the jitted code is  
-- [Write the bytes for a long jmp](https://github.com/MonoMod/MonoMod/blob/reorganize/src/MonoMod.Core/Platforms/Architectures/x86_64Arch.cs#L266  ) (`0xFF 0x25 + pointer`) into the start of the function to redirect the control flow back into MonoMod.  
+- Write the bytes for a long jmp (`0xFF 0x25 <pointer>`) into the start of the function to redirect the control flow back into MonoMod.  
 - Force the JIT code for the new modified method to generate and move the control flow there.
 
 This works because on desktop, all functions run through the CoreCLR JIT before they're executed, so all functions are guaranteed to have corresponding native code regions before they're even executed.
@@ -219,7 +219,7 @@ There was the address from `MethodBase.GetFunctionPointer()`, but it wasn't anyw
 
 Since it would be easier to work with the structs in c, we added a new c file to the project with `<NativeFileReference>` and copied in the mono headers. Sure enough, when we passed in the address from GetFunctionPointer, we could read `ptr->method->name` and extract metadata from the function. Even with this though, we couldn't find the actual code pointer, as it was in a hash table that we didn't have the pointer to.
 
-Suddenly, r58playz noticed something really cool: since everything was eventually compiling to a single `.wasm` file, the c program that we had just created was linked in the same step as the mono runtime itself. This meant that we could access any internal mono function or object just by name. We were more or less executing code inside the runtime itself.
+Suddenly, we noticed something really cool: since everything was eventually compiling to a single `.wasm` file, the c program that we had just created was linked in the same step as the mono runtime itself. This meant that we could access any internal mono function or object just by name. We were more or less executing code inside the runtime itself.
 
 With our new ability to call any internal function, we found `mono_method_get_header_internal`, and calling it with the pointer we found earlier finally allowed us to get to the code region.
 
@@ -230,7 +230,7 @@ By looking at the MSIL documentation and [this post](https://phrack.org/issues/7
 - insert one `ldarg.i` (`0xFE 0x0X`) corresponding to each argument in the original method
 - call `System.Reflection.Emit` to generate a new dynamic function with the exact same signature as the original method
 - insert an `ldc.i4` (`0x20 <int32>`) and put in the delegate pointer for the function we just created
-- finally, insert `calli` (`0x29`) to jump to the dynamic method
+- insert `calli` (`0x29`) to jump to the dynamic method
 - add a return (`0x2A`) to prevent executing the rest of the function 
 
 Once the hooked function is called, it runs our dynamic method, which will:
@@ -281,9 +281,7 @@ It feels a little weird to be talking about running an *exe file* in the browser
 
 Of course, the game won't work, since we needed patches in a few places to get it to run in the browser without crashing. 
 
-but we just made a whole framework for modifying functions at runtime! we can just use that
-
-all we need to do now is instantiate a `Hook` for the functions we need to patch, then make our changes
+We just made an entire framework for patching code at runtime though, so we can just use that, we just need to instantiate a `Hook` for the functions we need to patch then make our changes.
 
 Here's an example hook, we need to force the window buffer to a specific size after the screen initializes, which we can do by finding `ApplyScreen` on the dynamically loaded assembly and running our code after it
 
@@ -342,7 +340,7 @@ The Strawberry Jam mod uses over 60 individual mods. Most would load fine, but a
 we had to get all of them working.
  
 
-Here's a fun issue - one of the mods (procedureline) tries to RuntimeDetour a function that's so small that the bytes of our jump patch overflow the code buffer. For cases like these, we found out how to abuse mono's hot reload module to replace function bodies instead of directly modifying the memory.
+Here's a fun issue - one of the mods tries to RuntimeDetour a function that's so small that the bytes of our jump patch overflow the code buffer. For cases like these, we found out how to abuse mono's hot reload module to replace function bodies instead of directly modifying the memory.
 
 another one, apparently wasm .NET is just straight up broken in a lot of cases. it makes sense, it's a pretty niche thing. the main use case is the Blazor web framework, and no one really uses it, not even microsoft. here's [another .NET bug](https://github.com/dotnet/runtime/issues/112262) we had to work around
 
@@ -356,7 +354,7 @@ Again, the easiest way to get around this was just to patch the runtime. We're a
 
 FrostHelper won't load because the class override isn't valid? Well it is now.
 
-```
+```diff
 --- a/src/mono/mono/metadata/class-setup-vtable.c
 +++ b/src/mono/mono/metadata/class-setup-vtable.c
 @@ -773,6 +773,7 @@ mono_method_get_method_definition (MonoMethod *method)
@@ -368,7 +366,7 @@ FrostHelper won't load because the class override isn't valid? Well it is now.
 
 SecurityException? Who needs security anyway?
 
-```
+```diff
 +++ b/src/mono/mono/metadata/class.c
 @@ -6480,6 +6480,7 @@ can_access_member (MonoClass *access_klass, MonoClass *member_klass, MonoClass*
  gboolean
@@ -377,7 +375,26 @@ SecurityException? Who needs security anyway?
 +	return TRUE;
 ```
 
-The static initializer issue was also just fixed by bypassing a check in the vtable init
+And.. uhh. oh. ok
+
+So it turns out that mono's internal implementation of `System.Reflection.Module.GetTypes` is Broken and does not follow spec. Since the mods we're loading have extremely excessive use of reflection, a few of them are crashing. That's not a trivial fix, but after patching the runtime again with a [reimplementation of the broken icall](https://github.com/r58Playz/FNA-WASM-Build/blob/1231d08a85a236bbae04c49803f36b80833bc2ac/dotnet.patch#L85) in c, all the the mono bugs are finally fixed and we can move on.
+
+Just kidding. static initializer order [doesn't follow spec](https://github.com/dotnet/runtime/issues/77513) and is breaking some of our mods. Another runtime patch? Another runtime [patch](https://github.com/r58Playz/FNA-WASM-Build/blob/main/dotnet.patch#L193).
+
+
+
+
+200 lines of mono patches, 53 mods, and roughly a year passed since we started the project.
+
+Was it worth it? Probably.
+[image]
+
+One last mod to fix! Since no one asked, how about we get the celeste multiplayer mod running in a browser?
+
+[image]
+
+The helpful `[MonoModRelinkFrom]` attribute lets us declare a class to replace any system one, letting us intercept [CelesteNet](https://github.com/0x0ade/CelesteNet)'s creation of a `System.Net.Socket` with our own class that makes TCP connections over a [wisp protocol](https://github.com/MercuryWorkshop/wisp-protocol) proxy. We'll use the same wisp connection to download mods from gamebananna too, since it's normally blocked by CORS policy.
+
 
 # Steam for wasm
 
@@ -390,13 +407,3 @@ This is an error during code generation, so it's something that would have also 
 Hey you know what time it is. Let's clone mono again and start recompiling with some new debug prints  
 \[machelpers.cs\]  
 Awesome. Fuck mac. Lets delete that file
-
-# net10
-net10 preview 1 just released with threads and jiterpereter support, it probably improves perf for celeste wasm
-
-easy port to net 10, even monomod works perfectly after updating runtime patches
-
-perf improves a lot while loading, but regressions prevent sj from loading
-
-
-... present day ..
