@@ -53,6 +53,7 @@ const root = document.getElementById("app")!;
 try {
 	root.replaceWith(<App />);
 } catch (err) {
-	console.log(err);
-	root.replaceWith(document.createTextNode(`Failed to load: ${err}`));
+  console.log(err);
+	root.replaceWith(document.createTextNode(`Failed to load:\n ${err}`));
+  document.body.classList.add("error");
 }

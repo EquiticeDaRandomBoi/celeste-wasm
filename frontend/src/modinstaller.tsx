@@ -1,7 +1,8 @@
 import { loadedLibcurlPromise } from "./game/index";
-import { Button } from "./ui";
+import { Button, Icon, TextField } from "./ui";
 import { rootFolder } from "./fs";
 import { epoxyFetch } from "./epoxy";
+import iconSearch from "@ktibow/iconset-material-symbols/search";
 
 type Mod = {
   Screenshots: string[],
@@ -36,6 +37,15 @@ export const ModInstaller: Component<
       width: 100px;
       height: 100px;
     }
+  }
+
+  #modsearch {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .modsearchbar {
+    flex-grow: 1;
   }
 	`;
 
@@ -93,9 +103,11 @@ export const ModInstaller: Component<
 
   return (
     <div>
-      <div>
-        <input type="text" placeholder="Search" bind:value={use(this.query)} on:keydown={(e: any) => e.key === "Enter" && search()} />
-        <button on:click={search}>Search</button>
+      <div id="modsearch">
+        <TextField placeholder={"Search"} on:keydown={(e: any) => e.key === "Enter" && search()} bind:value={use(this.query)} class={"modsearchbar"} />
+        <Button on:click={search} class={"searchbtn"} type={"primary"} icon={"full"} disabled={false}>
+          <Icon icon={iconSearch}></Icon>
+        </Button>
       </div>
       <div class="mods">
         {use(this.entries, e => e.map(e =>

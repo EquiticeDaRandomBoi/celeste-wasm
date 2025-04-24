@@ -1,9 +1,27 @@
+:root {
+    --font-body: 'Adwaita Sans', 'Inter', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
+		Roboto, "Helvetica Neue", Arial, sans-serif;
+	--font-display: 'Renogare', 'Inter Tight', 'Adwaita Sans', 'Inter', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
+		Roboto, "Helvetica Neue", Arial, sans-serif;
+	--font-mono: 'Adwaita Mono', "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
 body,
 html {
 	padding: 0;
 	margin: 0;
 	width: 100%;
 	height: 100%;
+	font-family: var(--font-body);
+}
+
+body.error {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    align-content: center;
+    text-align: center;
+    background: #12060b;
+    color: #dedede;
 }
 
 * {
@@ -14,19 +32,12 @@ html {
 #app {
 	width: 100%;
 	height: 100%;
-
-	--font-body: 'Adwaita Sans', 'Inter', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
-		Roboto, "Helvetica Neue", Arial, sans-serif;
-	--font-display: 'Renogare', 'Inter Tight', 'Adwaita Sans', 'Inter', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
-		Roboto, "Helvetica Neue", Arial, sans-serif;
-	--font-mono: 'Adwaita Mono', "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-
 	font-family: var(--font-body);
-
 	accent-color: var(--accent);
 }
 
 #app.dark {
+    color-scheme: dark;
 	--bg-sub: #040002;
 	--bg: #12060b;
 	--surface0: #1b171a;
@@ -50,6 +61,7 @@ html {
 }
 
 #app.light {
+    color-scheme: light;
 	--bg-sub: #f6f0f3;
 	--bg: #fffaff;
 	--surface0: #f6f0ff;
@@ -73,6 +85,7 @@ html {
 }
 
 #app.ctp {
+    color-scheme: dark;
 	--bg-sub: #181825;
 	--bg: #1e1e2e;
 	--surface0: #313244;
