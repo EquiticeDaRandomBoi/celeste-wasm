@@ -68,7 +68,7 @@ const Progress: Component<{ indeterminate: boolean, progress: number }> = functi
 		.value.indeterminate {
 			width: 100%;
 			transform-origin: 0% 50%;
-			animation: indeterminate 0.75s infinite linear;
+			animation: indeterminate 1s infinite cubic-bezier(0.2, 0.15, 0.5, 0.95);
 		}
 
 		@keyframes indeterminate {
@@ -95,7 +95,7 @@ export const Loader: Component<{}, {
 	logs: HTMLElement,
 }> = function() {
 	this.css = `
-		--background: rgb(59, 45, 74);
+		--background: #40262a;
 
 		position: relative;
 
@@ -110,6 +110,22 @@ export const Loader: Component<{}, {
 
 		z-index: 10;
 
+		opacity: 1;
+		transition: opacity 625ms ease-out;
+
+		*, * * {
+  		opacity: 1;
+  		transition: opacity 625ms ease-out;
+		}
+
+		@starting-style {
+		  opacity: 0;
+
+			*, * * {
+				opacity: 0;
+			}
+		}
+
 		.overlay {
 			position: absolute;
 			top: 0;
@@ -123,7 +139,7 @@ export const Loader: Component<{}, {
 			display: flex;
 			flex-direction: column;
 
-			padding: 1vw;
+			padding: 1.5vw;
 		}
 
 		.logs {
@@ -144,6 +160,7 @@ export const Loader: Component<{}, {
 		.bg {
 			background-color: color-mix(in srgb, var(--background), white 1%);
 			background-image: url("loader_gradient.png");
+			filter: saturate(250%);
 			background-blend-mode: overlay;
 			background-size: cover;
 
@@ -160,9 +177,9 @@ export const Loader: Component<{}, {
 			height: min(100vw, 1280px);
 			transform: translate(50%, -50%);
 
-			animation: spin 10s infinite linear;
+			animation: spin 12.5s infinite linear;
 
-			filter: blur(0.25em);
+			filter: blur(8px);
 
 			z-index: 20;
 		}
@@ -171,7 +188,17 @@ export const Loader: Component<{}, {
 			text-transform: capitalize;
 		}
 
-		.large { font-size: min(max(22px, 4vw), 32px); }
+		.logs > div {
+		  overflow-y: scroll!important;
+			scrollbar-width: none;
+		}
+
+		.progresswrap {
+		  height: min(max(14px, 2vw), 20px);
+			margin-block: 0.25rem;
+		}
+
+		.large { font-size: min(max(32px, 4.5vw), 48px); }
 		.body { font-size: min(max(14px, 2vw), 20px); }
 		.smaller { font-size: min(max(10px, 1.5vw), 16px); }
 
@@ -189,11 +216,13 @@ export const Loader: Component<{}, {
 				<div class="smaller logs" bind:this={use(this.logs)}>
 					<LogView scrolling={false} />
 				</div>
+				<div class="progresswrap">
 				{$if(use(splashState.text, x => x.length > 0),
 					<div class="body modprogress">
 						{use(splashState.text)}
 					</div>
 				)}
+				</div>
 			</div>
 			<Progress indeterminate={use(splashState.progress, x => x === -1)} progress={use(splashState.progress)} />
 			<div class="overlay bg" />

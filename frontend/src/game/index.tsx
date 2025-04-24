@@ -79,7 +79,7 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function()
 			font-family: var(--font-display);
 			font-size: 2rem;
 			font-weight: 570;
-			
+
 			display: flex;
 			flex-direction: column;
 			align-items: center;
