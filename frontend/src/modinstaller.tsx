@@ -109,7 +109,7 @@ export const ModInstaller: Component<
             {use(e.Screenshots, e => e.map(s => <img src={s} />))}
             <Button on:click={() => {
               download(e);
-            }} icon="full" type="normal" disabled={false}>
+            }} icon="full" type="normal" disabled={false} title={"Download Mod"}>
               download
             </Button>
           </div>

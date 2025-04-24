@@ -107,17 +107,17 @@ const TopBar: Component<{
 			</div>
 			<div class="expand" />
 			<div class="group">
-				<Button on:click={() => this.modInstallerOpen = true} icon="left" type="normal" disabled={false}>
+				<Button on:click={() => this.modInstallerOpen = true} icon="left" type="normal" disabled={false} title={"Download Mods"}>
 					<Icon icon={iconDownload} />
 					<span>Mods</span>
 				</Button>
-				<Button on:click={() => this.steamOpen = true} icon="full" type="normal" disabled={false}>
+        <Button on:click={() => this.steamOpen = true} icon="full" type="normal" disabled={false} title={"Log in to Steam"}>
 					steam icon
 				</Button>
-				<Button on:click={() => this.achievementsOpen = true} icon="full" type="normal" disabled={false}>
+        <Button on:click={() => this.achievementsOpen = true} icon="full" type="normal" disabled={false} title={"Achievements"}>
 					<Icon icon={iconTrophy} />
 				</Button>
-				<Button on:click={() => this.fsOpen = true} icon="full" type="normal" disabled={false}>
+        <Button on:click={() => this.fsOpen = true} icon="full" type="normal" disabled={false} title={"File Browser"}>
 					<Icon icon={iconFolderOpen} />
 				</Button>
 				<Button on:click={() => {
@@ -126,11 +126,11 @@ const TopBar: Component<{
 					} else {
 						store.theme = "light";
 					}
-				}} icon="full" type="normal" disabled={false}>
+				}} icon="full" type="normal" disabled={false} title={"Toggle light/dark mode"}>
 					<Icon icon={use(store.theme, x => x === "light" ? iconDarkMode : iconLightMode)} />
 				</Button>
 				<Button
-					icon="full" type="normal" disabled={false}
+          icon="full" type="normal" disabled={false} title={"Show Logs"}
 					on:click={() => {
 						this.showLog = -this.showLog;
 					}}>
@@ -140,12 +140,12 @@ const TopBar: Component<{
 					try {
 						await this.canvas.requestFullscreen({ navigationUI: "hide" });
 					} catch { }
-				}} icon="full" type="normal" disabled={use(gameState.playing, x => !x)}>
+				}} icon="full" type="normal" disabled={use(gameState.playing, x => !x)} title={"Fullscreen"}>
 					<Icon icon={iconFullscreen} />
 				</Button>
 				<Button on:click={() => {
 					play();
-				}} icon="left" type="primary" disabled={use(this.allowPlay, x => !x)}>
+				}} icon="left" type="primary" disabled={use(this.allowPlay, x => !x)} title={"Start Game"}>
 					<Icon icon={iconPlayArrow} />
 					<span>Play</span>
 				</Button>

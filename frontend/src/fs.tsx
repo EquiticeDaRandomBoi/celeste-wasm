@@ -403,16 +403,16 @@ export const OpfsExplorer: Component<{
 			<div class="path">
 				<h3>{use(this.components, x => (x.length == 0 ? "Root Directory" : "/" + x.join("/")))}</h3>
 				<div class="expand" />
-				<Button type="normal" icon="full" disabled={uploadDisabled} on:click={uploadArchive}>
+				<Button type="normal" icon="full" disabled={uploadDisabled} on:click={uploadArchive} title={"Upload Filesystem Archive"}>
 					<Icon icon={iconUnarchive} />
 				</Button>
-				<Button type="normal" icon="full" disabled={downloadDisabled} on:click={downloadArchive}>
+				<Button type="normal" icon="full" disabled={downloadDisabled} on:click={downloadArchive} title={"Download Filesystem Archive"}>
 					<Icon icon={iconArchive} />
 				</Button>
-				<Button type="normal" icon="full" disabled={uploadDisabled} on:click={uploadFile}>
+				<Button type="normal" icon="full" disabled={uploadDisabled} on:click={uploadFile} title={"Upload File"}>
 					<Icon icon={iconUploadFile} />
 				</Button>
-				<Button type="normal" icon="full" disabled={uploadDisabled} on:click={uploadFolder}>
+				<Button type="normal" icon="full" disabled={uploadDisabled} on:click={uploadFolder} title={"Upload Folder"}>
 					<Icon icon={iconUploadFolder} />
 				</Button>
 			</div>
@@ -459,10 +459,10 @@ export const OpfsExplorer: Component<{
 							<Icon icon={x.name == ".." ? iconUploadFolder : icon} />
 							<span>{x.name === ".." ? "Parent Directory" : x.name}</span>
 							<div class="expand" />
-							<Button class={x.entry.kind !== "file" ? "hidden" : ""} on:click={download} icon="full" type="listaction" disabled={false}>
+							<Button class={x.entry.kind !== "file" ? "hidden" : ""} on:click={download} icon="full" type="listaction" disabled={false} title={"Download File"}>
 								<Icon icon={iconDownload} />
 							</Button>
-							<Button class={x.name === ".." ? "hidden" : ""} on:click={remove} icon="full" type="listaction" disabled={false}>
+							<Button class={x.name === ".." ? "hidden" : ""} on:click={remove} icon="full" type="listaction" disabled={false} title={"Delete File"}>
 								<Icon icon={iconDelete} />
 							</Button>
 						</Button>

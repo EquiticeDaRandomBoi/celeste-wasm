@@ -9,6 +9,7 @@ export const Button: Component<{
 	type: "primary" | "normal" | "listitem" | "listaction",
 	icon: "full" | "left" | "none",
 	disabled: boolean,
+	title?: string
 }, {
 	children: any,
 }> = function() {
@@ -114,6 +115,7 @@ export const Button: Component<{
 				on:click={this["on:click"]}
 				class={`icon-${this.icon} type-${this.type} ${this.class}`}
 				disabled={use(this.disabled)}
+				title={this.title}
 			>{use(this.children)}</button>
 		</div>
 	)
@@ -164,7 +166,7 @@ export const Dialog: Component<{ name: string, open: boolean }, { children: any[
 		visibility: hidden;
 		pointer-events: none;
 		transition: opacity 200ms, visibility 200ms;
-		
+
 		&[open] {
 			opacity: 1;
 			visibility: visible;
@@ -207,7 +209,7 @@ export const Dialog: Component<{ name: string, open: boolean }, { children: any[
 			<div class="header">
 				<h2>{this.name}</h2>
 				<div class="expand" />
-				<Button on:click={() => { this.open = false }} type="normal" icon="full" disabled={false}>
+				<Button on:click={() => { this.open = false }} type="normal" icon="full" disabled={false} title={"Close"}>
 					<Icon icon={iconClose} />
 				</Button>
 			</div>
