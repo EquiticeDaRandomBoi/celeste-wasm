@@ -120,17 +120,17 @@ const TopBar: Component<{
         <Button on:click={() => this.fsOpen = true} icon="full" type="normal" disabled={false} title={"File Browser"}>
 					<Icon icon={iconFolderOpen} />
 				</Button>
-				<Button on:click={() => {
-					if (store.theme === "light") {
-						store.theme = "dark";
-					} else {
-						store.theme = "light";
-					}
-				}} icon="full" type="normal" disabled={false} title={"Toggle light/dark mode"}>
+        <Button on:click={() => {
+          if (store.theme === "light") {
+            store.theme = "dark";
+          } else {
+            store.theme = "light";
+          }
+        }} icon="full" type="normal" disabled={false} bind:title={use(store.theme, x => x === "light" ? "Switch to Dark Mode" : "Switch to Light Mode")}>
 					<Icon icon={use(store.theme, x => x === "light" ? iconDarkMode : iconLightMode)} />
 				</Button>
 				<Button
-          icon="full" type="normal" disabled={false} title={"Show Logs"}
+          icon="full" type="normal" disabled={false} bind:title={use(this.showLog, x=> x > 0 ? "Hide Logs" : "Show Logs")}
 					on:click={() => {
 						this.showLog = -this.showLog;
 					}}>

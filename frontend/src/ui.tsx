@@ -37,10 +37,13 @@ export const Button: Component<{
 			transition: transform 0.1s;
 			-webkit-user-select: none;
 			user-select: none;
+			perspective: 800px;
+			transform-origin: 50% 0%;
 		}
 
 		button:active > * {
-			transform: scale(0.9);
+			transform: scale(0.975) rotate3d(1, 0, 0, -12.5deg);
+			perspective: 1250px;
 		}
 
 		button.icon-full svg, button.icon-left svg {
@@ -115,7 +118,7 @@ export const Button: Component<{
 				on:click={this["on:click"]}
 				class={`icon-${this.icon} type-${this.type} ${this.class}`}
 				disabled={use(this.disabled)}
-				title={this.title}
+				title={use(this.title)}
 			>{use(this.children)}</button>
 		</div>
 	)
