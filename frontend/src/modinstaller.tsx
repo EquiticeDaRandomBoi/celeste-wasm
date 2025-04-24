@@ -3,6 +3,7 @@ import { Button, Icon, TextField } from "./ui";
 import { rootFolder } from "./fs";
 import { epoxyFetch } from "./epoxy";
 import iconSearch from "@ktibow/iconset-material-symbols/search";
+import iconDownload from "@ktibow/iconset-material-symbols/download";
 
 type Mod = {
   Screenshots: string[],
@@ -36,7 +37,36 @@ export const ModInstaller: Component<
     img {
       width: 100px;
       height: 100px;
+      border: 0;
     }
+  }
+
+  .mod {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    position: relative;
+  }
+
+  .bg {
+    z-index: 9000;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    filter: brightness(0.8) contrast (0.6);
+    object-fit: cover;
+  }
+
+  .mod,
+  .detail {
+    z-index: 9002;
+  }
+
+  .moddownload {
+    margin-top: 0.83rem;
   }
 
   #modsearch {
@@ -106,23 +136,26 @@ export const ModInstaller: Component<
       <div id="modsearch">
         <TextField placeholder={"Search"} on:keydown={(e: any) => e.key === "Enter" && search()} bind:value={use(this.query)} class={"modsearchbar"} />
         <Button on:click={search} class={"searchbtn"} type={"primary"} icon={"full"} disabled={false}>
-          <Icon icon={iconSearch}></Icon>
+          <Icon icon={iconSearch} />
         </Button>
       </div>
       <div class="mods">
         {use(this.entries, e => e.map(e =>
           <div class="mod">
+            <img alt="" class="bg" src={e.Screenshots[0] || ""} />
+            <div class="detail">
             <h2>{e.Name}</h2>
             {(() => {
               let p = <p />;
               p.innerHTML = e.Text;
               return p;
             })()}
-            {use(e.Screenshots, e => e.map(s => <img src={s} />))}
+            {/* {use(e.Screenshots, e => e.map(s => <img src={s} />))} */}
+            </div>
             <Button on:click={() => {
               download(e);
-            }} icon="full" type="normal" disabled={false} title={"Download Mod"}>
-              download
+            }} icon="full" type="primary" class="moddownload" disabled={false} title={"Download Mod"}>
+              <Icon icon={iconDownload} />
             </Button>
           </div>
         ))}
