@@ -377,10 +377,13 @@ export async function downloadApp() {
 const SEAMLESSCOUNT = 10;
 
 export async function play() {
+  await new Promise(resolve => setTimeout(resolve, 25));
 	gameState.playing = true;
 
+  await new Promise(resolve => setTimeout(resolve, 500));
 	gameState.initting = true;
 
+	await new Promise(resolve => setTimeout(resolve, 100));
 	if (STEAM_ENABLED && steamState.login == 2) {
 		console.debug("Syncing Steam Cloud");
 		await exports.Steam.DownloadSteamCloud();

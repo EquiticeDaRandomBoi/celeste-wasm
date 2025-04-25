@@ -1,9 +1,12 @@
 import { gameState, play, FpsView, GameView, LogView } from "./game/index";
 import { Button, Dialog, Icon } from "./ui";
 import { store } from "./store";
+
 import { OpfsExplorer } from "./fs";
 import { Achievements } from "./achievements";
 import { ModInstaller } from "./modinstaller";
+import { SteamCloud } from "./steam";
+import { Settings } from "./settings";
 
 import iconPlayArrow from "@ktibow/iconset-material-symbols/play-arrow";
 import iconFullscreen from "@ktibow/iconset-material-symbols/fullscreen";
@@ -13,7 +16,7 @@ import iconFolderOpen from "@ktibow/iconset-material-symbols/folder-open";
 import iconTrophy from "@ktibow/iconset-material-symbols/trophy";
 import iconDownload from "@ktibow/iconset-material-symbols/download";
 import iconTerminal from "@ktibow/iconset-material-symbols/terminal";
-import { SteamCloud } from "./steam";
+import iconSettings from "@ktibow/iconset-material-symbols/settings";
 
 export const STEAM_ENABLED = import.meta.env.VITE_STEAM_ENABLED;
 
@@ -68,6 +71,7 @@ const TopBar: Component<{
 	steamOpen: boolean,
 	achievementsOpen: boolean,
 	modInstallerOpen: boolean,
+  settingsOpen: boolean,
 }, { allowPlay: boolean, fps: HTMLElement }> = function() {
 	this.css = `
 		background: var(--bg);
@@ -132,6 +136,7 @@ const TopBar: Component<{
         }} icon="full" type="normal" disabled={false} bind:title={use(store.theme, x => x === "light" ? "Switch to Dark Mode" : "Switch to Light Mode")}>
 					<Icon icon={use(store.theme, x => x === "light" ? iconDarkMode : iconLightMode)} />
 				</Button>
+        <Button icon="full" type="normal" disabled={false} title="Settings" on:click={() => { this.settingsOpen = true }}><Icon icon={iconSettings} /></Button>
 				<Button
           icon="full" type="normal" disabled={false} bind:title={use(this.showLog, x=> x > 0 ? "Hide Logs" : "Show Logs")}
 					on:click={() => {
@@ -163,6 +168,7 @@ export const Main: Component<{}, {
 	achievementsOpen: boolean,
 	modInstallerOpen: boolean,
 	steamOpen: boolean,
+	settingsOpen: boolean,
 	logcontainer: HTMLDivElement,
 }> = function() {
 	this.css = `
@@ -223,6 +229,7 @@ export const Main: Component<{}, {
 				bind:achievementsOpen={use(this.achievementsOpen)}
 				bind:steamOpen={use(this.steamOpen)}
 				bind:modInstallerOpen={use(this.modInstallerOpen)}
+				bind:settingsOpen={use(this.settingsOpen)}
 				bind:showLog={use(store.logs)}
 			/>
 			<div class="game">
@@ -264,6 +271,9 @@ export const Main: Component<{}, {
 			</Dialog>
 			<Dialog name="Mod Installer" bind:open={use(this.modInstallerOpen)}>
 				<ModInstaller open={use(this.modInstallerOpen)} />
+			</Dialog>
+			<Dialog name="Settings" bind:open={use(this.settingsOpen)}>
+			  <Settings />
 			</Dialog>
 		</div>
 	);

@@ -92,7 +92,8 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function (
 		.gameoverlay.loader {
 			opacity: 0;
 			visibility: hidden;
-			transition: opacity 150ms ease;
+			display: none;
+			transition: opacity 0.5s ease;
 			pointer-events: none;
 			z-index: 3;
 		}
@@ -100,7 +101,8 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function (
 		.gameoverlay.loader.active {
 			opacity: 1;
 			visibility: visible;
-			transition: opacity 150ms ease;
+			display: flex;
+			transition: opacity 0.5s ease;
 			pointer-events: auto;
 		}
 
