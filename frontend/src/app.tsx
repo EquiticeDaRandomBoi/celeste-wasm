@@ -38,7 +38,7 @@ const App: Component<{}, {
 	}
 
 	return (
-		<div id="app" class={use(store.theme)}>
+		<div id="app" class={use`${store.theme} ${store.accentColor}`}>
 			<div id="splash" bind:this={use(this.el)}>
 				<Splash on:next={next} />
 			</div>
