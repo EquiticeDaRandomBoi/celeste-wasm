@@ -1,5 +1,5 @@
 import { Logo, NAME, STEAM_ENABLED } from "./main";
-import { Button, Icon, Link } from "./ui";
+import { Button, Icon, Link, Switch } from "./ui";
 import { copyFile, copyFolder, countFolder, extractTar, hasContent, PICKERS_UNAVAILABLE, rootFolder, TAR_TYPES } from "./fs";
 import { downloadApp, gameState, PatchCeleste, pickDownloadsFolder } from "./game/dotnet";
 import { SteamLogin, steamState } from "./steam";
@@ -49,11 +49,11 @@ const Intro: Component<{
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
-		
+
 		.error {
 			margin-block: 0.3em;
 		}
-		
+
 		p {
 			margin-block: 0.3em;
 		}
@@ -399,11 +399,8 @@ export const Patch: Component<{
 	}
 
 	return <div>
-		<p>We're going to patch Celeste with MonoMod for neccesary webassembly fixes. You also have the option to install the Everest Mod Loader, but it will take longer to install</p>
-		<div>
-			<input type="checkbox" id="installEverest" bind:checked={use(this.everest)} />
-			<label for="installEverest">Install Everest Mod Loader?</label>
-		</div>
+		<p>We're going to patch Celeste with MonoMod for neccesary fixes for WASM. You can also optionally install the Everest Mod Loader, but it will take longer to install.</p>
+		<Switch title={"Install Everest Mod Loader?"} bind:on={use(this.everest)} />
 
 		<Button type="primary" icon="left" on:click={patch} disabled={use(this.patching)}>
 			Patch Celeste

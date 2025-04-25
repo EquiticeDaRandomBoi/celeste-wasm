@@ -200,7 +200,7 @@ export const TextField: Component<{
 
 export const Switch: Component<{
   "on:change"?: (() => void) |((e: InputEvent) => void),
-  checked: boolean,
+  on: boolean,
   title: string,
   disabled?: boolean,
   class?: string,
@@ -213,6 +213,9 @@ export const Switch: Component<{
     align-items: center;
     display: flex;
     justify-content: space-between;
+
+    user-select: none;
+    -webkit-user-select: none;
 
     .switch-container {
       position: relative;
@@ -305,7 +308,7 @@ export const Switch: Component<{
       <label class={`switch-container component-switch ${this.class || ''}`}>
         <input
           type="checkbox"
-          checked={use(this.checked)}
+          checked={use(this.on)}
           disabled={use(this.disabled || false)}
           on:change={(this["on:change"]||(()=>{}))}
         />
