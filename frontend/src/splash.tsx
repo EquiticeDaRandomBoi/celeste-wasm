@@ -1,5 +1,6 @@
 import { Logo, NAME, STEAM_ENABLED } from "./main";
-import { Button, Icon, Link, Switch } from "./ui";
+import { Switch } from "./ui/Switch";
+import { Button, Icon, Link } from "./ui/Button";
 import { copyFile, copyFolder, countFolder, extractTar, hasContent, PICKERS_UNAVAILABLE, rootFolder, TAR_TYPES } from "./fs";
 import { downloadApp, gameState, PatchCeleste, pickDownloadsFolder } from "./game/dotnet";
 import { SteamLogin, steamState } from "./steam";

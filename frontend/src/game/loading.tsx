@@ -1,6 +1,6 @@
 import { LogView } from ".";
 import { NAME } from "../main";
-import { Icon } from "../ui";
+import { Icon } from "../ui/Button";
 import iconSettings from "@ktibow/iconset-material-symbols/settings";
 
 // all the units are in vw so that it looks like it's in the game screen

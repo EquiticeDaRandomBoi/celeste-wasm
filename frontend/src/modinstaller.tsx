@@ -1,5 +1,6 @@
 import { loadedLibcurlPromise } from "./game/index";
-import { Button, Icon, TextField } from "./ui";
+import { TextField } from "./ui/TextField";
+import { Button, Icon } from "./ui/Button";
 import { rootFolder } from "./fs";
 import { epoxyFetch } from "./epoxy";
 import iconSearch from "@ktibow/iconset-material-symbols/search";

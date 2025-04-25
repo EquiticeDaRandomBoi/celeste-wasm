@@ -1,4 +1,4 @@
-import { Switch } from "./ui"
+import { Switch } from "./ui/Switch";
 import { store } from "./store";
 
 export const Settings: Component<{}, {

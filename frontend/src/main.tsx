@@ -1,5 +1,6 @@
 import { gameState, play, GameView, LogView } from "./game/index";
-import { Button, Dialog, Icon } from "./ui";
+import { Dialog } from "./ui/Dialog";
+import { Button, Icon } from "./ui/Button";
 import { store } from "./store";
 
 import { OpfsExplorer } from "./fs";

@@ -1,6 +1,7 @@
 import { gameState, LogView } from "./game";
 import { initSteam } from "./game/dotnet";
-import { Button, Icon, TextField } from "./ui";
+import { TextField } from "./ui/TextField";
+import { Button, Icon } from "./ui/Button";
 
 import iconQrCodeScanner from "@ktibow/iconset-material-symbols/qr-code-scanner";
 import iconLogin from "@ktibow/iconset-material-symbols/login";

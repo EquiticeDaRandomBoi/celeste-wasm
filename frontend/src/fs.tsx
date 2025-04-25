@@ -1,4 +1,4 @@
-import { Button, Icon } from "./ui";
+import { Button, Icon } from "./ui/Button";
 
 import tar, { Headers as TarHeaders, Pack } from "tar-stream";
 // @ts-expect-error
