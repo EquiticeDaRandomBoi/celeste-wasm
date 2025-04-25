@@ -43,7 +43,7 @@ export const LogView: Component<{ scrolling: boolean, }> = function() {
 		}, 100);
 	};
 
-	return <div style={this.scrolling ? "overflow: auto" : "overflow: hidden"} />
+	return <div class="component-log" style={this.scrolling ? "overflow: auto" : "overflow: hidden"} />
 }
 
 export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function () {

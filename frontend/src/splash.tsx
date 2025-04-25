@@ -11,6 +11,7 @@ import iconEncrypted from "@ktibow/iconset-material-symbols/encrypted";
 import iconArchive from "@ktibow/iconset-material-symbols/archive";
 import iconUnarchive from "@ktibow/iconset-material-symbols/unarchive";
 import iconFolderZip from "@ktibow/iconset-material-symbols/folder-zip";
+import iconManufacturing from "@ktibow/iconset-material-symbols/manufacturing"
 
 const validateDirectory = async (directory: FileSystemDirectoryHandle) => {
 	let content;
@@ -46,10 +47,6 @@ const Intro: Component<{
 	"on:next": (type: "copy" | "extract" | "download") => void,
 }, {}> = function() {
 	this.css = `
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-
 		.error {
 			margin-block: 0.3em;
 		}
@@ -60,32 +57,30 @@ const Intro: Component<{
 	`;
 
 	return (
-		<div>
+		<div class="step">
 			<p>
-				This is a mostly-complete port of <Link href="https://www.celestegame.com/">Celeste</Link> to the browser using <b>dotnet 9's threaded WASM support</b>.
-				It also uses <Link href="https://github.com/r58playz/monomod">r58Playz's <b>MonoMod WASM port</b></Link> to patch the game dynamically.
+				This is a near-complete port of <Link href="https://www.celestegame.com/">Celeste</Link> to the browser using <b>.NET 9's threaded WebAssembly support</b>.
+				It also uses <Link href="https://github.com/r58playz/monomod">r58Playz's <b>MonoMod WASM port</b></Link> to dynamically patch the game.
 				It needs around 0.6GB of memory and will probably not work on low-end devices.
 			</p>
 			<p>
-				You will need to own Celeste to play this
-			</p>
-			<p>
-				The background is from <Link href="https://www.fangamer.com/products/celeste-desk-mat-skies">fangamer merch</Link>.
+				You will need to own Celeste to use this port.
+				The setup background is from <Link href="https://www.fangamer.com/products/celeste-desk-mat-skies">Fangamer</Link>.
 			</p>
 			{PICKERS_UNAVAILABLE ?
 				<div class="error">
 					Your browser does not support the
 					{' '}<Link href="https://developer.mozilla.org/en-US/docs/Web/API/Window/showDirectoryPicker">File System Access API</Link>.{' '}
-					You will be unable to copy your Celeste assets or extract a {NAME} archive to play or use the upload features in the filesystem viewer.
+					You will be unable to copy game assets from your local install of Celeste or extract a {NAME} archive to play or use the upload features in the filesystem viewer.
 				</div>
 				: null}
 			{STEAM_ENABLED ? null :
 				<div class="warning">
-					<span>This deployment of {NAME} does not have steam download support. You cannot download assets from steam to play.</span>
+					<span>This deployment of {NAME} does not support downloading game assets from Steam.</span>
 				</div>}
 			{PICKERS_UNAVAILABLE && !STEAM_ENABLED ?
 				<div class="error">
-					You will have to switch browsers (to a Chromium-based one) to play as all methods of getting Celeste assets are unavailable.
+					All methods of obtaining game assets are unavailable on your browser. Please switch to a Chromium-based browser.
 				</div>
 				: null}
 
@@ -107,15 +102,15 @@ const Intro: Component<{
 
 const Progress: Component<{ percent: number }, {}> = function() {
 	this.css = `
-		background: var(--surface1);
+		background: color-mix(in srgb, var(--surface1) 70%, transparent);
 		border-radius: 1rem;
-		height: 1rem;
+		height: 0.6rem;
 
 		.bar {
 			background: var(--accent);
 			border-radius: 1rem;
-			height: 1rem;
-			transition: width 250ms;
+			height: 0.6rem;
+			transition: width 100ms ease;
 		}
 	`;
 
@@ -132,10 +127,6 @@ const Extract: Component<{
 	percent: number,
 }> = function() {
 	this.css = `
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-
 		/* hacky */
 		.center svg {
 			transform: translateY(15%);
@@ -183,10 +174,10 @@ const Extract: Component<{
 	}
 
 	return (
-		<div>
+		<div class="step">
 			<p class="center">
-				Select a {NAME} exported tar archive of the root directory.
-				You can create this by clicking the archive button (<Icon icon={iconArchive} />) in the filesystem explorer while in the root directory.
+				Select a {NAME} exported .tar archive of the root directory.
+				You can create this on a browser with {NAME} already set-up by clicking the archive button (<Icon icon={iconArchive} />) in the filesystem explorer while in the root directory.
 			</p>
 			{$if(use(this.extracting), <Progress percent={use(this.percent)} />)}
 			<Button on:click={opfs} type="primary" icon="left" disabled={use(this.extracting)}>
@@ -207,12 +198,12 @@ const Copy: Component<{
 	percent: number,
 }> = function() {
 	this.css = `
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-
 		code {
 			overflow-wrap: break-word;
+		}
+
+		p {
+			margin-block: 0.3em;
 		}
 	`;
 
@@ -263,27 +254,27 @@ const Copy: Component<{
 	}
 
 	return (
-		<div>
-			<div>
+		<div class="step">
+			<p>
 				Select your Celeste install's directory. It will be copied to browser storage and can be removed in the file manager.
-			</div>
-			{this.os == "win" ? (<div>
-				The directory for Steam installs of Celeste is usually located in <code>C:\Program Files (x86)\Steam\steamapps\common\Celeste</code>.
-			</div>) : null}
-			{this.os == "darwin" ? (<div>
-				The directory for Steam installs of Celeste is usually located in <code>~/Library/Application Support/Steam/steamapps/common/Celeste/Celeste.app/Contents/Resources</code>.
-			</div>) : null}
-			{this.os == "linux" ? (<div>
+			</p>
+			{this.os == "win" ? (<p>
+				The directory for Steam installs of Celeste on your OS is usually located in <code>C:\Program Files (x86)\Steam\steamapps\common\Celeste</code>.
+			</p>) : null}
+			{this.os == "darwin" ? (<p>
+				The directory for Steam installs of Celeste on your OS is usually located in:<br /> <code>~/Library/Application Support/Steam/steamapps/common/Celeste/Celeste.app/Contents/Resources</code>
+			</p>) : null}
+			{this.os == "linux" ? (<p>
 				The directory for Steam installs of Celeste is usually located in <code>~/.steam/root/steamapps/common/Celeste</code>.
-			</div>) : null}
-			{this.os == "" ? (<div>
+			</p>) : null}
+			{this.os == "" ? (<p>
 				The directory for Steam installs of Celeste is usually located in one of these locations:
 				<ul>
 					<li><code>~/.steam/root/steamapps/common/Celeste</code></li>
 					<li><code>C:\Program Files (x86)\Steam\steamapps\common\Celeste</code></li>
 					<li><code>~/Library/Application Support/Steam/steamapps/common/Celeste/Celeste.app/Contents/Resources</code></li>
 				</ul>
-			</div>) : null}
+			</p>) : null}
 			<div class="warning">
 				If you get an error stating it can't open the folder because it "contains system files", try copying it to another location first.
 			</div>
@@ -308,8 +299,6 @@ export const Download: Component<{
 
 }> = function() {
 	this.css = `
-		display: flex;
-		flex-direction: column;
 		gap: 2.5rem;
 		font-size: 15pt;
 
@@ -346,7 +335,7 @@ export const Download: Component<{
 				<div>
 					{$if(use(steamState.login, l => l == 2),
 						<div>
-							<p>Logged into steam successfully!</p>
+							<p>Logged into Steam successfully!</p>
 							<Button type="primary" icon="left" disabled={use(this.downloadDisabled)} on:click={download}>
 								<Icon icon={iconEncrypted} />
 								Download Assets
@@ -385,6 +374,11 @@ export const Patch: Component<{
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
+
+		.component-log {
+		  scrollbar-width: none;
+		}
+
 		.console {
 			display: flex;
 			font-size: initial;
@@ -403,11 +397,12 @@ export const Patch: Component<{
 		<Switch title={"Install Everest Mod Loader?"} bind:on={use(this.everest)} />
 
 		<Button type="primary" icon="left" on:click={patch} disabled={use(this.patching)}>
+		  <Icon icon={iconManufacturing} />
 			Patch Celeste
 		</Button>
 
 		<div class="console">
-			<LogView scrolling={false} />
+			<LogView scrolling={true} />
 		</div>
 	</div>
 }
@@ -474,6 +469,12 @@ export const Splash: Component<{
 		.logo {
 			display: flex;
 			justify-content: center;
+		}
+
+		.step {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
 		}
 	`;
 
