@@ -30,11 +30,15 @@ export const Button: Component<{
 			padding: 0.5rem;
 			font-family: var(--font-body);
 			cursor: pointer;
-			border-bottom: 2px solid color-mix(in srgb, var(--surface2) 80%, var(--surface1));
 		}
 
 		button,button:hover,button:focus,button:active,button:disabled {
 		  transition: ${transition};
+		}
+
+		button:not(:disabled, .type-listitem) {
+		  --border-color: color-mix(in srgb, var(--fg) 10.5%, transparent);
+		  box-shadow: inset 0px -0.85px 1px 0px var(--border-color);
 		}
 
 		button, button:active {
@@ -47,15 +51,15 @@ export const Button: Component<{
 		}
 
 		button:not(.type-listitem) {
-			padding-bottom: calc(0.5rem - 2px);
+			padding-bottom: 0.5rem;
 		}
 
 		button:not(:disabled):hover {
-  		transform: rotate3d(1, 0, 0, 10deg);
+  		transform: rotate3d(1, 0, 0, 7.5deg);
   	}
 
 		button:not(:disabled):active {
-			transform: rotate3d(1, 0, 0, 20deg);
+			transform: rotate3d(1, 0, 0, 17.5deg);
 		}
 
 		button.icon-full svg, button.icon-left svg {
@@ -72,7 +76,7 @@ export const Button: Component<{
 		button.type-primary {
 			background: var(--accent);
 			color: var(--fg);
-			border-color: color-mix(in srgb, var(--accent) 85%, var(--fg));
+			--border-color: color-mix(in srgb, var(--accent) 55%, var(--fg));
 	    transition: ${transition};
 		}
 		button.type-normal {
@@ -194,6 +198,123 @@ export const TextField: Component<{
   )
 }
 
+export const Switch: Component<{
+  "on:change"?: (() => void) |((e: InputEvent) => void),
+  checked: boolean,
+  title: string,
+  disabled?: boolean,
+  class?: string,
+}, {}> = function() {
+  // @ts-expect-error
+  this._leak = true;
+  const transition = "background 0.2s, transform 0.2s, width 0.2s";
+
+  this.css = `
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+
+    .switch-container {
+      position: relative;
+      display: inline-block;
+      width: 3.2rem;
+      height: 1.8rem;
+      flex: 0 0 auto;
+      max-width: 3.2rem;
+    }
+
+    .switch-container input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      margin: 0;
+    }
+
+    .switch-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--surface3);
+      transition: ${transition};
+      border-radius: 2rem;
+      box-shadow: inset 0px 0px 5px -0.1px color-mix(in srgb, var(--fg) 10%, transparent), inset 0px -0.7px 1px 0px color-mix(in srgb, var(--fg) 17.5%, transparent);
+    }
+
+    .switch-slider:before {
+      position: absolute;
+      content: "";
+      height: 1.4rem;
+      width: 1.4rem;
+      left: 0.2rem;
+      bottom: 0.2rem;
+      background-color: white;
+      transition: ${transition};
+      border-radius: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    input:checked + .switch-slider {
+      background-color: var(--accent);
+    }
+
+    input:active + .switch-slider {
+      background-color: var(--surface5);
+    }
+
+    .switch-container:hover input:checked:not(:disabled) + .switch-slider {
+      background-color: color-mix(in srgb, var(--accent) 87.5%, var(--fg));
+    }
+
+    input:checked:active + .switch-slider {
+      background-color: color-mix(in srgb, var(--accent) 70%, var(--fg));
+    }
+
+    .switch-container:hover input:not(:checked):not(:disabled) + .switch-slider {
+      background-color: var(--surface4);
+    }
+
+    input:active + .switch-slider:before {
+      width: 1.7rem;
+      transition: ${transition}
+    }
+
+    input:checked:active + .switch-slider:before {
+      transform: translateX(1.1rem);
+    }
+
+    input:disabled + .switch-slider {
+      background-color: var(--surface0);
+      cursor: not-allowed;
+    }
+
+    input:checked:disabled + .switch-slider {
+      background-color: color-mix(in srgb, var(--accent) 50%, var(--surface3));
+    }
+
+    input:checked + .switch-slider:before {
+      transform: translateX(1.4rem);
+    }
+  `;
+
+  return (
+    <div class="component-switch">
+      <span class="switch-label">{use(this.title)}</span>
+      <label class={`switch-container component-switch ${this.class || ''}`}>
+        <input
+          type="checkbox"
+          checked={use(this.checked)}
+          disabled={use(this.disabled || false)}
+          on:change={(this["on:change"]||(()=>{}))}
+        />
+        <span class="switch-slider"></span>
+      </label>
+    </div>
+  );
+}
+
 export const Icon: Component<{ icon: IconifyIcon, class?: string }, {}> = function() {
 	// @ts-expect-error
 	this._leak = true;
@@ -222,7 +343,7 @@ export const Dialog: Component<{ name: string, open: boolean }, { children: any[
 	this.css = `
 		display: flex;
 		flex-direction: column;
-		gap: 1.25rem;
+		gap: 0.8rem;
 
 		background: var(--bg-sub);
 		color: var(--fg);
@@ -254,6 +375,8 @@ export const Dialog: Component<{ name: string, open: boolean }, { children: any[
 			display: flex;
 			gap: 0.5rem;
 			align-items: center;
+      border-bottom: 1.8px solid var(--surface2);
+      padding-bottom: 0.5rem;
 		}
 
 		.header h2 {
