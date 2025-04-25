@@ -308,8 +308,8 @@ export const Switch: Component<{
       <label class={`switch-container component-switch ${this.class || ''}`}>
         <input
           type="checkbox"
-          checked={use(this.on)}
-          disabled={use(this.disabled || false)}
+          bind:checked={use(this.on)}
+          bind:disabled={use(this.disabled || false)}
           on:change={(this["on:change"]||(()=>{}))}
         />
         <span class="switch-slider"></span>
