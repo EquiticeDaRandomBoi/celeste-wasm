@@ -107,7 +107,6 @@ const TopBar: Component<{
 		<div>
 			<div class="group">
 				<Logo />
-				{$if(use(gameState.playing), <FpsView />)}
 			</div>
 			<div class="expand" />
 			<div class="group">

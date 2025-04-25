@@ -94,7 +94,7 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function (
 			visibility: hidden;
 			transition: opacity 150ms ease;
 			pointer-events: none;
-			z-index: 2;
+			z-index: 3;
 		}
 
 		.gameoverlay.loader.active {
@@ -109,6 +109,13 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function (
 			border-radius: 0;
 			background: black;
 		}
+
+		#fps {
+			position: absolute;
+			top: 0;
+			right: 0;
+			z-index: 2;
+		}
 	`;
   const notRunning = use(gameState.playing, x => x ? "gameoverlay notrunning started" : "gameoverlay notrunning stopped");
   const loader = use(gameState.initting, x => x ? "gameoverlay loader active" : "gameoverlay loader");
@@ -121,13 +128,13 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function (
 
 	return (
 		<div>
-			{/* {$if(use(gameState.initting), <div class="gameoverlay"><Loader /></div>)} */}
 			<div class={loader}>
 				<Loader />
 			</div>
 			<div class={notRunning}>
 				Game not running.
 			</div>
+			{$if(use(gameState.playing), <FpsView />)}
 			<canvas
 				id="canvas"
 				class={canvas}
@@ -139,6 +146,16 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function (
 }
 
 export const FpsView: Component<{}, { fps: HTMLElement }> = function() {
+  this.css=`
+    color: rgba(255, 225, 235, 0.6);
+    background: rgba(0, 0, 0, 0.3);
+    font-size: 0.775rem;
+    padding-inline: 0.5em;
+    padding-block: 0.5em;
+    min-width: 5em;
+    text-align: center;
+    border-bottom-left-radius: 0.3em;
+  `
 	this.mount = () => {
 		const interval = 250;
 		setInterval(() => {
@@ -150,7 +167,7 @@ export const FpsView: Component<{}, { fps: HTMLElement }> = function() {
 		}, interval);
 	}
 
-	return <span>FPS: <span bind:this={use(this.fps)} /></span>
+	return <span id="fps"><span bind:this={use(this.fps)} /> FPS</span>
 }
 
 export { gameState, play, loadedLibcurlPromise } from "./dotnet";
