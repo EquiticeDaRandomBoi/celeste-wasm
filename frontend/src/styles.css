@@ -95,16 +95,16 @@ body.error {
 .light {
     color-scheme: light;
 
-    --bg-sub: color-mix(in srgb, #fafafa 90%, var(--accent));
-    --bg: color-mix(in srgb, #f8f8f8 90%, var(--accent));
+    --bg-sub: color-mix(in srgb, #fafafa 95%, var(--accent));
+    --bg: color-mix(in srgb, #f8f8f8 95%, var(--accent));
 
-    --surface0: color-mix(in srgb, #f0f0f0 87.5%, var(--accent));
-    --surface1: color-mix(in srgb, #e3e3e3 92.5%, var(--accent));
-    --surface2: color-mix(in srgb, #d3d3d3 94.5%, var(--accent));
-    --surface3: color-mix(in srgb, #c3c3c3 95%, var(--accent));
-    --surface4: color-mix(in srgb, #b3b3b3 95%, var(--accent));
-    --surface5: color-mix(in srgb, #a3a3a3 95%, var(--accent));
-    --surface6: color-mix(in srgb, #939393 95%, var(--accent));
+    --surface0: color-mix(in srgb, #f0f0f0 94%, var(--accent));
+    --surface1: color-mix(in srgb, #e3e3e3 95%, var(--accent));
+    --surface2: color-mix(in srgb, #d3d3d3 95%, var(--accent));
+    --surface3: color-mix(in srgb, #c3c3c3 97%, var(--accent));
+    --surface4: color-mix(in srgb, #b3b3b3 97%, var(--accent));
+    --surface5: color-mix(in srgb, #a3a3a3 97%, var(--accent));
+    --surface6: color-mix(in srgb, #939393 97%, var(--accent));
 
     --fg: color-mix(in srgb, #191919 95%, var(--accent));
     --fg2: color-mix(in srgb, #2e2e2e 95%, var(--accent));
