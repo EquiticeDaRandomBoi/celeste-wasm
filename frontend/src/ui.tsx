@@ -146,7 +146,7 @@ export const Button: Component<{
 		}
 	`;
 	return (
-		<div>
+		<div class="component-btn">
 			<button
 				on:click={this["on:click"]}
 				class={`icon-${this.icon} type-${this.type} ${this.class}`}
@@ -190,7 +190,7 @@ export const TextField: Component<{
   `
 
   return (
-      <input type={this.type || "text"} class={`${this.class}`} placeholder={`${this.placeholder}`} bind:value={use(this.value)} on:keydown={(this["on:keydown"] || (()=>{}))} />
+      <input type={this.type || "text"} class={`component-textfield ${this.class}`} placeholder={`${this.placeholder}`} bind:value={use(this.value)} on:keydown={(this["on:keydown"] || (()=>{}))} />
   )
 }
 
@@ -205,17 +205,17 @@ export const Icon: Component<{ icon: IconifyIcon, class?: string }, {}> = functi
 	};
 	return (
 		<svg
-			width="1em"
-			height="1em"
-			viewBox={use`0 0 ${this.icon.width} ${this.icon.height}`}
-			xmlns="http://www.w3.org/2000/svg"
-			class={this.class || ""}
+      width="1em"
+      height="1em"
+      viewBox={use`0 0 ${this.icon.width} ${this.icon.height}`}
+      xmlns="http://www.w3.org/2000/svg"
+      class={`component-icon ${this.class}`}
 		></svg>
 	);
 }
 
 export const Link: Component<{ href: string }, { children: any[] }> = function() {
-	return <a href={this.href} target="_blank">{this.children}</a>
+	return <a href={this.href} class="component-link" target="_blank">{this.children}</a>
 }
 
 export const Dialog: Component<{ name: string, open: boolean }, { children: any[] }> = function() {
@@ -277,7 +277,7 @@ export const Dialog: Component<{ name: string, open: boolean }, { children: any[
 		});
 	}
 	return (
-		<dialog>
+		<dialog class="component-dialog">
 			<div class="header">
 				<h2>{this.name}</h2>
 				<div class="expand" />
