@@ -13,6 +13,7 @@ html {
 	width: 100%;
 	height: 100%;
 	font-family: var(--font-body);
+	overflow: hidden;
 }
 
 body.error {
@@ -34,20 +35,22 @@ body.error {
 	height: 100%;
 	font-family: var(--font-body);
 	accent-color: var(--accent);
+	scrollbar-color: var(--accent);
 }
 
-#app.dark {
+.dark {
     color-scheme: dark;
 	--bg-sub: #040002;
-	--bg: #12060b;
-	--surface0: #1b171a;
-	--surface1: #272124;
-	--surface2: #342a2f;
-	--surface3: #3a3133;
-	--surface4: #4a4144;
-	--surface5: #554a4f;
-	--surface6: #5c5355;
-	--accent: #f02424;
+	--bg: #0c0407;
+	--surface0: #150e0f;
+	--surface1: #221a1c;
+	--surface2: #261f22;
+	--surface3: #2d2527;
+	--surface4: #393233;
+	--surface5: #3e363a;
+	--surface6: #463e3f;
+	--accent: #ff2432;
+	--loader-bg: #451922;
 	--error: #f02424;
 	--success: #84f084;
 	--warning: #f0f084;
@@ -60,28 +63,29 @@ body.error {
 	--fg6: #aaaaaa;
 }
 
-#app.light {
+.light {
     color-scheme: light;
-	--bg-sub: #f6f0f3;
-	--bg: #fffaff;
-	--surface0: #f6f0ff;
-	--surface1: #e6e0e3;
-	--surface2: #d6d0d3;
-	--surface3: #c6c0c3;
-	--surface4: #b6b0b3;
-	--surface5: #a6a0a3;
-	--surface6: #969093;
-	--accent: #f06060;
+	--bg-sub: #fff6f8;
+	--bg: #fff9fb;
+	--surface0: #f8f0f3;
+	--surface1: #e8e0e3;
+	--surface2: #d8d0d3;
+	--surface3: #c8c0c3;
+	--surface4: #b8b0b3;
+	--surface5: #a8a0a3;
+	--surface6: #989093;
+	--accent: #ff4048;
+	--loader-bg: #803e49;
 	--error: #e43e3e;
 	--success: #14b614;
 	--warning: #e0e060;
 	--info: #3563ad;
-	--fg: #1a1719;
-	--fg2: #2f2b2e;
-	--fg3: #3f3b3e;
-	--fg4: #4f4c4d;
-	--fg5: #585556;
-	--fg6: #5f5a5e;
+	--fg: #1f1719;
+	--fg2: #322b2e;
+	--fg3: #423b3e;
+	--fg4: #524c4d;
+	--fg5: #5a5556;
+	--fg6: #615a5e;
 }
 
 #app.ctp {
@@ -96,6 +100,7 @@ body.error {
 	--surface5: #9399b2;
 	--surface6: #a6adc8;
 	--accent: #f38ba8;
+	--loader-bg: color-mix(in srgb, var(--accent) 95%, var(--fg6));
 	--error: #f38ba8;
 	--success: #a6e3a1;
 	--warning: #f9e2af;
@@ -112,7 +117,10 @@ body.error {
 	font-family: "Renogare";
 	src:
 		local("Renogare"),
-		url("/fonts/display/Renogare.woff2") format("woff2"),
+		url("/fonts/display/Renogare.woff2") format("woff2");
+	font-weight: normal bold;
+	font-style: normal italic;
+	font-display: block;
 }
 
 @font-face {
@@ -123,7 +131,7 @@ body.error {
 		url("/fonts/body/AdwaitaSans-Regular.ttf") format("truetype");
 	font-weight: 100 900;
 	font-style: normal;
-	font-display: swap;
+	font-display: block;
 }
 
 @font-face {
@@ -134,7 +142,7 @@ body.error {
 		url("/fonts/body/AdwaitaSans-Italic.ttf") format("truetype");
 	font-weight: 100 900;
 	font-style: italic;
-	font-display: swap;
+	font-display: block;
 }
 
 @font-face {
@@ -145,7 +153,7 @@ body.error {
 		url("/fonts/mono/AdwaitaMono-Regular.ttf") format("truetype");
 	font-weight: normal;
 	font-style: normal;
-	font-display: swap;
+	font-display: block;
 }
 
 @font-face {
@@ -156,7 +164,7 @@ body.error {
 		url("/fonts/mono/AdwaitaMono-Italic.ttf") format("truetype");
 	font-weight: normal;
 	font-style: italic;
-	font-display: swap;
+	font-display: block;
 }
 
 @font-face {
@@ -167,7 +175,7 @@ body.error {
 		url("/fonts/mono/AdwaitaMono-Bold.ttf") format("truetype");
 	font-weight: bold;
 	font-style: normal;
-	font-display: swap;
+	font-display: block;
 }
 
 @font-face {
@@ -178,7 +186,7 @@ body.error {
 		url("/fonts/mono/AdwaitaMono-BoldItalic.ttf") format("truetype");
 	font-weight: bold;
 	font-style: italic;
-	font-display: swap;
+	font-display: block;
 }
 
 h1,
@@ -211,7 +219,7 @@ pre {
 a {
 	color: var(--accent);
 	text-decoration: none;
-	transition: color 0.15s;
+	transition: color 0.1s;
 
 	&:hover {
 		color: color-mix(in srgb, var(--accent) 80%, white);

@@ -46,13 +46,13 @@ export const LogView: Component<{ scrolling: boolean, }> = function() {
 	return <div style={this.scrolling ? "overflow: auto" : "overflow: hidden"} />
 }
 
-export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function() {
-	this.css = `
+export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function () {
+  this.css = `
 		aspect-ratio: 16 / 9;
 		user-select: none;
 		position: relative;
 
-		transition: background 200ms, color 200ms;
+		transition: background 150ms, color 150ms;
 
 		.gameoverlay, canvas {
 			position: absolute;
@@ -60,9 +60,10 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function()
 			left: 0;
 			width: 100%;
 			height: 100%;
-			/*border: 2px solid var(--surface4);*/
-			transition: background 200ms, color 200ms, border-color 200ms;
+			transition: background 150ms, color 150ms, border-color 150ms;
+			border-bottom: 1.75px solid var(--surface2);
 		}
+
 		div.started, canvas.stopped {
 			visibility: hidden;
 			z-index: 0;
@@ -73,9 +74,9 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function()
 		}
 
 		.gameoverlay.notrunning {
-			background: var(--surface1);
-			color: var(--surface6);
-			transition: background 200ms, color 200ms, border-color 200ms;
+			background: var(--surface0);
+			color: var(--surface5);
+			transition: background 150ms, color 150ms, border-color 150ms;
 			font-family: var(--font-display);
 			font-size: 2rem;
 			font-weight: 570;
@@ -89,7 +90,18 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function()
 		}
 
 		.gameoverlay.loader {
+			opacity: 0;
+			visibility: hidden;
+			transition: opacity 150ms ease;
+			pointer-events: none;
 			z-index: 2;
+		}
+
+		.gameoverlay.loader.active {
+			opacity: 1;
+			visibility: visible;
+			transition: opacity 150ms ease;
+			pointer-events: auto;
 		}
 
 		canvas:fullscreen {
@@ -98,18 +110,22 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function()
 			background: black;
 		}
 	`;
-	const div = use(gameState.playing, x => x ? "gameoverlay notrunning started" : "gameoverlay notrunning stopped");
-	const canvas = use(gameState.playing, x => x ? "canvas started" : "canvas stopped");
+  const notRunning = use(gameState.playing, x => x ? "gameoverlay notrunning started" : "gameoverlay notrunning stopped");
+  const loader = use(gameState.initting, x => x ? "gameoverlay loader active" : "gameoverlay loader");
+  const canvas = use(gameState.playing, x => x ? "canvas started" : "canvas stopped");
 
-	this.mount = () => {
-		// dotnet will immediately transfer the canvas to deputy thread, so this.mount is required
-		preInit();
-	};
+  this.mount = () => {
+    // dotnet will immediately transfer the canvas to deputy thread, so this.mount is required
+    preInit();
+  };
 
 	return (
 		<div>
-			{$if(use(gameState.initting), <div class="gameoverlay"><Loader /></div>)}
-			<div class={div}>
+			{/* {$if(use(gameState.initting), <div class="gameoverlay"><Loader /></div>)} */}
+			<div class={loader}>
+				<Loader />
+			</div>
+			<div class={notRunning}>
 				Game not running.
 			</div>
 			<canvas

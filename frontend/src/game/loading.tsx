@@ -7,9 +7,13 @@ import iconSettings from "@ktibow/iconset-material-symbols/settings";
 
 export const splashState: Stateful<{
 	text: string,
+	modsFinished: number,
+	modsTotal: number,
 	progress: number,
 }> = $state({
-	text: "",
+	text: "Initializing Celeste",
+	modsFinished: 0,
+	modsTotal: 1,
 	progress: -1,
 });
 
@@ -17,7 +21,7 @@ export const JsSplash = {
 	StartSplash() {
 		console.debug("StartSplash...");
 
-		splashState.text = "Starting Everest";
+		splashState.text = "Initializing Everest";
 	},
 	OnMessage(message: string) {
 		let commands: string[] = [];
@@ -28,16 +32,20 @@ export const JsSplash = {
 			const totalMods = parseInt(commands[1]);
 			const modName = commands[2];
 
+			splashState.modsFinished = loadedMods;
+			splashState.modsTotal = totalMods;
 			splashState.progress = loadedMods / totalMods;
-			splashState.text = `[${loadedMods}/${totalMods}] Loading mod ${modName}`;
+			splashState.text = `Loading mod ${modName}`;
 		} else if (message.startsWith("#finish")) {
 			commands = message.substring(7).split(";");
 
 			const totalMods = parseInt(commands[0]);
 			const msg = commands[1];
 
+			splashState.modsFinished = totalMods;
+			splashState.modsTotal = totalMods;
 			splashState.progress = -1;
-			splashState.text = `[${totalMods}/${totalMods}] ${msg}`;
+			splashState.text = msg;
 		}
 	},
 	EndSplash() {
@@ -51,8 +59,8 @@ const Progress: Component<{ indeterminate: boolean, progress: number }> = functi
 		bottom: 0;
 		left: 0;
 		width: 100%;
-		height: calc(1vw / 2);
-		z-index: 22;
+		height: 0.5vw;
+		z-index: 23;
 		overflow: hidden;
 
 		.value {
@@ -61,7 +69,7 @@ const Progress: Component<{ indeterminate: boolean, progress: number }> = functi
 		}
 
 		.value:not(.indeterminate) {
-			transition: width 100ms;
+			transition: width 75ms;
 			width: var(--percent);
 		}
 
@@ -95,7 +103,6 @@ export const Loader: Component<{}, {
 	logs: HTMLElement,
 }> = function() {
 	this.css = `
-		--background: #40262a;
 
 		position: relative;
 
@@ -103,28 +110,12 @@ export const Loader: Component<{}, {
 		height: 100%;
 
 		font-family: var(--font-display);
-		background-color: var(--background);
+		background-color: var(--loader-bg);
 		color: white;
 
 		overflow: hidden;
 
 		z-index: 10;
-
-		opacity: 1;
-		transition: opacity 625ms ease-out;
-
-		*, * * {
-  		opacity: 1;
-  		transition: opacity 625ms ease-out;
-		}
-
-		@starting-style {
-		  opacity: 0;
-
-			*, * * {
-				opacity: 0;
-			}
-		}
 
 		.overlay {
 			position: absolute;
@@ -132,7 +123,7 @@ export const Loader: Component<{}, {
 			left: 0;
 			width: 100%;
 			height: 100%;
-			z-index: 22;
+			z-index: 23;
 		}
 
 		.main {
@@ -147,8 +138,7 @@ export const Loader: Component<{}, {
 			flex: 1;
 			min-height: 0;
 			padding-bottom: 0.5rem;
-
-			mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 70%, rgba(0, 0, 0, 0.1) 90%, transparent 100%);
+			mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 70%, rgba(0, 0, 0, 0.1) 90%, transparent 99%);
 		}
 
 		.modprogress {
@@ -157,10 +147,26 @@ export const Loader: Component<{}, {
 			text-overflow: ellipsis;
 		}
 
+		.progress-container {
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+		}
+
+		.progress-text {
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		.progress-counter {
+			text-align: right;
+			white-space: nowrap;
+		}
+
 		.bg {
-			background-color: color-mix(in srgb, var(--background), white 1%);
+			background-color: color-mix(in srgb, var(--loader-bg), white 1%);
 			background-image: url("loader_gradient.png");
-			filter: saturate(250%);
 			background-blend-mode: overlay;
 			background-size: cover;
 
@@ -169,12 +175,12 @@ export const Loader: Component<{}, {
 		}
 
 		.gear {
-			color: color-mix(in srgb, var(--background), white 35%);
+			color: color-mix(in srgb, var(--loader-bg), white 35%);
 			position: absolute;
-			top: 0;
-			right: 0;
-			width: min(100vw, 1280px);
-			height: min(100vw, 1280px);
+			top: 5vw;
+			right: 5vw;
+			width: 105vw;
+			height: 105vw;
 			transform: translate(50%, -50%);
 
 			animation: spin 12.5s infinite linear;
@@ -184,21 +190,32 @@ export const Loader: Component<{}, {
 			z-index: 20;
 		}
 
+		.bottom-bar {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			height: calc(min(max(14px, 2vw), 20px) + 2.5vw);
+			background-color: rgba(4, 0, 1, 0.6);
+			backdrop-filter: blur(18px);
+			z-index: 22;
+		}
+
 		.case {
 			text-transform: capitalize;
 		}
 
 		.logs > div {
-		  overflow-y: scroll!important;
+				overflow-y: scroll!important;
 			scrollbar-width: none;
 		}
 
 		.progresswrap {
-		  height: min(max(14px, 2vw), 20px);
-			margin-block: 0.25rem;
+			height: min(max(14px, 2vw), 20px);
+			margin-top: 1.25vw;
 		}
 
-		.large { font-size: min(max(32px, 4.5vw), 48px); }
+		.large { font-size: min(max(26px, 4.1vw), 40px); }
 		.body { font-size: min(max(14px, 2vw), 20px); }
 		.smaller { font-size: min(max(10px, 1.5vw), 16px); }
 
@@ -208,18 +225,25 @@ export const Loader: Component<{}, {
 	`;
 
 	return (
-		<div>
+		<div class='loader'>
 			<div class="overlay main">
 				<div class="large">
-					Loading <span class="case">{NAME}</span>
+					Starting <span class="case">{NAME}</span>...
 				</div>
-				<div class="smaller logs" bind:this={use(this.logs)}>
+				<div class="smaller logs dark" bind:this={use(this.logs)}>
 					<LogView scrolling={false} />
 				</div>
 				<div class="progresswrap">
 				{$if(use(splashState.text, x => x.length > 0),
-					<div class="body modprogress">
-						{use(splashState.text)}
+					<div class="body progress-container">
+						<div class="progress-text">
+							{use(splashState, state => state.text)}
+						</div>
+						{/* {$if(use(splashState.modsTotal, x => x > 0), */}
+							<div class="progress-counter">
+								{use(splashState.modsFinished)}<span style="color: var(--fg6)">/</span>{use(splashState.modsTotal)}
+							</div>
+						{/* )} */}
 					</div>
 				)}
 				</div>
@@ -227,6 +251,7 @@ export const Loader: Component<{}, {
 			<Progress indeterminate={use(splashState.progress, x => x === -1)} progress={use(splashState.progress)} />
 			<div class="overlay bg" />
 			<Icon class="gear" icon={iconSettings} />
+			<div class="bottom-bar" />
 		</div>
 	)
 }

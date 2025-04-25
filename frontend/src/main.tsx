@@ -28,6 +28,10 @@ export const Logo: Component<{}, {}> = function() {
 		font-family: var(--font-display);
 		color: var(--fg);
 
+		&:hover {
+		  color: var(--accent);
+		}
+
 		img {
 			image-rendering: pixelated;
 			-ms-interpolation-mode: nearest-neighbor;
@@ -47,11 +51,11 @@ export const Logo: Component<{}, {}> = function() {
 		}
 	`;
 	return (
-		<a href="https://github.com/MercuryWorkshop/celeste-wasm">
+		<a href="https://github.com/MercuryWorkshop/celeste-wasm" target="_blank">
 			<img src="/app.ico" />
 			<span>{NAME}</span>
 			<div class="extras">
-				<span>v1.4.0.0</span>
+				<span class="ver">v1.4.0.0</span>
 			</div>
 		</a>
 	)
@@ -68,8 +72,8 @@ const TopBar: Component<{
 	this.css = `
 		background: var(--bg);
 		padding: 1em;
-		border-bottom: 2px solid var(--surface1);
-		transition: background 200ms, color 200ms, border-color 200ms;
+		border-bottom: 1.75px solid var(--surface2);
+		transition: background 150ms, color 150ms, border-color 150ms;
 		display: flex;
 		align-items: stretch;
 		width: 100%;
@@ -172,7 +176,7 @@ export const Main: Component<{}, {
 		flex-direction: column;
 		align-items: center;
 
-		transition: background 200ms, color 200ms;
+		transition: background 150ms, color 150ms;
 
 		.game {
 			aspect-ratio: 16 / 9;

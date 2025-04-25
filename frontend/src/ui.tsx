@@ -15,6 +15,7 @@ export const Button: Component<{
 }> = function() {
 	// @ts-expect-error
 	this._leak = true;
+	const transition = "background 0.15s, color 0.15s, transform 0.15s, border-color 0.15s, border 0.15s, border-bottom 0.15s"
 	this.css = `
 		button {
 			display: flex;
@@ -27,23 +28,34 @@ export const Button: Component<{
 			border: none;
 			border-radius: 20rem;
 			padding: 0.5rem;
-
-			transition: background 0.2s, color 0.2s, transform 0.1s;
 			font-family: var(--font-body);
 			cursor: pointer;
+			border-bottom: 2px solid color-mix(in srgb, var(--surface2) 80%, var(--surface1));
 		}
 
-		button > *, button:active > * {
+		button,button:hover,button:focus,button:active,button:disabled {
+		  transition: ${transition};
+		}
+
+		button, button:active {
 			transition: transform 0.1s;
 			-webkit-user-select: none;
 			user-select: none;
 			perspective: 800px;
-			transform-origin: 50% 0%;
+			transform-origin: 50% 100%;
+			perspective: 1250px;
 		}
 
-		button:active > * {
-			transform: scale(0.975) rotate3d(1, 0, 0, -12.5deg);
-			perspective: 1250px;
+		button:not(.type-listitem) {
+			padding-bottom: calc(0.5rem - 2px);
+		}
+
+		button:not(:disabled):hover {
+  		transform: rotate3d(1, 0, 0, 10deg);
+  	}
+
+		button:not(:disabled):active {
+			transform: rotate3d(1, 0, 0, 20deg);
 		}
 
 		button.icon-full svg, button.icon-left svg {
@@ -60,10 +72,13 @@ export const Button: Component<{
 		button.type-primary {
 			background: var(--accent);
 			color: var(--fg);
+			border-color: color-mix(in srgb, var(--accent) 85%, var(--fg));
+	    transition: ${transition};
 		}
 		button.type-normal {
 			background: var(--surface1);
 			color: var(--fg);
+      transition: ${transition};
 		}
 		button.type-listitem {
 			background: transparent;
@@ -72,6 +87,8 @@ export const Button: Component<{
 			transition-duration: 0.1s;
 			padding-block: 0.75rem;
 			padding-inline: 0.5rem;
+			border: none;
+      transition: ${transition};
 			&:hover {
 				transition-duration: 0.1s;
 			}
@@ -79,37 +96,53 @@ export const Button: Component<{
 		button.type-listaction {
 			background: var(--surface1);
 			color: var(--fg);
+      transition: ${transition};
 		}
 
 		button.type-primary:not(:disabled):hover {
 			background: color-mix(in srgb, var(--accent) 80%, white);
+      transition: ${transition};
 		}
 		button.type-primary:not(:disabled):active {
 			background: color-mix(in srgb, var(--accent) 70%, white);
+      transition: ${transition};
 		}
 		button.type-normal:not(:disabled):hover {
 			background: var(--surface3);
+			border-color: color-mix(in srgb, var(--surface4) 60%, var(--surface3));
+      transition: ${transition};
 		}
 		button.type-normal:not(:disabled):active {
 			background: var(--surface4);
+			border-color: color-mix(in srgb, var(--surface5) 80%, var(--surface4));
+      transition: ${transition};
 		}
 		button.type-listitem:not(:disabled):hover {
 			background: var(--surface0);
+      transition: ${transition};
 		}
 		button.type-listitem:not(:disabled):active {
 			background: var(--surface1);
+      transition: ${transition};
 		}
 		button.type-listaction:not(:disabled):hover {
 			background: var(--surface2);
+			border-color: color-mix(in srgb, var(--surface3) 80%, var(--surface2));
+      transition: ${transition};
 		}
 		button.type-listaction:not(:disabled):active {
 			background: var(--surface3);
+			border-color: color-mix(in srgb, var(--surface4) 80%, var(--surface3));
+      transition: ${transition};
 		}
 
 		button:disabled {
 			background: var(--surface0);
-			color: var(--fg4);
+			color: var(--surface6);
 			cursor: not-allowed;
+			border-color: transparent;
+      transition: ${transition};
+			// border-color: color-mix(in srgb, var(--surface0) 98%, var(--fg));
 		}
 	`;
 	return (
@@ -133,7 +166,7 @@ export const TextField: Component<{
 }, {}> = function() {
 
   this.css = `
-    border: 0.125rem solid var(--surface0);
+    border: 0.1rem solid var(--surface0);
     border-radius: 4rem;
     background: var(--bg-sub);
     padding: 0.5em;
@@ -152,7 +185,7 @@ export const TextField: Component<{
     }
 
     ::placeholder {
-      color: var(--fg6);
+      color: var(--surface6);
     }
   `
 
@@ -214,8 +247,7 @@ export const Dialog: Component<{ name: string, open: boolean }, { children: any[
 		}
 
 		&::backdrop {
-			background: var(--bg-sub);
-			opacity: 50%;
+			background: rgba(32, 28, 28, 0.35);
 		}
 
 		.header {
