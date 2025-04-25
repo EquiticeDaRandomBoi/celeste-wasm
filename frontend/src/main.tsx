@@ -1,4 +1,4 @@
-import { gameState, play, FpsView, GameView, LogView } from "./game/index";
+import { gameState, play, GameView, LogView } from "./game/index";
 import { Button, Dialog, Icon } from "./ui";
 import { store } from "./store";
 
