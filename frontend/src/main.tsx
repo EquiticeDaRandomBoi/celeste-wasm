@@ -10,12 +10,9 @@ import { Settings } from "./settings";
 
 import iconPlayArrow from "@ktibow/iconset-material-symbols/play-arrow";
 import iconFullscreen from "@ktibow/iconset-material-symbols/fullscreen";
-import iconLightMode from "@ktibow/iconset-material-symbols/light-mode";
-import iconDarkMode from "@ktibow/iconset-material-symbols/dark-mode";
 import iconFolderOpen from "@ktibow/iconset-material-symbols/folder-open";
 import iconTrophy from "@ktibow/iconset-material-symbols/trophy";
 import iconDownload from "@ktibow/iconset-material-symbols/download";
-import iconTerminal from "@ktibow/iconset-material-symbols/terminal";
 import iconSettings from "@ktibow/iconset-material-symbols/settings";
 
 export const STEAM_ENABLED = import.meta.env.VITE_STEAM_ENABLED;
@@ -127,23 +124,7 @@ const TopBar: Component<{
         <Button on:click={() => this.fsOpen = true} icon="full" type="normal" disabled={false} title={"File Browser"}>
 					<Icon icon={iconFolderOpen} />
 				</Button>
-        <Button on:click={() => {
-          if (store.theme === "light") {
-            store.theme = "dark";
-          } else {
-            store.theme = "light";
-          }
-        }} icon="full" type="normal" disabled={false} bind:title={use(store.theme, x => x === "light" ? "Switch to Dark Mode" : "Switch to Light Mode")}>
-					<Icon icon={use(store.theme, x => x === "light" ? iconDarkMode : iconLightMode)} />
-				</Button>
         <Button icon="full" type="normal" disabled={false} title="Settings" on:click={() => { this.settingsOpen = true }}><Icon icon={iconSettings} /></Button>
-				<Button
-          icon="full" type="normal" disabled={false} bind:title={use(this.showLog, x=> x > 0 ? "Hide Logs" : "Show Logs")}
-					on:click={() => {
-						this.showLog = -this.showLog;
-					}}>
-					<Icon icon={iconTerminal} />
-				</Button>
 				<Button on:click={async () => {
 					try {
 						await this.canvas.requestFullscreen({ navigationUI: "hide" });

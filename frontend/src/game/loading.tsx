@@ -205,8 +205,8 @@ export const Loader: Component<{}, {
 			text-transform: capitalize;
 		}
 
-		.logs > div {
-				overflow-y: scroll!important;
+		.component-log {
+			overflow-y: scroll!important;
 			scrollbar-width: none;
 		}
 
@@ -239,11 +239,9 @@ export const Loader: Component<{}, {
 						<div class="progress-text">
 							{use(splashState, state => state.text)}
 						</div>
-						{/* {$if(use(splashState.modsTotal, x => x > 0), */}
 							<div class="progress-counter">
 								{use(splashState.modsFinished)}<span style="color: var(--fg6)">/</span>{use(splashState.modsTotal)}
 							</div>
-						{/* )} */}
 					</div>
 				)}
 				</div>
