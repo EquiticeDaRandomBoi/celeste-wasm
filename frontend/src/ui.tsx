@@ -380,6 +380,8 @@ export const Dialog: Component<{ name: string, open: boolean }, { children: any[
 			align-items: center;
       border-bottom: 1.8px solid var(--surface2);
       padding-bottom: 0.5rem;
+      user-select: none;
+      -webkit-user-select: none;
 		}
 
 		.header h2 {
