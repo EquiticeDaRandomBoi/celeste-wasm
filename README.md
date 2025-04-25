@@ -1,4 +1,4 @@
-<img src="public/app.ico" width=100 align="left">
+<img src="frontend/public/app.ico" width=100 align="left">
 
 <h1>Webleste</h1>
 
