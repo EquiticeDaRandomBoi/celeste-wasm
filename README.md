@@ -8,6 +8,9 @@ A mostly-complete port of Celeste (2018) to WebAssembly using dotnet 9's threade
 
 This "fork" will be merged into [the original](https://github.com/mercuryWorkshop/celeste-wasm) soon.
 
+![image](https://github.com/user-attachments/assets/9da839b1-0930-4534-91aa-a537a815f4ec)
+
+
 ## Limitations
 - Loading the game consumes 600M or so of memory, which is still around 3x lower than the original port, but it is still too much for low end devices.
 - You may encounter issues on firefox.
