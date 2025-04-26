@@ -46,8 +46,8 @@ export const LogView: Component<{ scrolling: boolean, }> = function() {
 	return <div class="component-log" style={this.scrolling ? "overflow: auto" : "overflow: hidden"} />
 }
 
-export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function () {
-  this.css = `
+export const GameView: Component<{ canvas: HTMLCanvasElement }, {}, { start: () => Promise<void>, }> = function() {
+	this.css = `
 		aspect-ratio: 16 / 9;
 		user-select: none;
 		position: relative;
@@ -119,14 +119,14 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function (
 			z-index: 2;
 		}
 	`;
-  const notRunning = use(gameState.playing, x => x ? "gameoverlay notrunning started" : "gameoverlay notrunning stopped");
-  const loader = use(gameState.initting, x => x ? "gameoverlay loader active" : "gameoverlay loader");
-  const canvas = use(gameState.playing, x => x ? "canvas started" : "canvas stopped");
+	const notRunning = use(gameState.playing, x => x ? "gameoverlay notrunning started" : "gameoverlay notrunning stopped");
+	const loader = use(gameState.initting, x => x ? "gameoverlay loader active" : "gameoverlay loader");
+	const canvas = use(gameState.playing, x => x ? "canvas started" : "canvas stopped");
 
-  this.mount = () => {
-    // dotnet will immediately transfer the canvas to deputy thread, so this.mount is required
-    preInit();
-  };
+	this.start = async () => {
+		// dotnet will immediately transfer the canvas to deputy thread, so this.mount is required
+		await preInit();
+	};
 
 	return (
 		<div>
@@ -148,7 +148,7 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}> = function (
 }
 
 export const FpsView: Component<{}, { fps: HTMLElement }> = function() {
-  this.css=`
+	this.css = `
     color: rgba(255, 225, 235, 0.6);
     background: rgba(0, 0, 0, 0.3);
     font-size: 0.775rem;

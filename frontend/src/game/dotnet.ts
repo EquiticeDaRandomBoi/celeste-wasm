@@ -87,8 +87,8 @@ useChange([gameState.playing], () => {
 	} catch (err) { console.log("keyboard lock error:", err); }
 });
 
-const wasm = await eval(`import("/_framework/dotnet.js")`);
-const dotnet: DotnetHostBuilder = wasm.dotnet;
+let wasm;
+let dotnet: DotnetHostBuilder;
 let exports: any;
 
 export async function getDlls(): Promise<(readonly [string, string])[]> {
@@ -212,7 +212,6 @@ export async function downloadEverest() {
 }
 
 export async function wispSanityCheck() {
-	return;
 	let r;
 	try {
 		r = await epoxyFetch("https://google.com");
@@ -233,6 +232,11 @@ export async function pickDownloadsFolder() {
 let libcurlresolver: any;
 export const loadedLibcurlPromise = new Promise(r => libcurlresolver = r);
 export async function preInit() {
+	if (gameState.ready) return;
+
+	wasm = await eval(`import("/_framework/dotnet.js")`);
+	dotnet = wasm.dotnet;
+
 	console.debug("initializing dotnet");
 	const runtime = await dotnet.withConfig({
 		pthreadPoolInitialSize: 24,
@@ -377,10 +381,10 @@ export async function downloadApp() {
 const SEAMLESSCOUNT = 10;
 
 export async function play() {
-  await new Promise(resolve => setTimeout(resolve, 25));
+	await new Promise(resolve => setTimeout(resolve, 25));
 	gameState.playing = true;
 
-  await new Promise(resolve => setTimeout(resolve, 500));
+	await new Promise(resolve => setTimeout(resolve, 500));
 	gameState.initting = true;
 
 	await new Promise(resolve => setTimeout(resolve, 100));

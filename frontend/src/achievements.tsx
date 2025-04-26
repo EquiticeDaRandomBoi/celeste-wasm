@@ -183,6 +183,7 @@ export const Achievements: Component<
 						</div>
 					</div>
 					<img
+						alt={`Achievement ${achievement.name}`}
 						src={
 							unlocked ? achievement.unlocked_image : achievement.locked_image
 						}

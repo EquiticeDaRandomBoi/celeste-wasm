@@ -53,7 +53,7 @@ export const Logo: Component<{}, {}> = function() {
 	`;
 	return (
 		<a href="https://github.com/MercuryWorkshop/celeste-wasm" target="_blank">
-			<img src="/app.ico" />
+			<img alt="Celeste icon" src="/app.webp" />
 			<span>{NAME}</span>
 			<div class="extras">
 				<span class="ver">v1.4.0.0</span>
@@ -69,7 +69,7 @@ const TopBar: Component<{
 	steamOpen: boolean,
 	achievementsOpen: boolean,
 	modInstallerOpen: boolean,
-  settingsOpen: boolean,
+	settingsOpen: boolean,
 }, { allowPlay: boolean, fps: HTMLElement }> = function() {
 	this.css = `
 		background: var(--bg);
@@ -116,16 +116,16 @@ const TopBar: Component<{
 					<Icon icon={iconDownload} />
 					<span>Mods</span>
 				</Button>
-        <Button on:click={() => this.steamOpen = true} icon="full" type="normal" disabled={false} title={"Log in to Steam"}>
+				<Button on:click={() => this.steamOpen = true} icon="full" type="normal" disabled={false} title={"Log in to Steam"}>
 					steam icon
 				</Button>
-        <Button on:click={() => this.achievementsOpen = true} icon="full" type="normal" disabled={false} title={"Achievements"}>
+				<Button on:click={() => this.achievementsOpen = true} icon="full" type="normal" disabled={false} title={"Achievements"}>
 					<Icon icon={iconTrophy} />
 				</Button>
-        <Button on:click={() => this.fsOpen = true} icon="full" type="normal" disabled={false} title={"File Browser"}>
+				<Button on:click={() => this.fsOpen = true} icon="full" type="normal" disabled={false} title={"File Browser"}>
 					<Icon icon={iconFolderOpen} />
 				</Button>
-        <Button icon="full" type="normal" disabled={false} title="Settings" on:click={() => { this.settingsOpen = true }}><Icon icon={iconSettings} /></Button>
+				<Button icon="full" type="normal" disabled={false} title="Settings" on:click={() => { this.settingsOpen = true }}><Icon icon={iconSettings} /></Button>
 				<Button on:click={async () => {
 					try {
 						await this.canvas.requestFullscreen({ navigationUI: "hide" });
@@ -152,6 +152,8 @@ export const Main: Component<{}, {
 	steamOpen: boolean,
 	settingsOpen: boolean,
 	logcontainer: HTMLDivElement,
+}, {
+	start: () => Promise<void>,
 }> = function() {
 	this.css = `
 		width: 100%;
@@ -203,6 +205,10 @@ export const Main: Component<{}, {
 		});
 	}
 
+	const game = <GameView bind:canvas={use(this.canvas)} />
+
+	this.start = async () => { await (game.$ as ComponentType<typeof GameView>).start() }
+
 	return (
 		<div>
 			<TopBar
@@ -215,7 +221,7 @@ export const Main: Component<{}, {
 				bind:showLog={use(store.logs)}
 			/>
 			<div class="game">
-				<GameView bind:canvas={use(this.canvas)} />
+				{game}
 			</div>
 			<div class="expand" />
 			{$if(use(store.logs, x => x > 0), /* @ts-expect-error */
@@ -255,7 +261,7 @@ export const Main: Component<{}, {
 				<ModInstaller open={use(this.modInstallerOpen)} />
 			</Dialog>
 			<Dialog name="Settings" bind:open={use(this.settingsOpen)}>
-			  <Settings />
+				<Settings />
 			</Dialog>
 		</div>
 	);

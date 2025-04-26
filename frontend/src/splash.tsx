@@ -46,7 +46,9 @@ const validateDirectory = async (directory: FileSystemDirectoryHandle) => {
 
 const Intro: Component<{
 	"on:next": (type: "copy" | "extract" | "download") => void,
-}, {}> = function() {
+}, {
+	disabled: boolean,
+}> = function() {
 	this.css = `
 		.error {
 			margin-block: 0.3em;
@@ -56,6 +58,11 @@ const Intro: Component<{
 			margin-block: 0.3em;
 		}
 	`;
+
+	const next = (type: "copy" | "extract" | "download") => {
+		this.disabled = true;
+		this["on:next"](type);
+	}
 
 	return (
 		<div class="step">
@@ -85,15 +92,15 @@ const Intro: Component<{
 				</div>
 				: null}
 
-			<Button on:click={() => this["on:next"]("copy")} type="primary" icon="left" disabled={PICKERS_UNAVAILABLE}>
+			<Button on:click={() => next("copy")} type="primary" icon="left" disabled={use(this.disabled, x => x || PICKERS_UNAVAILABLE)}>
 				<Icon icon={iconFolderOpen} />
 				{PICKERS_UNAVAILABLE ? "Copying local Celeste assets is unsupported" : "Copy local Celeste assets"}
 			</Button>
-			<Button on:click={() => this["on:next"]("extract")} type="primary" icon="left" disabled={PICKERS_UNAVAILABLE}>
+			<Button on:click={() => next("extract")} type="primary" icon="left" disabled={use(this.disabled, x => x || PICKERS_UNAVAILABLE)}>
 				<Icon icon={iconUnarchive} />
 				{PICKERS_UNAVAILABLE ? `Extracting ${NAME} archive is unsupported` : `Extract ${NAME} archive`}
 			</Button>
-			<Button on:click={() => this["on:next"]("download")} type="primary" icon="left" disabled={!STEAM_ENABLED}>
+			<Button on:click={() => next("download")} type="primary" icon="left" disabled={use(this.disabled, x => x || !STEAM_ENABLED)}>
 				<Icon icon={iconDownload} />
 				{STEAM_ENABLED ? "Download assets with Steam Login" : "Download through Steam is disabled"}
 			</Button>
@@ -398,7 +405,7 @@ export const Patch: Component<{
 		<Switch title={"Install Everest Mod Loader?"} bind:on={use(this.everest)} />
 
 		<Button type="primary" icon="left" on:click={patch} disabled={use(this.patching)}>
-		  <Icon icon={iconManufacturing} />
+			<Icon icon={iconManufacturing} />
 			Patch Celeste
 		</Button>
 
@@ -417,6 +424,7 @@ try {
 
 export const Splash: Component<{
 	"on:next": (animation: boolean) => void,
+	start: () => Promise<void>,
 }, {
 	next: "intro" | "copy" | "extract" | "download" | "patch",
 }> = function() {
@@ -491,7 +499,7 @@ export const Splash: Component<{
 
 	return (
 		<div>
-			<img class="splash" src="/splash.png" />
+			<img alt="Splash image" class="splash" src="/splash.webp" />
 			<div class="blur" />
 			<div class="main">
 				<div class="container">
@@ -500,7 +508,7 @@ export const Splash: Component<{
 					</div>
 					{use(this.next, x => {
 						if (x === "intro") {
-							return <Intro on:next={(x) => this.next = x} />;
+							return <Intro on:next={async (x) => { await this.start(); this.next = x }} />;
 						} else if (x === "copy") {
 							return <Copy on:done={() => this.next = "patch"} />;
 						} else if (x === "extract") {

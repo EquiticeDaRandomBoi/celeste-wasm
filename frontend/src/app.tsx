@@ -28,6 +28,8 @@ const App: Component<{}, {
 		}
 	`;
 
+	const main = <Main />;
+	const start = () => (main.$ as ComponentType<typeof Main>).start();
 	const next = (anim: boolean) => {
 		if (anim) {
 			this.el.addEventListener("animationend", this.el.remove);
@@ -35,15 +37,16 @@ const App: Component<{}, {
 		} else {
 			this.el.remove();
 		}
+		start();
 	}
 
 	return (
 		<div id="app" class={use`${store.theme} ${store.accentColor}`}>
 			<div id="splash" bind:this={use(this.el)}>
-				<Splash on:next={next} />
+				<Splash on:next={next} start={start} />
 			</div>
 			<div id="main">
-				<Main />
+				{main}
 			</div>
 		</div>
 	)
@@ -53,7 +56,7 @@ const root = document.getElementById("app")!;
 try {
 	root.replaceWith(<App />);
 } catch (err) {
-  console.log(err);
+	console.log(err);
 	root.replaceWith(document.createTextNode(`Failed to load:\n ${err}`));
-  document.body.classList.add("error");
+	document.body.classList.add("error");
 }

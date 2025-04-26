@@ -199,7 +199,7 @@ export const SteamLogin: Component<
             location being wrong. Just select the location that you don't
             usually log in from if it asks.
           </p>
-          {$if(use(steamState.qr), <img src={use(steamState.qr)} />)}
+          {$if(use(steamState.qr), <img alt="Steam QR" src={use(steamState.qr)} />)}
 
           {$if(
             use(steamState.qr),

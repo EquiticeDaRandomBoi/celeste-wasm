@@ -1,20 +1,20 @@
 import type { IconifyIcon } from "@iconify/types";
 
 export const Button: Component<{
-    "on:click": (() => void) | ((e: PointerEvent) => void);
+	"on:click": (() => void) | ((e: PointerEvent) => void);
 
-    class?: string;
-    type: "primary" | "normal" | "listitem" | "listaction";
-    icon: "full" | "left" | "none";
-    disabled: boolean;
-    title?: string;
+	class?: string;
+	type: "primary" | "normal" | "listitem" | "listaction";
+	icon: "full" | "left" | "none";
+	disabled: boolean;
+	title?: string;
 }, {
-    children: any;
-}> = function () {
-    // @ts-expect-error
-    this._leak = true;
-    const transition = "background 0.15s, color 0.15s, transform 0.15s, border-color 0.15s, border 0.15s, border-bottom 0.15s";
-    this.css = `
+	children: any;
+}> = function() {
+	// @ts-expect-error
+	this._leak = true;
+	const transition = "background 0.15s, color 0.15s, transform 0.15s, border-color 0.15s, border 0.15s, border-bottom 0.15s";
+	this.css = `
 		button {
 			display: flex;
 			align-items: center;
@@ -31,7 +31,7 @@ export const Button: Component<{
 		}
 
 		button,button:hover,button:focus,button:active,button:disabled {
-		  transition: ${transition};
+			transition: ${transition};
 		}
 
 		button:not(:disabled, .type-listitem) {
@@ -52,8 +52,8 @@ export const Button: Component<{
 		}
 
 		button:not(:disabled):hover {
-  		transform: rotate3d(1, 0, 0, 7.5deg);
-  	}
+			transform: rotate3d(1, 0, 0, 7.5deg);
+		}
 
 		button:not(:disabled):active {
 			transform: rotate3d(1, 0, 0, 17.5deg);
@@ -74,12 +74,12 @@ export const Button: Component<{
 			background: var(--accent);
 			color: var(--fg);
 			--border-color: color-mix(in srgb, var(--accent) 55%, var(--fg));
-	    transition: ${transition};
+			transition: ${transition};
 		}
 		button.type-normal {
 			background: var(--surface1);
 			color: var(--fg);
-      transition: ${transition};
+			transition: ${transition};
 		}
 		button.type-listitem {
 			background: transparent;
@@ -89,7 +89,7 @@ export const Button: Component<{
 			padding-block: 0.75rem;
 			padding-inline: 0.5rem;
 			border: none;
-      transition: ${transition};
+			  transition: ${transition};
 			&:hover {
 				transition-duration: 0.1s;
 			}
@@ -97,16 +97,16 @@ export const Button: Component<{
 		button.type-listaction {
 			background: var(--surface1);
 			color: var(--fg);
-      transition: ${transition};
+			transition: ${transition};
 		}
 
 		button.type-primary:not(:disabled):hover {
 			background: color-mix(in srgb, var(--accent) 80%, white);
-      transition: ${transition};
+			transition: ${transition};
 		}
 		button.type-primary:not(:disabled):active {
 			background: color-mix(in srgb, var(--accent) 70%, white);
-      transition: ${transition};
+			transition: ${transition};
 		}
 		button.type-normal:not(:disabled):hover {
 			background: var(--surface3);
@@ -142,42 +142,42 @@ export const Button: Component<{
 			color: var(--surface6);
 			cursor: not-allowed;
 			border-color: transparent;
-      transition: ${transition};
+			transition: ${transition};
 			// border-color: color-mix(in srgb, var(--surface0) 98%, var(--fg));
 		}
 	`;
-    return (
-        <div class="component-btn">
-            <button
-                on:click={this["on:click"]}
-                class={`icon-${this.icon} type-${this.type} ${this.class}`}
-                disabled={use(this.disabled)}
-                title={use(this.title)}
-            >{use(this.children)}</button>
-        </div>
-    );
+	return (
+		<div class="component-btn">
+			<button
+				on:click={this["on:click"]}
+				class={`icon-${this.icon} type-${this.type} ${this.class}`}
+				disabled={use(this.disabled)}
+				title={use(this.title)}
+			>{use(this.children)}</button>
+		</div>
+	);
 };
 
-export const Icon: Component<{ icon: IconifyIcon; class?: string; }, {}> = function () {
-    // @ts-expect-error
-    this._leak = true;
-    this.mount = () => {
-        this.root.innerHTML = this.icon.body;
-        useChange([this.icon], () => {
-            this.root.innerHTML = this.icon.body;
-        });
-    };
-    return (
-        <svg
-            width="1em"
-            height="1em"
-            viewBox={use`0 0 ${this.icon.width} ${this.icon.height}`}
-            xmlns="http://www.w3.org/2000/svg"
-            class={`component-icon ${this.class}`}
-        ></svg>
-    );
+export const Icon: Component<{ icon: IconifyIcon; class?: string; }, {}> = function() {
+	// @ts-expect-error
+	this._leak = true;
+	this.mount = () => {
+		this.root.innerHTML = this.icon.body;
+		useChange([this.icon], () => {
+			this.root.innerHTML = this.icon.body;
+		});
+	};
+	return (
+		<svg
+			width="1em"
+			height="1em"
+			viewBox={use`0 0 ${this.icon.width} ${this.icon.height}`}
+			xmlns="http://www.w3.org/2000/svg"
+			class={`component-icon ${this.class}`}
+		></svg>
+	);
 };
 
-export const Link: Component<{ href: string; }, { children: any[]; }> = function () {
-    return <a href={this.href} class="component-link" target="_blank">{this.children}</a>;
+export const Link: Component<{ href: string; }, { children: any[]; }> = function() {
+	return <a href={this.href} class="component-link" target="_blank">{this.children}</a>;
 };

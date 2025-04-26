@@ -143,7 +143,7 @@ export const ModInstaller: Component<
       <div class="mods">
         {use(this.entries, e => e.map(e =>
           <div class="mod">
-            <img alt="" class="bg" src={e.Screenshots[0] || ""} />
+            <img alt="Screenshot" class="bg" src={e.Screenshots[0] || ""} />
             <div class="detail">
             <h2>{e.Name}</h2>
             {(() => {

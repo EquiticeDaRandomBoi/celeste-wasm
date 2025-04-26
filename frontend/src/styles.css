@@ -1,5 +1,5 @@
 :root {
-    --font-body: 'Adwaita Sans', 'Inter', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
+	--font-body: 'Adwaita Sans', 'Inter', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
 		Roboto, "Helvetica Neue", Arial, sans-serif;
 	--font-display: 'Renogare', 'Inter Tight', 'Adwaita Sans', 'Inter', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
 		Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -17,12 +17,12 @@ html {
 }
 
 body.error {
-    font-family: var(--font-display);
-    font-size: 2rem;
-    align-content: center;
-    text-align: center;
-    background: #12060b;
-    color: #dedede;
+	font-family: var(--font-display);
+	font-size: 2rem;
+	align-content: center;
+	text-align: center;
+	background: #12060b;
+	color: #dedede;
 }
 
 * {
@@ -83,77 +83,79 @@ body.error {
 }
 
 .dark.blue {
-    --accent: #2480ff;
-    --loader-bg: #192745;
+	--accent: #2480ff;
+	--loader-bg: #192745;
 }
 
 .dark.purple {
-    --accent: #b885ff;
-    --loader-bg: rgb(59, 45, 74);
+	--accent: #b885ff;
+	--loader-bg: rgb(59, 45, 74);
 }
 
 .light {
-    color-scheme: light;
+	color-scheme: light;
 
-    --bg-sub: color-mix(in srgb, #fafafa 95%, var(--accent));
-    --bg: color-mix(in srgb, #f8f8f8 95%, var(--accent));
+	--bg-sub: color-mix(in srgb, #fafafa 95%, var(--accent));
+	--bg: color-mix(in srgb, #f8f8f8 95%, var(--accent));
 
-    --surface0: color-mix(in srgb, #f0f0f0 94%, var(--accent));
-    --surface1: color-mix(in srgb, #e3e3e3 95%, var(--accent));
-    --surface2: color-mix(in srgb, #d3d3d3 95%, var(--accent));
-    --surface3: color-mix(in srgb, #c3c3c3 97%, var(--accent));
-    --surface4: color-mix(in srgb, #b3b3b3 97%, var(--accent));
-    --surface5: color-mix(in srgb, #a3a3a3 97%, var(--accent));
-    --surface6: color-mix(in srgb, #939393 97%, var(--accent));
+	--surface0: color-mix(in srgb, #f0f0f0 94%, var(--accent));
+	--surface1: color-mix(in srgb, #e3e3e3 95%, var(--accent));
+	--surface2: color-mix(in srgb, #d3d3d3 95%, var(--accent));
+	--surface3: color-mix(in srgb, #c3c3c3 97%, var(--accent));
+	--surface4: color-mix(in srgb, #b3b3b3 97%, var(--accent));
+	--surface5: color-mix(in srgb, #a3a3a3 97%, var(--accent));
+	--surface6: color-mix(in srgb, #939393 97%, var(--accent));
 
-    --fg: color-mix(in srgb, #191919 95%, var(--accent));
-    --fg2: color-mix(in srgb, #2e2e2e 95%, var(--accent));
-    --fg3: color-mix(in srgb, #3e3e3e 95%, var(--accent));
-    --fg4: color-mix(in srgb, #4d4d4d 95%, var(--accent));
-    --fg5: color-mix(in srgb, #565656 95%, var(--accent));
-    --fg6: color-mix(in srgb, #5e5e5e 95%, var(--accent));
+	--fg: color-mix(in srgb, #191919 95%, var(--accent));
+	--fg2: color-mix(in srgb, #2e2e2e 95%, var(--accent));
+	--fg3: color-mix(in srgb, #3e3e3e 95%, var(--accent));
+	--fg4: color-mix(in srgb, #4d4d4d 95%, var(--accent));
+	--fg5: color-mix(in srgb, #565656 95%, var(--accent));
+	--fg6: color-mix(in srgb, #5e5e5e 95%, var(--accent));
 
-    --accent: #ff4048;
-    --loader-bg: #803e49;
-    --error: #e43e3e;
-    --success: #14b614;
-    --warning: #e0e060;
-    --info: #3563ad;
+	--accent: #ff4048;
+	--loader-bg: #803e49;
+	--error: #e43e3e;
+	--success: #14b614;
+	--warning: #e0e060;
+	--info: #3563ad;
 }
 
 .light.orange {
-    --accent: #ff8024;
-    --loader-bg: #804027;
+	--accent: #ff8024;
+	--loader-bg: #804027;
 }
 
 .light.yellow {
-    --accent: #ffd024;
-    --loader-bg: #806827;
+	--accent: #ffd024;
+	--loader-bg: #806827;
 }
 
 .light.green {
-    --accent: #1aa04a;
-    --loader-bg: #278040;
+	--accent: #1aa04a;
+	--loader-bg: #278040;
 }
 
 .light.blue {
-    --accent: #2480ff;
-    --loader-bg: #274080;
+	--accent: #2480ff;
+	--loader-bg: #274080;
 }
 
 .light.purple {
-    --accent: #b885ff;
-    --loader-bg: #7058a3;
+	--accent: #b885ff;
+	--loader-bg: #7058a3;
 }
 
-.dark.orange, .dark.yellow, .dark.purple {
-    .component-btn button.type-primary {
-	   color: var(--bg)!important;
+.dark.orange,
+.dark.yellow,
+.dark.purple {
+	.component-btn button:not(:disabled).type-primary {
+		color: var(--bg) !important;
 	}
 }
 
 .ctp {
-    color-scheme: dark;
+	color-scheme: dark;
 	--bg-sub: #181825;
 	--bg: #1e1e2e;
 	--surface0: #313244;
@@ -293,6 +295,7 @@ a {
 .warning {
 	color: var(--warning);
 }
+
 .error {
 	color: var(--error);
 }

@@ -1,4 +1,4 @@
-<img src="frontend/public/app.ico" width=100 align="left">
+<img src="frontend/public/app.webp" width=100 align="left">
 
 <h1>Webleste</h1>
 
@@ -6,9 +6,7 @@
 
 A mostly-complete port of Celeste (2018) to WebAssembly using dotnet 9's threaded WASM support and [FNA WASM libraries](https://github.com/r58playz/FNA-WASM-Build).
 
-This "fork" will be merged into [the original](https://github.com/mercuryWorkshop/celeste-wasm) soon.
-
-![image](https://github.com/user-attachments/assets/9da839b1-0930-4534-91aa-a537a815f4ec)
+![Webleste demo](https://github.com/user-attachments/assets/9da839b1-0930-4534-91aa-a537a815f4ec)
 
 
 ## Limitations

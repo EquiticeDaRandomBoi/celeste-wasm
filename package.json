@@ -5,7 +5,8 @@
 	"type": "module",
 	"scripts": {
 		"build": "tsc -p frontend/tsconfig.json && vite build",
-		"dev": "vite"
+		"dev": "vite",
+		"preview": "vite preview"
 	},
 	"dependencies": {
 		"@ktibow/iconset-material-symbols": "^0.0.1733470085",
