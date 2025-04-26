@@ -19,18 +19,33 @@ export const Dialog: Component<{ name: string, open: boolean }, { children: any[
 		position: fixed;
 		inset: 0;
 		opacity: 0;
-		visibility: hidden;
+
+		scale: .9;
+    transform: rotate3d(1, 0, 0, -20deg);
+    filter: brightness(1.5);
+
 		pointer-events: none;
-		transition: opacity 200ms, visibility 200ms;
+		transition: opacity 0.25s, transform 0.175s, filter 0.2s, scale 0.2s;
+    transition-timing-function: ease;
+    transition-delay: 0.05s, 0.05s, 0.05s, 0.05s;
+    transform-origin: 50% 0%;
+    perspective: 1250px;
 
 		&[open] {
 			opacity: 1;
-			visibility: visible;
+			transform: rotate3d(1,0,0,0deg);
+			filter: brightness(1.0);
+		  transition-delay: 0.05s, 0.05s, 0.05s, 0.2s;
 			pointer-events: auto;
 		}
 
+		&[open]::backdrop {
+		  background: rgba(32, 28, 28, 0.35);
+		}
+
 		&::backdrop {
-			background: rgba(32, 28, 28, 0.35);
+			background: rgba(32, 28, 28, 0);
+			transition: background 0.2s;
 		}
 
 		.header {

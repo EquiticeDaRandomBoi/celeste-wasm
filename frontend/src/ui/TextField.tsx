@@ -7,7 +7,7 @@ export const TextField: Component<{
 }, {}> = function () {
 
     this.css = `
-    border: 0.1rem solid var(--surface0);
+    border: 0.1rem solid var(--surface1);
     border-radius: 4rem;
     background: var(--bg-sub);
     padding: 0.5em;
@@ -17,7 +17,7 @@ export const TextField: Component<{
 
     &:hover {
       transition: all 0.1s ease;
-      border-color: var(--surface1);
+      border-color: var(--surface2);
     }
 
     &:focus {
@@ -26,7 +26,7 @@ export const TextField: Component<{
     }
 
     ::placeholder {
-      color: var(--surface6);
+      color: var(--surface5);
     }
   `;
 

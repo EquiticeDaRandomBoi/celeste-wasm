@@ -43,7 +43,6 @@ export const Button: Component<{
 			transition: transform 0.1s;
 			-webkit-user-select: none;
 			user-select: none;
-			perspective: 800px;
 			transform-origin: 50% 100%;
 			perspective: 1250px;
 		}
