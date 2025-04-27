@@ -93,6 +93,8 @@ let exports: any;
 
 export async function getDlls(): Promise<(readonly [string, string])[]> {
 	const resources: any = await fetch("/_framework/blazor.boot.json").then(r => r.json());
+	//return Object.entries(resources.resources.fingerprinting).map(x => [x[0] as string, x[1] as string] as const);
+
 	const whitelist = [
 		"netstandard.dll",
 		"mscorlib.dll",
@@ -200,7 +202,7 @@ export async function downloadEverest() {
 
 	console.log(`Installing Everest ${branch} ${build.commit} ${build.date}`);
 	console.log("Downloading Everest from", build.mainDownload);
-	const zipres = await fetch(build.mainDownload);
+	const zipres = await epoxyFetch(build.mainDownload);
 	const zipbin = await zipres.arrayBuffer();
 
 	const file = await rootFolder.getFileHandle("everest.zip", { create: true });

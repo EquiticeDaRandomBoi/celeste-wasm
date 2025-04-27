@@ -44,8 +44,15 @@ const validateDirectory = async (directory: FileSystemDirectoryHandle) => {
 	return "";
 };
 
+const initialHasContent = await hasContent();
+let initialIsPatched = false;
+try {
+	await rootFolder.getFileHandle("CustomCeleste.dll", { create: false });
+	initialIsPatched = true;
+} catch { }
+
 const Intro: Component<{
-	"on:next": (type: "copy" | "extract" | "download") => void,
+	"on:next": (type: "copy" | "extract" | "patch" | "download" | "done") => void,
 }, {
 	disabled: boolean,
 }> = function() {
@@ -59,9 +66,16 @@ const Intro: Component<{
 		}
 	`;
 
-	const next = (type: "copy" | "extract" | "download") => {
+	const next = (type: "copy" | "extract" | "patch" | "download" | "done") => {
 		this.disabled = true;
 		this["on:next"](type);
+	}
+	if (initialHasContent) {
+		if (initialIsPatched) {
+			queueMicrotask(() => next("done"));
+		} else {
+			next("patch");
+		}
 	}
 
 	return (
@@ -415,13 +429,6 @@ export const Patch: Component<{
 	</div>
 }
 
-const initialHasContent = await hasContent();
-let initialIsPatched = false;
-try {
-	await rootFolder.getFileHandle("CustomCeleste.dll", { create: false });
-	initialIsPatched = true;
-} catch { }
-
 export const Splash: Component<{
 	"on:next": (animation: boolean) => void,
 	start: () => Promise<void>,
@@ -486,16 +493,7 @@ export const Splash: Component<{
       gap: 0.5rem;
 		}
 	`;
-
-	if (initialHasContent) {
-		if (initialIsPatched) {
-			queueMicrotask(() => this["on:next"](false));
-		} else {
-			this.next = "patch";
-		}
-	} else {
-		this.next = "intro";
-	}
+	this.next = "intro";
 
 	return (
 		<div>
@@ -508,7 +506,14 @@ export const Splash: Component<{
 					</div>
 					{use(this.next, x => {
 						if (x === "intro") {
-							return <Intro on:next={async (x) => { await this.start(); this.next = x }} />;
+							return <Intro on:next={async (x) => {
+								if (x === "done") {
+									this["on:next"](false);
+									return;
+								}
+								await this.start();
+								this.next = x;
+							}} />;
 						} else if (x === "copy") {
 							return <Copy on:done={() => this.next = "patch"} />;
 						} else if (x === "extract") {
