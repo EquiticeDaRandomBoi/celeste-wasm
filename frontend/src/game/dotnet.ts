@@ -7,39 +7,41 @@ import { STEAM_ENABLED } from "../main";
 import { epoxyFetch, EpxTcpWs, EpxWs, getWispUrl } from "../epoxy";
 import { steamState } from "../steam";
 
-export type Log = { color: string, log: string };
+export type Log = { color: string; log: string };
 export const TIMEBUF_SIZE = 60;
 export const gameState: Stateful<{
-	ready: boolean,
-	initting: boolean,
-	playing: boolean,
+  ready: boolean;
+  initting: boolean;
+  playing: boolean;
+  hasEverest: boolean;
 
-	timebuf: RingBuffer<number>,
+  timebuf: RingBuffer<number>;
 }> = $state({
-	ready: false,
-	initting: false,
-	playing: false,
+  ready: false,
+  initting: false,
+  playing: false,
+  hasEverest: false,
 
-	timebuf: new RingBuffer<number>(TIMEBUF_SIZE)
+  timebuf: new RingBuffer<number>(TIMEBUF_SIZE),
 });
 export const loglisteners: ((log: Log) => void)[] = [];
 
 function proxyConsole(name: string, color: string) {
-	// @ts-expect-error ts sucks
-	const old = console[name].bind(console);
-	// @ts-expect-error ts sucks
-	console[name] = (...args) => {
-		let str;
-		try {
-			str = args.join(" ");
-		} catch {
-			str = "<failed to render>";
-		}
-		old(...args);
-		for (const logger of loglisteners) {
-			logger({ color, log: str });
-		}
-	}
+  // @ts-expect-error ts sucks
+  const old = console[name].bind(console);
+  // @ts-expect-error ts sucks
+  console[name] = (...args) => {
+    let str;
+    try {
+      str = args.join(" ");
+    } catch {
+      str = "<failed to render>";
+    }
+    old(...args);
+    for (const logger of loglisteners) {
+      logger({ color, log: str });
+    }
+  };
 }
 proxyConsole("error", "var(--error)");
 proxyConsole("warn", "var(--warning)");
@@ -48,43 +50,45 @@ proxyConsole("info", "var(--info)");
 proxyConsole("debug", "var(--fg4)");
 
 function hookfmod() {
-	let contexts: AudioContext[] = [];
+  let contexts: AudioContext[] = [];
 
-	let ctx = AudioContext;
-	(AudioContext as any) = function() {
-		let context = new ctx();
+  let ctx = AudioContext;
+  (AudioContext as any) = function () {
+    let context = new ctx();
 
-		contexts.push(context);
-		return context;
-	};
+    contexts.push(context);
+    return context;
+  };
 
-	window.addEventListener("focus", async () => {
-		for (let context of contexts) {
-			try {
-				await context.resume();
-			} catch { }
-		}
-	});
-	window.addEventListener("blur", async () => {
-		for (let context of contexts) {
-			try {
-				await context.suspend();
-			} catch { }
-		}
-	});
+  window.addEventListener("focus", async () => {
+    for (let context of contexts) {
+      try {
+        await context.resume();
+      } catch {}
+    }
+  });
+  window.addEventListener("blur", async () => {
+    for (let context of contexts) {
+      try {
+        await context.suspend();
+      } catch {}
+    }
+  });
 }
 hookfmod();
 
 useChange([gameState.playing], () => {
-	try {
-		if (gameState.playing) {
-			// @ts-expect-error
-			navigator.keyboard.lock()
-		} else {
-			// @ts-expect-error
-			navigator.keyboard.unlock();
-		}
-	} catch (err) { console.log("keyboard lock error:", err); }
+  try {
+    if (gameState.playing) {
+      // @ts-expect-error
+      navigator.keyboard.lock();
+    } else {
+      // @ts-expect-error
+      navigator.keyboard.unlock();
+    }
+  } catch (err) {
+    console.log("keyboard lock error:", err);
+  }
 });
 
 let wasm;
@@ -92,344 +96,378 @@ let dotnet: DotnetHostBuilder;
 let exports: any;
 
 export async function getDlls(): Promise<(readonly [string, string])[]> {
-	const resources: any = await fetch("/_framework/blazor.boot.json").then(r => r.json());
-	//return Object.entries(resources.resources.fingerprinting).map(x => [x[0] as string, x[1] as string] as const);
+  const resources: any = await fetch("/_framework/blazor.boot.json").then((r) =>
+    r.json(),
+  );
+  //return Object.entries(resources.resources.fingerprinting).map(x => [x[0] as string, x[1] as string] as const);
 
-	const whitelist = [
-		"netstandard.dll",
-		"mscorlib.dll",
-		"System.Collections.Concurrent.dll",
-		"System.Memory.dll",
-		"System.Private.CoreLib.dll",
-		"System.Private.Uri.dll",
-		"System.Runtime.dll",
-		"System.Reflection.dll",
-		"System.Runtime.InteropServices.dll",
-		"System.Text.RegularExpressions.dll",
+  const whitelist = [
+    "netstandard.dll",
+    "mscorlib.dll",
+    "System.Collections.Concurrent.dll",
+    "System.Memory.dll",
+    "System.Private.CoreLib.dll",
+    "System.Private.Uri.dll",
+    "System.Runtime.dll",
+    "System.Reflection.dll",
+    "System.Runtime.InteropServices.dll",
+    "System.Text.RegularExpressions.dll",
 
-		"NETCoreifier.dll",
-		"FNA.dll",
-		"Wasm.Celeste.dll",
-		"Celeste.Wasm.mm.dll",
+    "NETCoreifier.dll",
+    "FNA.dll",
+    "Wasm.Celeste.dll",
+    "Celeste.Wasm.mm.dll",
 
-		"MonoMod.Common.dll",
-		"MonoMod.Core.dll",
-		"MonoMod.Patcher.dll",
-		"MonoMod.ILHelpers.dll",
-		"MonoMod.Backports.dll",
-		"MonoMod.Utils.dll",
-		"MonoMod.RuntimeDetour.dll",
-		"Mono.Cecil.dll",
-		"System.Diagnostics.Process.dll",
-		"System.ComponentModel.Primitives.dll",
-		"System.Collections.dll",
-		"System.dll",
-		"Steamworks.NET.dll",
-		"Jdenticon.dll",
-		"YamlDotNet.dll",
-		"MAB.DotIgnore.dll",
-		"Newtonsoft.Json.dll",
-		"NLua.dll",
-		"KeraLua.dll",
-		"DnsOverHttps.dll",
-	];
+    "MonoMod.Common.dll",
+    "MonoMod.Core.dll",
+    "MonoMod.Patcher.dll",
+    "MonoMod.ILHelpers.dll",
+    "MonoMod.Backports.dll",
+    "MonoMod.Utils.dll",
+    "MonoMod.RuntimeDetour.dll",
+    "Mono.Cecil.dll",
+    "System.Diagnostics.Process.dll",
+    "System.ComponentModel.Primitives.dll",
+    "System.Collections.dll",
+    "System.dll",
+    "Steamworks.NET.dll",
+    "Jdenticon.dll",
+    "YamlDotNet.dll",
+    "MAB.DotIgnore.dll",
+    "Newtonsoft.Json.dll",
+    "NLua.dll",
+    "KeraLua.dll",
+    "DnsOverHttps.dll",
+  ];
 
-	return Object.entries(resources.resources.fingerprinting).map(x => [x[0] as string, x[1] as string] as const).filter(([_, v]) => whitelist.includes(v));
+  return Object.entries(resources.resources.fingerprinting)
+    .map((x) => [x[0] as string, x[1] as string] as const)
+    .filter(([_, v]) => whitelist.includes(v));
 }
 
 // the funny custom rsa
 // https://github.com/MercuryWorkshop/wispcraft/blob/main/src/connection/crypto.ts
 function encryptRSA(data: Uint8Array, n: bigint, e: bigint): Uint8Array {
-	const modExp = (base: bigint, exp: bigint, mod: bigint) => {
-		let result = 1n;
-		base = base % mod;
-		while (exp > 0n) {
-			if (exp % 2n === 1n) {
-				result = (result * base) % mod;
-			}
-			exp = exp >> 1n;
-			base = (base * base) % mod;
-		}
-		return result;
-	};
-	// thank you jippity
-	const pkcs1v15Pad = (messageBytes: Uint8Array, n: bigint) => {
-		const messageLength = messageBytes.length;
-		const nBytes = Math.ceil(n.toString(16).length / 2);
+  const modExp = (base: bigint, exp: bigint, mod: bigint) => {
+    let result = 1n;
+    base = base % mod;
+    while (exp > 0n) {
+      if (exp % 2n === 1n) {
+        result = (result * base) % mod;
+      }
+      exp = exp >> 1n;
+      base = (base * base) % mod;
+    }
+    return result;
+  };
+  // thank you jippity
+  const pkcs1v15Pad = (messageBytes: Uint8Array, n: bigint) => {
+    const messageLength = messageBytes.length;
+    const nBytes = Math.ceil(n.toString(16).length / 2);
 
-		if (messageLength > nBytes - 11) {
-			throw new Error("Message too long for RSA encryption");
-		}
+    if (messageLength > nBytes - 11) {
+      throw new Error("Message too long for RSA encryption");
+    }
 
-		const paddingLength = nBytes - messageLength - 3;
-		const padding = Array(paddingLength).fill(0xff);
+    const paddingLength = nBytes - messageLength - 3;
+    const padding = Array(paddingLength).fill(0xff);
 
-		return BigInt(
-			"0x" +
-			[
-				"00",
-				"02",
-				...padding.map((byte) => byte.toString(16).padStart(2, "0")),
-				"00",
-				...Array.from(messageBytes).map((byte: any) =>
-					byte.toString(16).padStart(2, "0")
-				),
-			].join("")
-		);
-	};
-	const paddedMessage = pkcs1v15Pad(data, n);
-	let int = modExp(paddedMessage, e, n);
+    return BigInt(
+      "0x" +
+        [
+          "00",
+          "02",
+          ...padding.map((byte) => byte.toString(16).padStart(2, "0")),
+          "00",
+          ...Array.from(messageBytes).map((byte: any) =>
+            byte.toString(16).padStart(2, "0"),
+          ),
+        ].join(""),
+    );
+  };
+  const paddedMessage = pkcs1v15Pad(data, n);
+  let int = modExp(paddedMessage, e, n);
 
-	let hex = int.toString(16);
-	if (hex.length % 2) {
-		hex = "0" + hex;
-	}
+  let hex = int.toString(16);
+  if (hex.length % 2) {
+    hex = "0" + hex;
+  }
 
-	// ????
-	return new Uint8Array(
-		Array.from(hex.match(/.{2}/g) || []).map((byte) => parseInt(byte, 16))
-	);
+  // ????
+  return new Uint8Array(
+    Array.from(hex.match(/.{2}/g) || []).map((byte) => parseInt(byte, 16)),
+  );
 }
 
 export async function downloadEverest() {
-	const branch = "stable"
-	const res = await fetch("https://everestapi.github.io/everestupdater.txt");
-	const versionsUrl = await res.text();
-	const versRes = await fetch(versionsUrl + "?supportsNativeBuilds=true");
+  const branch = "stable";
+  const res = await fetch("https://everestapi.github.io/everestupdater.txt");
+  const versionsUrl = await res.text();
+  const versRes = await fetch(versionsUrl + "?supportsNativeBuilds=true");
 
-	const versions = await versRes.json();
-	const build = versions.filter((v: any) => v.branch == branch)[0];
+  const versions = await versRes.json();
+  const build = versions.filter((v: any) => v.branch == branch)[0];
 
-	console.log(`Installing Everest ${branch} ${build.commit} ${build.date}`);
-	console.log("Downloading Everest from", build.mainDownload);
-	const zipres = await epoxyFetch(build.mainDownload);
-	const zipbin = await zipres.arrayBuffer();
+  console.log(`Installing Everest ${branch} ${build.commit} ${build.date}`);
+  console.log("Downloading Everest from", build.mainDownload);
+  const zipres = await epoxyFetch(build.mainDownload);
+  const zipbin = await zipres.arrayBuffer();
 
-	const file = await rootFolder.getFileHandle("everest.zip", { create: true });
-	const writable = await file.createWritable();
-	await writable.write(new Uint8Array(zipbin));
-	await writable.close();
+  const file = await rootFolder.getFileHandle("everest.zip", { create: true });
+  const writable = await file.createWritable();
+  await writable.write(new Uint8Array(zipbin));
+  await writable.close();
 
-	console.log("Successfully downloaded Everest");
+  console.log("Successfully downloaded Everest");
 }
 
 export async function wispSanityCheck() {
-	let r;
-	try {
-		r = await epoxyFetch("https://google.com");
-	} catch (e) {
-		console.error(e);
-	}
+  let r;
+  try {
+    r = await epoxyFetch("https://google.com");
+  } catch (e) {
+    console.error(e);
+  }
 
-	if (!r || !r.ok) throw new Error("wisp sanity check failed");
+  if (!r || !r.ok) throw new Error("wisp sanity check failed");
 }
 
 let downloadsFolder: FileSystemDirectoryHandle | null = null;
 
 export async function pickDownloadsFolder() {
-	let d = await showDirectoryPicker();
-	downloadsFolder = d;
+  let d = await showDirectoryPicker();
+  downloadsFolder = d;
 }
 
 let libcurlresolver: any;
-export const loadedLibcurlPromise = new Promise(r => libcurlresolver = r);
+export const loadedLibcurlPromise = new Promise((r) => (libcurlresolver = r));
 export async function preInit() {
-	if (gameState.ready) return;
+  if (gameState.ready) return;
 
-	wasm = await eval(`import("/_framework/dotnet.js")`);
-	dotnet = wasm.dotnet;
+  wasm = await eval(`import("/_framework/dotnet.js")`);
+  dotnet = wasm.dotnet;
 
-	console.debug("initializing dotnet");
-	const runtime = await dotnet.withConfig({
-		pthreadPoolInitialSize: 24,
-		// pthreadPoolUnusedSize: 512,
-	}).create();
+  console.debug("initializing dotnet");
+  const runtime = await dotnet
+    .withConfig({
+      pthreadPoolInitialSize: 24,
+      // pthreadPoolUnusedSize: 512,
+    })
+    .create();
 
-	runtime.setModuleImports("SteamJS", SteamJS);
-	runtime.setModuleImports("JsSplash", JsSplash);
+  runtime.setModuleImports("SteamJS", SteamJS);
+  runtime.setModuleImports("JsSplash", JsSplash);
 
-	console.log("loading epoxy");
-	await wispSanityCheck();
+  console.log("loading epoxy");
+  await wispSanityCheck();
 
-	window.WebSocket = new Proxy(WebSocket, {
-		construct(t, a, n) {
-			const url = new URL(a[0]);
-			if (a[0] === getWispUrl() || url.host === location.host)
-				return Reflect.construct(t, a, n);
-			if (url.hostname.startsWith("__celestewasm_wisp_proxy_ws__"))
-				return new EpxTcpWs(url.pathname.substring(1), url.hostname.replace("__celestewasm_wisp_proxy_ws__", ""));
+  window.WebSocket = new Proxy(WebSocket, {
+    construct(t, a, n) {
+      const url = new URL(a[0]);
+      if (a[0] === getWispUrl() || url.host === location.host)
+        return Reflect.construct(t, a, n);
+      if (url.hostname.startsWith("__celestewasm_wisp_proxy_ws__"))
+        return new EpxTcpWs(
+          url.pathname.substring(1),
+          url.hostname.replace("__celestewasm_wisp_proxy_ws__", ""),
+        );
 
-			// @ts-expect-error
-			return new EpxWs(...a);
-		}
-	});
+      // @ts-expect-error
+      return new EpxWs(...a);
+    },
+  });
 
-	let nativefetch = window.fetch;
-	let dl = document.createElement("a");
-	dl.style.display = "none";
-	document.body.appendChild(dl);
+  let nativefetch = window.fetch;
+  let dl = document.createElement("a");
+  dl.style.display = "none";
+  document.body.appendChild(dl);
 
+  window.fetch = async (...args) => {
+    // don't try native for steam depots
+    if (typeof args[0] !== "string" || !args[0].includes("/depot/")) {
+      try {
+        return await nativefetch(...args);
+      } catch (e) {}
+    } else if (downloadsFolder != null) {
+      let last = args[0].split("/").pop()!;
+      try {
+        let file = await downloadsFolder.getFileHandle(last, { create: false });
+        let h = await file.getFile();
+        console.log("got file cached", last);
+        return new Response(h.stream());
+      } catch {}
+      dl.download = "cross origin lol";
+      dl.href = args[0];
+      dl.click();
 
-	window.fetch = async (...args) => {
-		// don't try native for steam depots
-		if (typeof args[0] !== "string" || !args[0].includes("/depot/")) {
-			try {
-				return await nativefetch(...args);
-			} catch (e) {
-			}
-		} else if (downloadsFolder != null) {
-			let last = args[0].split("/").pop()!;
-			try {
-				let file = await downloadsFolder.getFileHandle(last, { create: false });
-				let h = await file.getFile();
-				console.log("got file cached", last);
-				return new Response(h.stream());
-			} catch { }
-			dl.download = "cross origin lol";
-			dl.href = args[0];
-			dl.click();
+      while (true) {
+        try {
+          let file = await downloadsFolder.getFileHandle(last, {
+            create: false,
+          });
+          let h = await file.getFile();
+          console.log("got file", last);
+          return new Response(h.stream());
+        } catch {}
+        await new Promise((r) => setTimeout(r, 100));
+      }
+    }
 
-			while (true) {
-				try {
-					let file = await downloadsFolder.getFileHandle(last, { create: false });
-					let h = await file.getFile();
-					console.log("got file", last);
-					return new Response(h.stream());
-				} catch { }
-				await new Promise(r => setTimeout(r, 100));
-			}
-		}
+    // @ts-expect-error
+    return await epoxyFetch(...args);
+  };
+  libcurlresolver();
 
-		// @ts-expect-error
-		return await epoxyFetch(...args);
-	}
-	libcurlresolver();
+  const config = runtime.getConfig();
+  exports = await runtime.getAssemblyExports(config.mainAssemblyName!);
 
-	const config = runtime.getConfig();
-	exports = await runtime.getAssemblyExports(config.mainAssemblyName!);
+  // TODO: replace with native openssl
+  runtime.setModuleImports("interop.js", {
+    encryptrsa: (
+      publicKeyModulusHex: string,
+      publicKeyExponentHex: string,
+      data: Uint8Array,
+    ) => {
+      let modulus = BigInt("0x" + publicKeyModulusHex);
+      let exponent = BigInt("0x" + publicKeyExponentHex);
+      let encrypted = encryptRSA(data, modulus, exponent);
+      return new Uint8Array(encrypted);
+    },
+  });
 
+  runtime.setModuleImports("depot.js", {
+    newqr: (qr: string) => {
+      console.log("QR DATA" + qr);
+      steamState.qr = qr;
+    },
+  });
 
-	// TODO: replace with native openssl
-	runtime.setModuleImports("interop.js", {
-		encryptrsa: (publicKeyModulusHex: string, publicKeyExponentHex: string, data: Uint8Array) => {
-			let modulus = BigInt("0x" + publicKeyModulusHex);
-			let exponent = BigInt("0x" + publicKeyExponentHex);
-			let encrypted = encryptRSA(data, modulus, exponent);
-			return new Uint8Array(encrypted);
-		}
-	});
+  (self as any).wasm = {
+    Module: runtime.Module,
+    // @ts-expect-error
+    FS: runtime.Module.FS,
+    dotnet,
+    runtime,
+    config,
+    exports,
+  };
 
-	runtime.setModuleImports("depot.js", {
-		newqr: (qr: string) => {
-			console.log("QR DATA" + qr);
-			steamState.qr = qr;
-		}
-	});
+  const dlls = await getDlls();
 
-	(self as any).wasm = {
-		Module: runtime.Module,
-		// @ts-expect-error
-		FS: runtime.Module.FS,
-		dotnet,
-		runtime,
-		config,
-		exports,
-	};
+  console.debug("runMain...");
+  await runtime.runMain();
+  console.debug("MountFilesystems...");
+  await exports.CelesteBootstrap.MountFilesystems(
+    dlls.map((x) => `${x[0]}|${x[1]}`),
+  );
+  console.debug("PreInit...");
+  await exports.CelesteLoader.PreInit();
+  console.debug("dotnet initialized");
 
-	const dlls = await getDlls();
+  if (STEAM_ENABLED) {
+    await exports.Steam.Init();
+    if (await exports.Steam.InitSteamSaved()) {
+      console.log("Steam saved login success");
+      steamState.login = 2;
+    }
+  }
 
-	console.debug("runMain...");
-	await runtime.runMain();
-	console.debug("MountFilesystems...");
-	await exports.CelesteBootstrap.MountFilesystems(dlls.map(x => `${x[0]}|${x[1]}`));
-	console.debug("PreInit...");
-	await exports.CelesteLoader.PreInit();
-	console.debug("dotnet initialized");
+  try {
+    await (
+      await rootFolder.getDirectoryHandle("Celeste")
+    ).getDirectoryHandle("Everest");
+    gameState.hasEverest = true;
+  } catch {
+    gameState.hasEverest = false;
+  }
 
-
-	if (STEAM_ENABLED) {
-		await exports.Steam.Init();
-		if (await exports.Steam.InitSteamSaved()) {
-			console.log("Steam saved login success");
-			steamState.login = 2;
-		}
-	}
-
-	gameState.ready = true;
-};
-
-export async function PatchCeleste(installEverest: boolean) {
-	try {
-		await (await (await rootFolder.getDirectoryHandle("Celeste")).getDirectoryHandle("Everest")).getFileHandle("Celeste.Mod.mm.dll", { create: false });
-	} catch {
-		try {
-			await rootFolder.getFileHandle("everest.zip", { create: false });
-		} catch {
-			await downloadEverest();
-		}
-		await exports.Patcher.ExtractEverest();
-	}
-
-	await exports.Patcher.PatchCeleste(installEverest);
+  gameState.ready = true;
 }
 
-export async function initSteam(username: string | null, password: string | null, qr: boolean) {
-	return await exports.Steam.InitSteam(username, password, qr);
+export async function PatchCeleste(installEverest: boolean) {
+  if (installEverest) {
+    try {
+      await (
+        await (
+          await rootFolder.getDirectoryHandle("Celeste")
+        ).getDirectoryHandle("Everest")
+      ).getFileHandle("Celeste.Mod.mm.dll", { create: false });
+    } catch {
+      try {
+        await rootFolder.getFileHandle("everest.zip", { create: false });
+      } catch {
+        await downloadEverest();
+      }
+      await exports.Patcher.ExtractEverest();
+    }
+  }
+
+  await exports.Patcher.PatchCeleste(installEverest);
+  gameState.hasEverest = true;
+}
+
+export async function initSteam(
+  username: string | null,
+  password: string | null,
+  qr: boolean,
+) {
+  return await exports.Steam.InitSteam(username, password, qr);
 }
 
 export async function downloadApp() {
-	return await exports.Steam.DownloadApp();
+  return await exports.Steam.DownloadApp();
 }
 const SEAMLESSCOUNT = 10;
 
 export async function play() {
-	await new Promise(resolve => setTimeout(resolve, 25));
-	gameState.playing = true;
+  await new Promise((resolve) => setTimeout(resolve, 25));
+  gameState.playing = true;
 
-	await new Promise(resolve => setTimeout(resolve, 500));
-	gameState.initting = true;
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  gameState.initting = true;
 
-	await new Promise(resolve => setTimeout(resolve, 100));
-	if (STEAM_ENABLED && steamState.login == 2) {
-		console.debug("Syncing Steam Cloud");
-		await exports.Steam.DownloadSteamCloud();
-	}
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  if (STEAM_ENABLED && steamState.login == 2) {
+    console.debug("Syncing Steam Cloud");
+    await exports.Steam.DownloadSteamCloud();
+  }
 
-	console.debug("Init...");
-	const before = performance.now();
+  console.debug("Init...");
+  const before = performance.now();
 
-	await exports.CelesteLoader.Init();
+  await exports.CelesteLoader.Init();
 
-	// run some frames for seamless transition
-	for (let i = 0; i < SEAMLESSCOUNT; i++) {
-		console.debug(`SeamlessInit${i}...`);
-		if (!await exports.CelesteLoader.MainLoop()) throw new Error("CelesteLoader.MainLoop() Failed!");
-	}
+  // run some frames for seamless transition
+  for (let i = 0; i < SEAMLESSCOUNT; i++) {
+    console.debug(`SeamlessInit${i}...`);
+    if (!(await exports.CelesteLoader.MainLoop()))
+      throw new Error("CelesteLoader.MainLoop() Failed!");
+  }
 
-	const after = performance.now();
-	console.debug(`Init : ${(after - before).toFixed(2)}ms`);
-	gameState.initting = false;
+  const after = performance.now();
+  console.debug(`Init : ${(after - before).toFixed(2)}ms`);
+  gameState.initting = false;
 
-	const main = async () => {
-		const before = performance.now();
-		const ret = await exports.CelesteLoader.MainLoop();
-		const after = performance.now();
+  const main = async () => {
+    const before = performance.now();
+    const ret = await exports.CelesteLoader.MainLoop();
+    const after = performance.now();
 
-		gameState.timebuf.add(after - before);
+    gameState.timebuf.add(after - before);
 
-		if (!ret) {
-			console.debug("Cleanup...");
+    if (!ret) {
+      console.debug("Cleanup...");
 
-			gameState.timebuf.clear();
+      gameState.timebuf.clear();
 
-			await exports.CelesteLoader.Cleanup();
-			gameState.ready = false;
-			gameState.playing = false;
+      await exports.CelesteLoader.Cleanup();
+      gameState.ready = false;
+      gameState.playing = false;
 
-			return;
-		}
+      return;
+    }
 
-		requestAnimationFrame(main);
-	}
-	requestAnimationFrame(main);
+    requestAnimationFrame(main);
+  };
+  requestAnimationFrame(main);
 }

@@ -68,7 +68,6 @@ public static partial class CelesteBootstrap
                 throw new Exception($"Failed to mount OPFS: error code {ret}");
             }
 
-            TryCreateDirectory("/libsdl/Celeste/Everest");
             TryCreateDirectory("/libsdl/Celeste/Mods");
             TryCreateDirectory("/libsdl/Celeste/Saves");
             TryCreateDirectory("/remote/");

@@ -119,7 +119,7 @@ const TopBar: Component<
           on:click={() => (this.modInstallerOpen = true)}
           icon="left"
           type="normal"
-          disabled={false}
+          disabled={use(gameState.hasEverest, (t) => !t)}
           title={"Download Mods"}
         >
           <Icon icon={iconDownload} />
