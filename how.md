@@ -1,18 +1,24 @@
 # Porting Terraria and Celeste to WebAssembly
 
-I've always been interested in weird things running in the browser, so when I saw an old post of someone running a half working copy of the game Celeste in the browser, I knew I had to try and recreate it myself.
+I've always loved seeing things running in the browser that should absolutely not be running in the browser. Some of my favorites in this genre of project are the [Half Life 1 port](https://github.com/btarg/Xash3D-Emscripten) that uses a reimplementation of goldsrc, a direct recompilation of [Minecraft 1.12](https://eaglercraft.com) from java bytecode to WebAssembly, and even an [emulated Pentium II capable of running modern linux](https://copy.sh/v86/).
 
-Both Celeste and Terraria were written using XNA, a proprietary low level C# game "engine" developed and subsequently abandoned by Microsoft. It was eventually replaced with the community maintained FNA library, including a SDL backend and greater platform support.
+So when I saw an old post of someone running a half working copy of the game Celeste in the browser, it completely fascinated me, leading to a year long journey of patching various bits of software to create something that really shouldn't exist.
 
-Like Java, C# compiles to a platform-independent bytecode format. Common Intermediate Language (referred to as MSIL or just IL) was designed to map very closely to the original code. The game binaries are typically provided with symbols for both function names and local variables, so the output from the decompiler is typically about as close to the original source as possible.
 
-Starting with .NET 5, Microsoft released Blazor in an attempt to take over the frontend world with C#'s "Enterprise Reliability", and with it came the ability to run any C# in WebAssembly
 
-thanks r58 for figuring most of this stuff out and bomberfish for making a cool ui
+thanks to [r58](https://www.r58playz.dev) for figuring most of this stuff out with me and [bomberfish](https://bomberfish.ca) for making a cool ui
 
 # Terraria
+Celeste was written in C#, using XNA. Actually FNA.
 
-Without knowing much about C# in general we figured a good place to start was setting up a development environment for modding. In theory, all we needed to do was decompile the game, change the target to webassembly, and then recompile it.
+XNA *was* a proprietary low level game "engine" developed and subsequently abandoned by Microsoft. It was eventually replaced with the community maintained FNA library, including a SDL backend and greater platform support.
+
+Terraria was also built with XNA/FNA, so I assumed we co
+
+
+The original post didn't have too many details to go off of, but we figured a good place to start was setting up a development environment for modding. In theory, all we needed to do was decompile the game, change the target to webassembly, and then recompile it.
+
+Like Java, C# compiles to a platform-independent bytecode format. Common Intermediate Language (referred to as MSIL or just IL) was designed to map very closely to the original code. The game binaries are typically provided with symbols for both function names and local variables, so the output from the decompiler is typically about as close to the original source as possible.
 
 ## Setting up a project
 
@@ -305,7 +311,7 @@ Now that the loader doesn't care where the code comes from, we can just swap out
 
 image
 
-everest loads but there was one more step in getting mods to run
+Everest loads but there was one more step in getting mods to run
 
 we couldn't load mods though because we needed monomod
 
