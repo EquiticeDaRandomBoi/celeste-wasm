@@ -20,8 +20,8 @@ export const STEAM_ENABLED = import.meta.env.VITE_STEAM_ENABLED;
 
 export const NAME = "webleste";
 
-export const Logo: Component<{}, {}> = function() {
-	this.css = `
+export const Logo: Component<{}, {}> = function () {
+  this.css = `
 		display: flex;
 		align-items: center;
 		font-size: 1.5rem;
@@ -51,27 +51,30 @@ export const Logo: Component<{}, {}> = function() {
 			justify-content: space-between;
 		}
 	`;
-	return (
-		<a href="https://github.com/MercuryWorkshop/celeste-wasm" target="_blank">
-			<img alt="Celeste icon" src="/app.webp" />
-			<span>{NAME}</span>
-			<div class="extras">
-				<span class="ver">v1.4.0.0</span>
-			</div>
-		</a>
-	)
-}
+  return (
+    <a href="https://github.com/MercuryWorkshop/celeste-wasm" target="_blank">
+      <img alt="Celeste icon" src="/app.webp" />
+      <span>{NAME}</span>
+      <div class="extras">
+        <span class="ver">v1.4.0.0</span>
+      </div>
+    </a>
+  );
+};
 
-const TopBar: Component<{
-	canvas: HTMLCanvasElement,
-	fsOpen: boolean,
-	showLog: number,
-	steamOpen: boolean,
-	achievementsOpen: boolean,
-	modInstallerOpen: boolean,
-	settingsOpen: boolean,
-}, { allowPlay: boolean, fps: HTMLElement }> = function() {
-	this.css = `
+const TopBar: Component<
+  {
+    canvas: HTMLCanvasElement;
+    fsOpen: boolean;
+    showLog: number;
+    steamOpen: boolean;
+    achievementsOpen: boolean;
+    modInstallerOpen: boolean;
+    settingsOpen: boolean;
+  },
+  { allowPlay: boolean; fps: HTMLElement }
+> = function () {
+  this.css = `
 		background: var(--bg);
 		padding: 1em;
 		border-bottom: 1.75px solid var(--surface2);
@@ -101,61 +104,115 @@ const TopBar: Component<{
 		}
 	`;
 
-	useChange([gameState.ready, gameState.playing], () => {
-		this.allowPlay = gameState.ready && !gameState.playing;
-	});
+  useChange([gameState.ready, gameState.playing], () => {
+    this.allowPlay = gameState.ready && !gameState.playing;
+  });
 
-	return (
-		<div>
-			<div class="group">
-				<Logo />
-			</div>
-			<div class="expand" />
-			<div class="group">
-				<Button on:click={() => this.modInstallerOpen = true} icon="left" type="normal" disabled={false} title={"Download Mods"}>
-					<Icon icon={iconDownload} />
-					<span>Mods</span>
-				</Button>
-				<Button on:click={() => this.steamOpen = true} icon="full" type="normal" disabled={false} title={"Log in to Steam"}>
-					steam icon
-				</Button>
-				<Button on:click={() => this.achievementsOpen = true} icon="full" type="normal" disabled={false} title={"Achievements"}>
-					<Icon icon={iconTrophy} />
-				</Button>
-				<Button on:click={() => this.fsOpen = true} icon="full" type="normal" disabled={false} title={"File Browser"}>
-					<Icon icon={iconFolderOpen} />
-				</Button>
-				<Button icon="full" type="normal" disabled={false} title="Settings" on:click={() => { this.settingsOpen = true }}><Icon icon={iconSettings} /></Button>
-				<Button on:click={async () => {
-					try {
-						await this.canvas.requestFullscreen({ navigationUI: "hide" });
-					} catch { }
-				}} icon="full" type="normal" disabled={use(gameState.playing, x => !x)} title={"Fullscreen"}>
-					<Icon icon={iconFullscreen} />
-				</Button>
-				<Button on:click={() => {
-					play();
-				}} icon="left" type="primary" disabled={use(this.allowPlay, x => !x)} title={"Start Game"}>
-					<Icon icon={iconPlayArrow} />
-					<span>Play</span>
-				</Button>
-			</div>
-		</div>
-	)
-}
+  return (
+    <div>
+      <div class="group">
+        <Logo />
+      </div>
+      <div class="expand" />
+      <div class="group">
+        <Button
+          on:click={() => (this.modInstallerOpen = true)}
+          icon="left"
+          type="normal"
+          disabled={false}
+          title={"Download Mods"}
+        >
+          <Icon icon={iconDownload} />
+          <span>Mods</span>
+        </Button>
+        <Button
+          on:click={() => (this.steamOpen = true)}
+          icon="full"
+          type="normal"
+          disabled={false}
+          title={"Log in to Steam"}
+        >
+          <img
+            src="/steamlogo.svg"
+            alt="Steam Logo"
+            style={{ width: "1.5rem", height: "1.5rem" }}
+          />
+        </Button>
+        <Button
+          on:click={() => (this.achievementsOpen = true)}
+          icon="full"
+          type="normal"
+          disabled={false}
+          title={"Achievements"}
+        >
+          <Icon icon={iconTrophy} />
+        </Button>
+        <Button
+          on:click={() => (this.fsOpen = true)}
+          icon="full"
+          type="normal"
+          disabled={false}
+          title={"File Browser"}
+        >
+          <Icon icon={iconFolderOpen} />
+        </Button>
+        <Button
+          icon="full"
+          type="normal"
+          disabled={false}
+          title="Settings"
+          on:click={() => {
+            this.settingsOpen = true;
+          }}
+        >
+          <Icon icon={iconSettings} />
+        </Button>
+        <Button
+          on:click={async () => {
+            try {
+              await this.canvas.requestFullscreen({ navigationUI: "hide" });
+            } catch {}
+          }}
+          icon="full"
+          type="normal"
+          disabled={use(gameState.playing, (x) => !x)}
+          title={"Fullscreen"}
+        >
+          <Icon icon={iconFullscreen} />
+        </Button>
+        <Button
+          on:click={() => {
+            play();
+          }}
+          icon="left"
+          type="primary"
+          disabled={use(this.allowPlay, (x) => !x)}
+          title={"Start Game"}
+        >
+          <Icon icon={iconPlayArrow} />
+          <span>Play</span>
+        </Button>
+      </div>
+    </div>
+  );
+};
 
-export const Main: Component<{}, {
-	canvas: HTMLCanvasElement,
-	fsOpen: boolean,
-	achievementsOpen: boolean,
-	modInstallerOpen: boolean,
-	steamOpen: boolean,
-	settingsOpen: boolean,
-	logcontainer: HTMLDivElement,
-}, {
-	start: () => Promise<void>,
-}> = function() {
-	this.css = `
+export const Main: Component<
+  {},
+  {
+    canvas: HTMLCanvasElement;
+    fsOpen: boolean;
+    achievementsOpen: boolean;
+    modInstallerOpen: boolean;
+    steamOpen: boolean;
+    settingsOpen: boolean;
+    logcontainer: HTMLDivElement;
+  },
+  {
+    start: () => Promise<void>;
+  }
+> = function () {
+  this.css = `
 		width: 100%;
 		height: 100%;
 		background: var(--bg-sub);
@@ -196,73 +253,76 @@ export const Main: Component<{}, {
 		.expand { flex: 1; }
 	`;
 
-	this.fsOpen = false;
-	this.achievementsOpen = false;
+  this.fsOpen = false;
+  this.achievementsOpen = false;
 
-	this.mount = () => {
-		useChange([store.logs], x => {
-			this.logcontainer.style.height = `${x}px`;
-		});
-	}
+  this.mount = () => {
+    useChange([store.logs], (x) => {
+      this.logcontainer.style.height = `${x}px`;
+    });
+  };
 
-	const game = <GameView bind:canvas={use(this.canvas)} />
+  const game = <GameView bind:canvas={use(this.canvas)} />;
 
-	this.start = async () => { await (game.$ as ComponentType<typeof GameView>).start() }
+  this.start = async () => {
+    await (game.$ as ComponentType<typeof GameView>).start();
+  };
 
-	return (
-		<div>
-			<TopBar
-				canvas={use(this.canvas)}
-				bind:fsOpen={use(this.fsOpen)}
-				bind:achievementsOpen={use(this.achievementsOpen)}
-				bind:steamOpen={use(this.steamOpen)}
-				bind:modInstallerOpen={use(this.modInstallerOpen)}
-				bind:settingsOpen={use(this.settingsOpen)}
-				bind:showLog={use(store.logs)}
-			/>
-			<div class="game">
-				{game}
-			</div>
-			<div class="expand" />
-			{$if(use(store.logs, x => x > 0), /* @ts-expect-error */
-				<>
-					<div class="resizer"
-						on:mousedown={(e: MouseEvent) => {
-							const startY = e.clientY;
-							const startHeight = this.logcontainer.clientHeight;
-							let height: number;
-							const onMouseMove = (e: MouseEvent) => {
-								height = startHeight + startY - e.clientY;
-								this.logcontainer.style.height = `${height}px`;
-							}
-							const onMouseUp = () => {
-								document.removeEventListener("mousemove", onMouseMove);
-								document.removeEventListener("mouseup", onMouseUp);
-								store.logs = height;
-							}
-							document.addEventListener("mousemove", onMouseMove);
-							document.addEventListener("mouseup", onMouseUp);
-						}}></div>
-					<div class="logs" bind:this={use(this.logcontainer)}>
-						<LogView scrolling={true} />
-					</div>
-				</>
-			)}
-			<Dialog name="Steam Cloud" bind:open={use(this.steamOpen)}>
-				<SteamCloud open={use(this.steamOpen)} />
-			</Dialog>
-			<Dialog name="File System" bind:open={use(this.fsOpen)}>
-				<OpfsExplorer open={use(this.fsOpen)} />
-			</Dialog>
-			<Dialog name="Achievements" bind:open={use(this.achievementsOpen)}>
-				<Achievements open={use(this.achievementsOpen)} />
-			</Dialog>
-			<Dialog name="Mod Installer" bind:open={use(this.modInstallerOpen)}>
-				<ModInstaller open={use(this.modInstallerOpen)} />
-			</Dialog>
-			<Dialog name="Settings" bind:open={use(this.settingsOpen)}>
-				<Settings />
-			</Dialog>
-		</div>
-	);
-}
+  return (
+    <div>
+      <TopBar
+        canvas={use(this.canvas)}
+        bind:fsOpen={use(this.fsOpen)}
+        bind:achievementsOpen={use(this.achievementsOpen)}
+        bind:steamOpen={use(this.steamOpen)}
+        bind:modInstallerOpen={use(this.modInstallerOpen)}
+        bind:settingsOpen={use(this.settingsOpen)}
+        bind:showLog={use(store.logs)}
+      />
+      <div class="game">{game}</div>
+      <div class="expand" />
+      {$if(
+        use(store.logs, (x) => x > 0) /* @ts-expect-error */,
+        <>
+          <div
+            class="resizer"
+            on:mousedown={(e: MouseEvent) => {
+              const startY = e.clientY;
+              const startHeight = this.logcontainer.clientHeight;
+              let height: number;
+              const onMouseMove = (e: MouseEvent) => {
+                height = startHeight + startY - e.clientY;
+                this.logcontainer.style.height = `${height}px`;
+              };
+              const onMouseUp = () => {
+                document.removeEventListener("mousemove", onMouseMove);
+                document.removeEventListener("mouseup", onMouseUp);
+                store.logs = height;
+              };
+              document.addEventListener("mousemove", onMouseMove);
+              document.addEventListener("mouseup", onMouseUp);
+            }}
+          ></div>
+          <div class="logs" bind:this={use(this.logcontainer)}>
+            <LogView scrolling={true} />
+          </div>
+        </>,
+      )}
+      <Dialog name="Steam Cloud" bind:open={use(this.steamOpen)}>
+        <SteamCloud open={use(this.steamOpen)} />
+      </Dialog>
+      <Dialog name="File System" bind:open={use(this.fsOpen)}>
+        <OpfsExplorer open={use(this.fsOpen)} />
+      </Dialog>
+      <Dialog name="Achievements" bind:open={use(this.achievementsOpen)}>
+        <Achievements open={use(this.achievementsOpen)} />
+      </Dialog>
+      <Dialog name="Mod Installer" bind:open={use(this.modInstallerOpen)}>
+        <ModInstaller open={use(this.modInstallerOpen)} />
+      </Dialog>
+      <Dialog name="Settings" bind:open={use(this.settingsOpen)}>
+        <Settings />
+      </Dialog>
+    </div>
+  );
+};
