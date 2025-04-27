@@ -99,7 +99,9 @@ export async function getDlls(): Promise<(readonly [string, string])[]> {
   const resources: any = await fetch("/_framework/blazor.boot.json").then((r) =>
     r.json(),
   );
-  //return Object.entries(resources.resources.fingerprinting).map(x => [x[0] as string, x[1] as string] as const);
+  return Object.entries(resources.resources.fingerprinting).map(
+    (x) => [x[0] as string, x[1] as string] as const,
+  );
 
   const whitelist = [
     "netstandard.dll",
