@@ -1,16 +1,17 @@
 using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
 using Mono.Cecil;
 using MonoMod;
 using MonoMod.Cil;
 using MonoMod.InlineRT;
 using FMOD;
-using System.Reflection;
-using System.Runtime.InteropServices;
 
 namespace FMOD
 {
     public struct StringWrapper { }
-    public enum RESULT { }
+    public enum RESULT { OK, }
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate RESULT REAL_FILE_CLOSECALLBACK(IntPtr handle, IntPtr userdata);
     // ref uint filesize, ref IntPtr handle
@@ -26,6 +27,33 @@ namespace FMOD
     public delegate RESULT FILE_CLOSECALLBACK(IntPtr handle, IntPtr userdata);
     public delegate RESULT FILE_READCALLBACK(IntPtr handle, IntPtr buffer, uint sizebytes, ref uint bytesread, IntPtr userdata);
     public delegate RESULT FILE_SEEKCALLBACK(IntPtr handle, uint pos, IntPtr userdata);
+
+    public enum SPEAKERMODE
+    {
+        DEFAULT,
+        RAW,
+        MONO,
+        STEREO,
+        QUAD,
+        SURROUND,
+        _5POINT1,
+        _7POINT1,
+        _7POINT1POINT4,
+        MAX
+    }
+
+    public class System
+    {
+
+        [MonoModIgnore]
+        public extern RESULT getDriverInfo(int id, StringBuilder name, int namelen, out Guid guid, out int systemrate, out SPEAKERMODE speakermode, out int speakermodechannels);
+
+        [MonoModIgnore]
+        public extern RESULT setSoftwareFormat(int samplerate, SPEAKERMODE speakermode, int numrawspeakers);
+
+        [MonoModIgnore]
+        public extern RESULT setDSPBufferSize(uint bufferlength, int numbuffers);
+    }
 }
 namespace FMOD.Studio
 {
@@ -73,7 +101,7 @@ namespace FMOD.Studio
         DECOMPRESS_SAMPLES = 2u
     }
 
-    public class System 
+    public class System
     {
         [DllImport("fmodstudio")]
         private static extern RESULT FMOD_Studio_System_LoadBankCustom(IntPtr studiosystem, ref REAL_BANK_INFO info, LOAD_BANK_FLAGS flags, out IntPtr bank);
@@ -113,6 +141,30 @@ namespace FMOD.Studio
         [MonoModIgnore]
         [PatchFMODVersion]
         public extern static RESULT create(out System studiosystem);
+
+        public extern RESULT orig_getLowLevelSystem(out FMOD.System system);
+        // https://www.fmod.com/docs/2.03/api/platforms-html5.html#performance-and-memory
+        public RESULT getLowLevelSystem(out FMOD.System system)
+        {
+            RESULT ret = orig_getLowLevelSystem(out system);
+            if (ret != RESULT.OK) return ret;
+
+            Guid guid;
+            int systemrate;
+            SPEAKERMODE speakermode;
+            int speakermodechannels;
+
+            ret = system.getDriverInfo(0, new StringBuilder(), 0, out guid, out systemrate, out speakermode, out speakermodechannels);
+            if (ret != RESULT.OK) return ret;
+
+            ret = system.setSoftwareFormat(systemrate, speakermode, speakermodechannels);
+            if (ret != RESULT.OK) return ret;
+
+            ret = system.setDSPBufferSize(2048, 4);
+            if (ret != RESULT.OK) return ret;
+
+            return RESULT.OK;
+        }
     }
 }
 
@@ -132,9 +184,10 @@ namespace MonoMod
             cursor.GotoNext(i => i.MatchLdcI4(out var num) && num == 69652);
 
             if (!context.Instrs[cursor.Index].MatchLdcI4(out var _))
-                throw new Exception("should never happen");
+                throw new Exception("[FMODPatcher] Unable to find FMOD version in FMOD.Studio.System.create");
 
             context.Instrs[cursor.Index].Operand = (int)0x00020222;
+
             MonoModRule.Modder.Log("[FMODPatcher] Patched FMOD Version");
         }
     }

@@ -37,7 +37,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<WasmOptConfigurationFlags Include="--converge -O4"></WasmOptConfigurationFlags>
+		<WasmOptConfigurationFlags Include="--converge -O4 --flatten --rereloop --code-folding --const-hoisting --dae --flatten --merge-locals -O4 -Oz"></WasmOptConfigurationFlags>
 	</ItemGroup>
 
 	<ItemGroup>
