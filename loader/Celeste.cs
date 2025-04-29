@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices.JavaScript;
@@ -15,7 +14,7 @@ public static partial class CelesteLoader
 {
     private static void Main()
     {
-        Console.WriteLine("Hi!");
+        Console.WriteLine(":3");
     }
 
     [DllImport("Emscripten")]
@@ -35,7 +34,6 @@ public static partial class CelesteLoader
             try
             {
                 CallPinvokeFixers();
-                Console.WriteLine("fixed pinvoke");
 
                 Environment.SetEnvironmentVariable("FNA_PLATFORM_BACKEND", "SDL3");
                 Environment.SetEnvironmentVariable("MONOMOD_DEPENDENCY_REMOVE_PATCH", "0");
@@ -60,7 +58,6 @@ public static partial class CelesteLoader
         {
             File.CreateSymbolicLink("/bin/Celeste.exe", "/libsdl/CustomCeleste.dll");
             File.CreateSymbolicLink("/bin/Celeste.dll", "/libsdl/CustomCeleste.dll");
-            Console.WriteLine("created celeste symlinks");
             if (Directory.Exists("/libsdl/Celeste/Everest"))
             {
                 File.CreateSymbolicLink("/bin/Celeste.Mod.mm.dll", "/libsdl/Celeste.Mod.mm.dll");
@@ -68,7 +65,6 @@ public static partial class CelesteLoader
 
                 File.Copy("/libsdl/Celeste/Everest/Celeste.Mod.mm.dll", "/libsdl/Celeste.Mod.mm.dll", true);
                 File.Copy("/libsdl/Celeste/Everest/MMHOOK_Celeste.dll", "/libsdl/MMHOOK_Celeste.dll", true);
-                Console.WriteLine("created everest symlinks");
             }
 
             celeste = Assembly.LoadFrom("/libsdl/CustomCeleste.dll");
@@ -89,7 +85,7 @@ public static partial class CelesteLoader
                     else asm = ctx.LoadFromAssemblyPath($"/libsdl/Celeste/Everest/{name.Name}.dll");
                     return asm;
                 }
-                catch (Exception err)
+                catch
                 {
                     return null;
                 }
@@ -98,41 +94,28 @@ public static partial class CelesteLoader
             JsSplash.Init(celeste);
 
             var Celeste = celeste.GetType("Celeste.Celeste");
-            Console.WriteLine($"Celeste.Celeste: {Celeste}");
             var Settings = celeste.GetType("Celeste.Settings");
-            Console.WriteLine($"Celeste.Settings: {Settings}");
             var Engine = celeste.GetType("Monocle.Engine");
-            Console.WriteLine($"Monocle.Engine: {Engine}");
 
             var MainThreadId = Celeste.GetField("_mainThreadId", BindingFlags.Static | BindingFlags.NonPublic);
-            Console.WriteLine($"Celeste.Celeste._mainThreadId: {MainThreadId}");
             var AssemblyDirectory = Engine.GetField("AssemblyDirectory", BindingFlags.Static | BindingFlags.NonPublic);
-            Console.WriteLine($"Engine.AssemblyDirectory: {AssemblyDirectory}");
             var SettingsInitialize = Settings.GetMethod("Initialize", BindingFlags.Static | BindingFlags.Public);
-            Console.WriteLine($"Settings.Initialize: {SettingsInitialize}");
             var GameConstructor = Celeste.GetConstructor([]);
-            Console.WriteLine($"Celeste.Celeste..ctor: {GameConstructor}");
 
             MainThreadId.SetValue(null, Thread.CurrentThread.ManagedThreadId);
-            Console.WriteLine($"MAIN THREAD INITIALIZED");
             AssemblyDirectory.SetValue(null, "/");
-            Console.WriteLine($"ASSEMBLY DIRECTORY SET");
 
             SettingsInitialize.Invoke(null, []);
-            Console.WriteLine($"SETTINGS INITIALIZED");
 
             var Everest = celeste.GetType("Celeste.Mod.Everest");
             if (Everest != null)
             {
-                Console.WriteLine($"EVEREST DETECTED: {Everest}");
                 var ParseArgs = Everest.GetMethod("ParseArgs", BindingFlags.Static | BindingFlags.NonPublic);
                 ParseArgs.Invoke(null, [new string[] { }]);
             }
 
             game = (Game)GameConstructor.Invoke([]);
-            Console.WriteLine($"CELESTE CREATED");
             RunApplication = Celeste.GetField("RunApplication", BindingFlags.NonPublic | BindingFlags.Instance);
-            Console.WriteLine($"RUNAPPLICATION FOUND");
         }
         catch (Exception e)
         {

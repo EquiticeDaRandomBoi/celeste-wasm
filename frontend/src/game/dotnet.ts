@@ -100,8 +100,8 @@ export async function getDlls(): Promise<(readonly [string, string])[]> {
 		r.json(),
 	);
 	return Object.entries(resources.resources.fingerprinting).map(
-		(x) => [x[0] as string, x[1] as string] as const,
-	);
+		x => [x[0] as string, x[1] as string] as const,
+	).filter(x => x[1].endsWith(".dll"));
 
 	const whitelist = [
 		"netstandard.dll",

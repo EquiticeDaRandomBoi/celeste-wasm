@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Xna.Framework;
 
 namespace Monocle
@@ -19,7 +18,6 @@ namespace Celeste
         public extern void orig_ApplyScreen();
         public void ApplyScreen()
         {
-            Console.WriteLine("Forcing windowed");
             orig_ApplyScreen();
 
             Monocle.Engine.Graphics.PreferredBackBufferWidth = WindowScale * 320;
@@ -27,8 +25,6 @@ namespace Celeste
             Monocle.Engine.Graphics.IsFullScreen = false;
             Monocle.Engine.Graphics.ApplyChanges();
             Fullscreen = false;
-
-            Console.WriteLine("Forced windowed");
         }
     }
 }

@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices.JavaScript;
-using System.Reflection;
+using System.Collections.Generic;
 using System.IO.Compression;
 using Mono.Cecil;
 using MonoMod;
@@ -12,7 +12,7 @@ public partial class Patcher
 {
 
     [JSExport]
-    internal static async Task<bool> PatchCeleste(bool installEverest)
+    public static async Task<bool> PatchCeleste(bool installEverest)
     {
         try
         {
@@ -37,9 +37,10 @@ public partial class Patcher
                 throw new Exception("Celeste.dll or Celeste.exe not found!");
             }
 
-            Console.WriteLine($"Patching Assembly {patcher._path}");
+            Console.WriteLine($"Patching Celeste");
             patcher.patch();
             patcher.write("/libsdl/CustomCeleste.dll");
+
             return true;
         }
         catch (Exception e)
@@ -51,7 +52,7 @@ public partial class Patcher
     }
 
     [JSExport]
-    internal static async Task<bool> ExtractEverest()
+    public static async Task<bool> ExtractEverest()
     {
         try
         {
@@ -80,38 +81,50 @@ public partial class Patcher
     }
 
     public ModuleDefinition Module;
-    public string _path;
+    public ReaderParameters parameters;
     public bool installEverest = false;
 
     public Patcher(string path)
     {
-        _path = path;
-        ReaderParameters readerParams = new(ReadingMode.Immediate) { ReadSymbols = false, InMemory = true };
-        MemoryStream stream = new(File.ReadAllBytes(path));
-        Module = ModuleDefinition.ReadModule(stream, readerParams);
+        parameters = new(ReadingMode.Immediate) { ReadSymbols = false, InMemory = true };
+        Module = ModuleDefinition.ReadModule(new MemoryStream(File.ReadAllBytes(path)), parameters);
+    }
+
+    private void RunMonoMod(ModuleDefinition module, List<ModuleReference> mods, bool coreify, Action<MonoModder> callback)
+    {
+        using (MonoModder modder = new()
+        {
+            Module = module,
+            Mods = mods,
+			MissingDependencyThrow = false,
+        })
+        {
+            modder.DependencyDirs.Add("/bin");
+            modder.DependencyDirs.Add("/libsdl/Celeste/Everest");
+
+            if (coreify)
+            {
+                modder.Log($"Converting {module.Name} to .NET Core");
+                NETCoreifier.Coreifier.ConvertToNetCore(modder);
+            }
+
+            modder.MapDependencies();
+            callback(modder);
+            modder.AutoPatch();
+        }
     }
 
     public void patch()
     {
         if (installEverest)
         {
-            ModuleDefinition everest = ModuleDefinition.ReadModule("/libsdl/Celeste/Everest/Celeste.Mod.mm.dll");
-            using (MonoModder modder = new()
-            {
-                Module = Module,
-                Mods = [everest],
-                MissingDependencyThrow = false,
-            })
-            {
-                modder.DependencyDirs.Add("/bin");
-                modder.DependencyDirs.Add("/libsdl/Celeste/Everest");
-                modder.Log("Converting Celeste to NET Core");
-                NETCoreifier.Coreifier.ConvertToNetCore(modder);
+            string everestPath = "/libsdl/Celeste/Everest/Celeste.Mod.mm.dll";
+            string mmhookPath = "/libsdl/Celeste/Everest/MMHOOK_Celeste.dll";
 
+            RunMonoMod(Module, [ModuleDefinition.ReadModule(everestPath)], true, modder =>
+            {
                 modder.Log("Installing Everest");
-                modder.MapDependencies();
-                modder.AutoPatch();
-            }
+            });
 
             using (MonoModder modder = new()
             {
@@ -122,21 +135,34 @@ public partial class Patcher
                 modder.DependencyDirs.Add("/bin");
                 modder.DependencyDirs.Add("/libsdl/Celeste/Everest");
                 modder.MapDependencies();
+
                 modder.Log("Generating MMHOOK_Celeste.dll");
-                string pathOut = "/libsdl/Celeste/Everest/MMHOOK_Celeste.dll";
-                var gen = new HookGenerator(modder, Path.GetFileName(pathOut))
+
+                HookGenerator gen = new(modder, Path.GetFileName(mmhookPath))
                 {
                     HookPrivate = true,
                 };
-                using (var mOut = gen.OutputModule)
-                {
-                    gen.Generate();
 
-                    // we're supposed to run everest again on the mmhook? i don't feel like doing that
-                    // it's only for monomod crimes so we should be fine
-                    mOut.Write(pathOut);
+                gen.Generate();
+
+                gen.OutputModule.Write(mmhookPath);
+            }
+
+            ModuleDefinition everest = ModuleDefinition.ReadModule(everestPath);
+            foreach (var type in everest.Types)
+            {
+                type.Resolve();
+                foreach (var attr in type.CustomAttributes)
+                {
+                    var _ = attr.HasConstructorArguments;
                 }
             }
+
+            ModuleDefinition mmhook = ModuleDefinition.ReadModule(mmhookPath);
+            RunMonoMod(mmhook, [everest], false, modder =>
+            {
+                modder.Log("Patching MMHOOK_Celeste.dll");
+            });
         }
 
 
@@ -144,7 +170,6 @@ public partial class Patcher
         if (!installEverest)
         {
             var ignore = wasmMod.ImportReference(typeof(MonoMod.MonoModIgnore).GetConstructor([]));
-            Console.WriteLine($"IGNORING: {ignore}");
             foreach (var type in wasmMod.GetTypes())
             {
                 if (type.Namespace.StartsWith("Celeste.Mod"))
@@ -157,22 +182,11 @@ public partial class Patcher
             }
         }
 
-        using (MonoModder modder = new()
+        RunMonoMod(Module, [wasmMod], false, modder =>
         {
-            Module = Module,
-            Mods = [wasmMod],
-            MissingDependencyThrow = false,
-        })
-        {
-            modder.DependencyDirs.Add("/bin");
-            modder.DependencyDirs.Add("/libsdl/Celeste/Everest");
-
             modder.Log("Installing WASM patches");
-            modder.MapDependencies();
             modder.DependencyMap[modder.Module].Add(wasmMod);
-
-            modder.AutoPatch();
-        }
+        });
 
         Module.AssemblyReferences.Add(wasmMod.Assembly.Name);
     }
