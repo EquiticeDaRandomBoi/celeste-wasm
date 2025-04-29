@@ -417,7 +417,9 @@ export async function PatchCeleste(installEverest: boolean) {
 		}
 	}
 
-	await exports.Patcher.PatchCeleste(installEverest);
+	if ((await exports.Patcher.PatchCeleste(installEverest) as boolean) == false) {
+	  throw new Error("nobody expects the spanish inquisition!");
+	}
 	gameState.hasEverest = true;
 }
 
