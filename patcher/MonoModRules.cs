@@ -15,8 +15,9 @@ namespace MonoMod
             { "FMOD_Studio_EventDescription_GetParameterCount", "FMOD_Studio_EventDescription_GetParameterDescriptionCount" },
             { "FMOD_Studio_EventDescription_GetParameterByIndex", "FMOD_Studio_EventDescription_GetParameterDescriptionByIndex" },
             { "FMOD_Studio_EventDescription_GetParameterByName", "FMOD_Studio_EventDescription_GetParameterDescriptionByName" },
+            { "FMOD_Studio_EventDescription_GetParameter", "FMOD_Studio_EventDescription_GetParameterDescriptionByName" },
+            { "FMOD_Studio_EventDescription_HasCue", "FMOD_Studio_EventDescription_HasSustainPoint" },
             { "FMOD_Studio_EventInstance_TriggerCue", "FMOD_Studio_EventInstance_KeyOff" },
-            { "FMOD_Studio_EventDescription_HasCue", "FMOD_Studio_EventDescription_HasSustainPoint" }
         };
 
         static MonoModRules()
