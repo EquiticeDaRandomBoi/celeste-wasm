@@ -35,10 +35,11 @@ export const ModInstaller: Component<
   height: 100%;
 
   .mods {
-    overflow: none;
+    overflow: auto;
+
     img {
-      width: 100px;
-      height: 100px;
+      width: auto;
+      height: 5rem;
       border: 0;
     }
   }
@@ -48,6 +49,17 @@ export const ModInstaller: Component<
     flex-direction: row;
     align-items: start;
     position: relative;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    min-height: 12rem;
+  }
+
+  .mod:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
   }
 
   .bg {
@@ -55,11 +67,21 @@ export const ModInstaller: Component<
     position: absolute;
     top: 0;
     left: 0;
+    width: 100%!important;
+    height: 100%!important;
+    border: 0;
+    object-fit: cover;
+  }
+
+  .gradient-overlay {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    border: 0;
-    filter: brightness(0.8) contrast (0.6);
-    object-fit: cover;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9));
+    z-index: 9001;
   }
 
   .mod,
@@ -67,19 +89,89 @@ export const ModInstaller: Component<
     z-index: 9002;
   }
 
+  .detail {
+    padding: 1.25rem;
+    width: calc(100% - 60px);
+
+    h2 {
+      margin-top: 0;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      font-size: 1.4rem;
+    }
+
+    p {
+      color: rgba(255, 255, 255, 0.9);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+      font-size: 0.9rem;
+      line-height: 1.4;
+      margin-bottom: 0.75rem;
+    }
+  }
+
+  .screenshots {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    width: 100%;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 0.5rem;
+
+    img {
+      flex: 0 0 auto;
+      height: 5rem;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      transition: transform 0.2s ease;
+    }
+
+    img:hover {
+      transform: scale(1.05);
+    }
+  }
+
   .moddownload {
-    margin-top: 0.83rem;
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    margin: 0;
+    z-index: 9003;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease;
+  }
+
+  .moddownload:hover {
+    transform: scale(1.1);
   }
 
   #modsearch {
     display: flex;
     gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    padding: 0 0.5rem;
   }
 
   .modsearchbar {
     flex-grow: 1;
   }
-	`;
+
+  .empty-message {
+    text-align: center;
+    padding: 2rem;
+    color: rgba(255,255,255,0.7);
+    font-style: italic;
+  }
+ `;
 
   const loadFrom = async (url: string) => {
     await loadedLibcurlPromise;
@@ -142,7 +234,7 @@ export const ModInstaller: Component<
     <div>
       <div id="modsearch">
         <TextField
-          placeholder={"Search"}
+          placeholder={"Search mods..."}
           on:keydown={(e: any) => {
             this.query = e.target.value;
             e.key === "Enter" && search();
@@ -163,11 +255,13 @@ export const ModInstaller: Component<
       <div class="mods">
         {$if(
           use(this.entries, (entries) => entries.length === 0),
-          <div>No mods found! Try Searching for something else</div>,
+          <div class="empty-message">No mods found! Try searching for something else</div>,
         )}
         {use(this.entries, (e) =>
           e.map((e) => (
             <div class="mod">
+              <img class="bg" src={use(e.Screenshots, s=> s[0])} />
+              <div class="gradient-overlay"></div>
               <div class="detail">
                 <h2>{e.Name}</h2>
                 {(() => {
@@ -175,7 +269,9 @@ export const ModInstaller: Component<
                   p.innerHTML = e.Text;
                   return p;
                 })()}
-                {use(e.Screenshots, (e) => e.map((s) => <img src={s} />))}
+                <div class="screenshots">
+                  {use(e.Screenshots, (e) => e.slice(1).map((s) => <img src={s} />))}
+                </div>
               </div>
               <Button
                 on:click={() => {
