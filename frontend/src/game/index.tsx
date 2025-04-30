@@ -124,7 +124,6 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}, { start: () 
 	const canvas = use(gameState.playing, x => x ? "canvas started" : "canvas stopped");
 
 	this.start = async () => {
-		// dotnet will immediately transfer the canvas to deputy thread, so this.mount is required
 		await preInit();
 	};
 
@@ -149,15 +148,16 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}, { start: () 
 
 export const FpsView: Component<{}, { fps: HTMLElement }> = function() {
 	this.css = `
-    color: rgba(255, 225, 235, 0.6);
-    background: rgba(0, 0, 0, 0.3);
-    font-size: 0.775rem;
-    padding-inline: 0.5em;
-    padding-block: 0.5em;
-    min-width: 5em;
-    text-align: center;
-    border-bottom-left-radius: 0.3em;
-  `
+		color: rgba(255, 225, 235, 0.6);
+		background: rgba(0, 0, 0, 0.3);
+		font-size: 0.775rem;
+		padding-inline: 0.5em;
+		padding-block: 0.5em;
+		min-width: 5em;
+		text-align: center;
+		border-bottom-left-radius: 0.3em;
+	`;
+
 	this.mount = () => {
 		const interval = 250;
 		setInterval(() => {

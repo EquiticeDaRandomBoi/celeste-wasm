@@ -24,7 +24,7 @@ NLua:
 	cd NLua && git checkout 9dc76edd0782d484c54433fdfa3a5097f45a379a && git apply ../nlua.patch
 
 MonoMod:
-	git clone https://github.com/r58Playz/MonoMod --recursive --depth=1
+	git clone https://github.com/r58Playz/MonoMod --recursive
 
 emsdk:
 	git clone https://github.com/emscripten-core/emsdk

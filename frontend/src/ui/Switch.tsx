@@ -1,15 +1,15 @@
 export const Switch: Component<{
-    "on:change"?: (() => void) | ((e: InputEvent) => void);
-    on: boolean;
-    title: string;
-    disabled: boolean;
-    class?: string;
-}, {}> = function () {
-    // @ts-expect-error
-    this._leak = true;
-    const transition = "background 0.2s, transform 0.2s, width 0.2s";
+	"on:change"?: (() => void) | ((e: InputEvent) => void);
+	on: boolean;
+	title: string;
+	disabled: boolean;
+	class?: string;
+}, {}> = function() {
+	// @ts-expect-error
+	this._leak = true;
+	const transition = "background 0.2s, transform 0.2s, width 0.2s";
 
-    this.css = `
+	this.css = `
     align-items: center;
     display: flex;
     justify-content: space-between;
@@ -110,17 +110,17 @@ export const Switch: Component<{
     }
   `;
 
-    return (
-        <div class="component-switch">
-            <span class="switch-label">{use(this.title)}</span>
-            <label class={`switch-container component-switch ${this.class || ''}`}>
-                <input
-                    type="checkbox"
-                    disabled={use(this.disabled)}
-                    checked={use(this.on)}
-                    on:change={(this["on:change"] || (() => { }))} />
-                <span class="switch-slider"></span>
-            </label>
-        </div>
-    );
+	return (
+		<div class="component-switch">
+			<span class="switch-label">{use(this.title)}</span>
+			<label class={`switch-container component-switch ${this.class || ''}`}>
+				<input
+					type="checkbox"
+					disabled={use(this.disabled)}
+					bind:checked={use(this.on)}
+					on:change={(this["on:change"] || (() => { }))} />
+				<span class="switch-slider"></span>
+			</label>
+		</div>
+	);
 };
