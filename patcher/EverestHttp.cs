@@ -9,7 +9,7 @@ public class RegularHttpClient : HttpClient
 {
     public RegularHttpClient() : base()
     {
-        DefaultRequestHeaders.Add("User-Agent", $"Everest/{Celeste.Mod.patch_Everest.VersionString}");
+        DefaultRequestHeaders.Add("User-Agent", $"Everest/1.0.0.WASM");
     }
 }
 
