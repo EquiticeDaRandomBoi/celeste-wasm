@@ -163,9 +163,9 @@ export async function downloadEverest() {
 	const branch = "stable";
 	const res = await epoxyFetch("https://everestapi.github.io/everestupdater.txt");
 	const versionsUrl = await res.text();
-	const versRes = await epoxyFetch(versionsUrl + "?supportsNativeBuilds=true");
-
+	const versRes = await epoxyFetch(versionsUrl.trim() + "?supportsNativeBuilds=true");
 	const versions = await versRes.json();
+
 	const build = versions.filter((v: any) => v.branch == branch)[0];
 
 	console.log(`Installing Everest ${branch} ${build.commit} ${build.date}`);
