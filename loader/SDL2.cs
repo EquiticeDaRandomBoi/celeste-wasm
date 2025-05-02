@@ -1,7 +1,6 @@
 namespace SDL2 {
 	class SDL {
 		public static string SDL_GetPlatform() {
-			// trick celeste into loading stuff later
 			return "Emscripten";
 		}
 		public static string SDL_GetPrefPath(string org, string app) {

@@ -28,7 +28,7 @@ export const Dialog: Component<
     filter: brightness(1.5);
 
 		pointer-events: none;
-		transition: opacity 0.25s, transform 0.175s, filter 0.2s, scale 0.2s;
+		transition: opacity 0.25s, transform 0.175s, filter 0.2s, scale 0.2s, background 0.1s, border-color 0.1s;
     transition-timing-function: ease;
     transition-delay: 0.05s, 0.05s, 0.05s, 0.05s;
     transform-origin: 50% 0%;
@@ -56,6 +56,7 @@ export const Dialog: Component<
 			gap: 0.5rem;
 			align-items: center;
       border-bottom: 1.8px solid var(--surface2);
+      transition: border-color 0.1s ease;
       padding-bottom: 0.5rem;
       user-select: none;
       -webkit-user-select: none;

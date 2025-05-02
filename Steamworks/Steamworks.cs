@@ -24,13 +24,11 @@ namespace Steamworks
 
         public static bool RestartAppIfNecessary(AppId_t app)
         {
-            Console.WriteLine($"Steamworks polyfill: RestartAppIfNecessary {app}");
             return false;
         }
 
         public static bool Init()
         {
-            Console.WriteLine("Steamworks polyfill: Init");
             return true;
         }
     }
@@ -39,7 +37,6 @@ namespace Steamworks
     {
         public static string GetCurrentGameLanguage()
         {
-            Console.WriteLine("Steamworks polyfill: GetCurrentGameLanguage");
             return "english";
         }
     }
@@ -48,49 +45,41 @@ namespace Steamworks
     {
         public static bool GetAchievement(string achievement, out bool achieved)
         {
-            Console.WriteLine($"Steamworks polyfill: GetAchievement {achievement}");
             achieved = SteamJS.GetAchievement(achievement);
             return true;
         }
         public static bool SetAchievement(string achievement)
         {
-            Console.WriteLine($"Steamworks polyfill: SetAchievement {achievement}");
             SteamJS.SetAchievement(achievement);
 			return true;
         }
 
         public static bool GetStat(string stat, out int val)
         {
-            Console.WriteLine($"Steamworks polyfill: GetStat {stat}");
             val = SteamJS.GetStat(stat);
             return true;
         }
         public static bool SetStat(string stat, int val)
         {
-            Console.WriteLine($"Steamworks polyfill: SetStat {stat} {val}");
 			SteamJS.SetStat(stat, val);
             return true;
         }
         public static bool GetGlobalStat(string stat, out long val)
         {
-            Console.WriteLine($"Steamworks polyfill: GetGlobalStat {stat}");
             val = SteamJS.GetStat(stat);
             return true;
         }
         public static bool StoreStats()
         {
-            Console.WriteLine("Steamworks polyfill: StoreStats");
             return true;
         }
 
         public static bool RequestCurrentStats()
         {
-            Console.WriteLine("Steamworks polyfill: RequestCurrentStats");
             return true;
         }
         public static SteamAPICall_t RequestGlobalStats(int param)
         {
-            Console.WriteLine($"Steamworks polyfill: RequestGlobalStats {param}");
             return SteamAPICall_t.Invalid;
         }
     }

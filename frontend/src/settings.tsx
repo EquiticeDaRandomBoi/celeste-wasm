@@ -1,5 +1,6 @@
 import { Switch } from "./ui/Switch";
 import { store } from "./store";
+import { TextField } from "./ui/TextField";
 
 export const Settings: Component<{}, {
   darkMode: boolean,
@@ -12,27 +13,36 @@ export const Settings: Component<{}, {
   flex-direction: column;
   gap: 0.8rem;
 
+  .setting,
   .component-switch {
+    margin-inline: 0.25rem;
+  }
+
+  .setting {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     margin-inline: 0.25rem;
   }
   `;
 
   this.darkMode = store.theme === "dark";
-  useChange([this.darkMode], () => {
-    console.log("Theme changed");
-    store.theme = this.darkMode ? "dark" : "light";
-  });
 
   this.showLogs = store.logs > 0;
-  useChange([this.showLogs], () => {
-    console.log("Logs changed");
-    store.logs = this.showLogs ? 1 : -1;
-  });
 
   return (
     <div>
-      <Switch title="Dark Mode" bind:on={use(this.darkMode)} />
-      <Switch title="Show Logs" bind:on={use(this.showLogs)} />
+      <Switch title="Dark Mode" bind:on={use(this.darkMode)} on:change={(e: Event)=>{
+        store.theme = (e.target as HTMLInputElement).checked ? "dark" : "light";
+      }} disabled={false} />
+      <Switch title="Show Logs" bind:on={use(this.showLogs)} disabled={false} on:change={(e: Event)=>{
+        store.logs = (e.target as HTMLInputElement).checked ? 1 : -1;
+      }} />
+      <div class="setting">
+        <span>Wisp Server</span>
+        <TextField bind:value={use(store.wispServer)} placeholder={"wss://" + import.meta.env.VITE_WISP_URL} />
+      </div>
       <div>
         <div style="margin-inline: 0.2rem; user-select: none;">Accent Color</div>
         <AccentPicker />
@@ -67,7 +77,7 @@ const AccentPicker: Component<{}> = function() {
       border-radius: 50%;
       outline: 2px solid var(--accent);
       outline-offset: -0.5px;
-      transition: outline-width 0.25s ease, outline-offset 0.2s ease;
+      transition: outline-width 0.25s ease, outline-offset 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
     }
 
     button:not(:has(.selected)):hover {
@@ -75,7 +85,7 @@ const AccentPicker: Component<{}> = function() {
     }
 
     button:has(.selected) {
-      transition: outline-width 0.25s ease, outline-offset 0.2s ease;
+      transition: outline-width 0.25s ease, outline-offset 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
       outline-offset: 2.75px;
     }
 

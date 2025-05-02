@@ -99,52 +99,10 @@ export async function getDlls(): Promise<(readonly [string, string])[]> {
 	const resources: any = await fetch("/_framework/blazor.boot.json").then((r) =>
 		r.json(),
 	);
+
 	return Object.entries(resources.resources.fingerprinting).map(
 		x => [x[0] as string, x[1] as string] as const,
 	).filter(x => x[1].endsWith(".dll"));
-
-	const whitelist = [
-		"netstandard.dll",
-		"mscorlib.dll",
-		"System.Collections.Concurrent.dll",
-		"System.Memory.dll",
-		"System.Private.CoreLib.dll",
-		"System.Private.Uri.dll",
-		"System.Runtime.dll",
-		"System.Reflection.dll",
-		"System.Runtime.InteropServices.dll",
-		"System.Text.RegularExpressions.dll",
-
-		"NETCoreifier.dll",
-		"FNA.dll",
-		"Wasm.Celeste.dll",
-		"Celeste.Wasm.mm.dll",
-
-		"MonoMod.Common.dll",
-		"MonoMod.Core.dll",
-		"MonoMod.Patcher.dll",
-		"MonoMod.ILHelpers.dll",
-		"MonoMod.Backports.dll",
-		"MonoMod.Utils.dll",
-		"MonoMod.RuntimeDetour.dll",
-		"Mono.Cecil.dll",
-		"System.Diagnostics.Process.dll",
-		"System.ComponentModel.Primitives.dll",
-		"System.Collections.dll",
-		"System.dll",
-		"Steamworks.NET.dll",
-		"Jdenticon.dll",
-		"YamlDotNet.dll",
-		"MAB.DotIgnore.dll",
-		"Newtonsoft.Json.dll",
-		"NLua.dll",
-		"KeraLua.dll",
-		"DnsOverHttps.dll",
-	];
-
-	return Object.entries(resources.resources.fingerprinting)
-		.map((x) => [x[0] as string, x[1] as string] as const)
-		.filter(([_, v]) => whitelist.includes(v));
 }
 
 // the funny custom rsa
@@ -203,11 +161,11 @@ function encryptRSA(data: Uint8Array, n: bigint, e: bigint): Uint8Array {
 
 export async function downloadEverest() {
 	const branch = "stable";
-	const res = await fetch("https://everestapi.github.io/everestupdater.txt");
+	const res = await epoxyFetch("https://everestapi.github.io/everestupdater.txt");
 	const versionsUrl = await res.text();
-	const versRes = await fetch(versionsUrl + "?supportsNativeBuilds=true");
-
+	const versRes = await epoxyFetch(versionsUrl.trim() + "?supportsNativeBuilds=true");
 	const versions = await versRes.json();
+
 	const build = versions.filter((v: any) => v.branch == branch)[0];
 
 	console.log(`Installing Everest ${branch} ${build.commit} ${build.date}`);
@@ -413,11 +371,16 @@ export async function PatchCeleste(installEverest: boolean) {
 			} catch {
 				await downloadEverest();
 			}
-			await exports.Patcher.ExtractEverest();
+
+			if (!await exports.Patcher.ExtractEverest()) {
+				throw ":3";
+			}
 		}
 	}
 
-	await exports.Patcher.PatchCeleste(installEverest);
+	if (!await exports.Patcher.PatchCeleste(installEverest)) {
+		throw ":3";
+	}
 	gameState.hasEverest = true;
 }
 
@@ -432,16 +395,11 @@ export async function initSteam(
 export async function downloadApp() {
 	return await exports.Steam.DownloadApp();
 }
-const SEAMLESSCOUNT = 10;
+const SEAMLESSCOUNT = 5;
 
 export async function play() {
-	await new Promise((resolve) => setTimeout(resolve, 25));
 	gameState.playing = true;
-
-	await new Promise((resolve) => setTimeout(resolve, 500));
 	gameState.initting = true;
-
-	await new Promise((resolve) => setTimeout(resolve, 100));
 	if (STEAM_ENABLED && steamState.login == 2) {
 		console.debug("Syncing Steam Cloud");
 		await exports.Steam.DownloadSteamCloud();

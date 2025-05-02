@@ -1,15 +1,15 @@
 export const Switch: Component<{
-    "on:change"?: (() => void) | ((e: InputEvent) => void);
-    on: boolean;
-    title: string;
-    disabled?: boolean;
-    class?: string;
-}, {}> = function () {
-    // @ts-expect-error
-    this._leak = true;
-    const transition = "background 0.2s, transform 0.2s, width 0.2s";
+	"on:change"?: (() => void) | ((e: InputEvent) => void);
+	on: boolean;
+	title: string;
+	disabled: boolean;
+	class?: string;
+}, {}> = function() {
+	// @ts-expect-error
+	this._leak = true;
+	const transition = "background 0.2s, transform 0.2s, width 0.2s";
 
-    this.css = `
+	this.css = `
     align-items: center;
     display: flex;
     justify-content: space-between;
@@ -46,7 +46,7 @@ export const Switch: Component<{
       box-shadow: inset 0px 0px 5px -0.1px color-mix(in srgb, var(--fg) 10%, transparent), inset 0px -0.7px 1px 0px color-mix(in srgb, var(--fg) 17.5%, transparent);
     }
 
-    .switch-slider:before {
+    .switch-slider::before {
       position: absolute;
       content: "";
       height: 1.4rem;
@@ -79,12 +79,12 @@ export const Switch: Component<{
       background-color: var(--surface4);
     }
 
-    input:active + .switch-slider:before {
+    input:not(:disabled):active + .switch-slider::before {
       width: 1.7rem;
       transition: ${transition}
     }
 
-    input:checked:active + .switch-slider:before {
+    input:not(:disabled):checked:active + .switch-slider::before {
       transform: translateX(1.1rem);
     }
 
@@ -97,22 +97,30 @@ export const Switch: Component<{
       background-color: color-mix(in srgb, var(--accent) 50%, var(--surface3));
     }
 
-    input:checked + .switch-slider:before {
+    input:checked + .switch-slider::before {
       transform: translateX(1.4rem);
+    }
+
+    input:disabled + .switch-slider::before {
+      background-color: color-mix(in srgb, #888888 92.5%, var(--accent));
+    }
+
+    input:checked:disabled + .switch-slider::before {
+      background-color: color-mix(in srgb, #bbbbbb 92.5%, var(--accent));
     }
   `;
 
-    return (
-        <div class="component-switch">
-            <span class="switch-label">{use(this.title)}</span>
-            <label class={`switch-container component-switch ${this.class || ''}`}>
-                <input
-                    type="checkbox"
-                    bind:checked={use(this.on)}
-                    bind:disabled={use(this.disabled || false)}
-                    on:change={(this["on:change"] || (() => { }))} />
-                <span class="switch-slider"></span>
-            </label>
-        </div>
-    );
+	return (
+		<div class="component-switch">
+			<span class="switch-label">{use(this.title)}</span>
+			<label class={`switch-container component-switch ${this.class || ''}`}>
+				<input
+					type="checkbox"
+					disabled={use(this.disabled)}
+					bind:checked={use(this.on)}
+					on:change={(this["on:change"] || (() => { }))} />
+				<span class="switch-slider"></span>
+			</label>
+		</div>
+	);
 };

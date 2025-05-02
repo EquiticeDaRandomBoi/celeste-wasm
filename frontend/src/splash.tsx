@@ -409,14 +409,22 @@ export const Patch: Component<{
 	`
 	const patch = async () => {
 		this.patching = true;
-		await PatchCeleste(this.everest);
-		this.patching = false;
-		this["on:done"]();
+		try {
+			await PatchCeleste(this.everest);
+			this.patching = false;
+			this["on:done"]();
+		} catch {
+			console.debug("================================================");
+			console.error("[!!!] There was an error patching Celeste!");
+			console.log("Please try again or reload the page.");
+			console.debug("================================================");
+			this.patching = false;
+		}
 	}
 
 	return <div>
 		<p>We're going to patch Celeste with MonoMod for neccesary fixes for WASM. You can also optionally install the Everest Mod Loader, but it will take longer to install.</p>
-		<Switch title={"Install Everest Mod Loader?"} bind:on={use(this.everest)} />
+		<Switch title={"Install Everest Mod Loader?"} bind:on={use(this.everest)} bind:disabled={use(this.patching)} />
 
 		<Button type="primary" icon="left" on:click={patch} disabled={use(this.patching)}>
 			<Icon icon={iconManufacturing} />

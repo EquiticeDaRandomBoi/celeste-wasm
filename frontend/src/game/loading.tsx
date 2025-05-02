@@ -237,7 +237,7 @@ export const Loader: Component<{}, {
 				{$if(use(splashState.text, x => x.length > 0),
 					<div class="body progress-container">
 						<div class="progress-text">
-							{use(splashState, state => state.text)}
+							{use(splashState.text)}
 						</div>
 							<div class="progress-counter">
 								{use(splashState.modsFinished)}<span style="color: var(--fg6)">/</span>{use(splashState.modsTotal)}

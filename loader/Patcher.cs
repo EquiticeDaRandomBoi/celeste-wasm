@@ -96,7 +96,8 @@ public partial class Patcher
         {
             Module = module,
             Mods = mods,
-			MissingDependencyThrow = false,
+            MissingDependencyThrow = false,
+            LogVerboseEnabled = false,
         })
         {
             modder.DependencyDirs.Add("/bin");
@@ -130,6 +131,7 @@ public partial class Patcher
             {
                 Module = Module,
                 MissingDependencyThrow = false,
+                LogVerboseEnabled = false,
             })
             {
                 modder.DependencyDirs.Add("/bin");

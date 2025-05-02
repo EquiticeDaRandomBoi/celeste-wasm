@@ -24,7 +24,7 @@ NLua:
 	cd NLua && git checkout 9dc76edd0782d484c54433fdfa3a5097f45a379a && git apply ../nlua.patch
 
 MonoMod:
-	git clone https://github.com/r58Playz/MonoMod --recursive --depth=1
+	git clone https://github.com/r58Playz/MonoMod --recursive
 
 emsdk:
 	git clone https://github.com/emscripten-core/emsdk
@@ -50,6 +50,7 @@ build: deps
 	cp -r loader/bin/Release/net9.0/publish/wwwroot/_framework frontend/public/
 	# emscripten sucks
 	sed -i 's/var offscreenCanvases \?= \?{};/var offscreenCanvases={};if(globalThis.window\&\&!window.TRANSFERRED_CANVAS){transferredCanvasNames=[".canvas"];window.TRANSFERRED_CANVAS=true;}/' frontend/public/_framework/dotnet.native.*.js
+	sed -i 's/this.appendULeb(32768)/this.appendULeb(65535)/' frontend/public/_framework/dotnet.runtime.*.js
 
 serve: build
 	pnpm dev
