@@ -1,28 +1,26 @@
 # Porting Terraria and Celeste to WebAssembly
 
-I've always loved seeing things running in the browser that should absolutely not be running in the browser. Some of my favorites in this genre of project are the [Half Life 1 port](https://github.com/btarg/Xash3D-Emscripten) that uses a reimplementation of goldsrc, a direct recompilation of [Minecraft 1.12](https://eaglercraft.com) from java bytecode to WebAssembly, and even an [emulated Pentium II capable of running modern linux](https://copy.sh/v86/).
+One of my favorite genres of weird project is "thing running in the browser that should absolutely not be running in the browser". Some of my favorites are the [Half Life 1 port](https://github.com/btarg/Xash3D-Emscripten) that uses a reimplementation of goldsrc, the [direct recompilation of Minecraft 1.12](https://eaglercraft.com) from java bytecode to WebAssembly, and even an [emulated Pentium II capable of running modern linux](https://copy.sh/v86/).
 
-So when I saw an old post of someone running a half working copy of the game Celeste in the browser, it completely fascinated me, leading to a year long journey of patching various bits of software to create something that really shouldn't exist.
-
-
+In early 2024 I came across an old post of someone running a half working copy of the game [Celeste](https://www.celestegame.com) entirely in the browser. When I saw that they had never posted their work publicly, I became about as obsessed with the idea as you would expect, leading to a year long journey of bytecode hacks, runtime bugs, patch files, and horrible build systems all to create something that really should have never existed.
 
 thanks to [r58](https://www.r58playz.dev) for figuring most of this stuff out with me and [bomberfish](https://bomberfish.ca) for making a cool ui
 
 # Terraria
-Celeste was written in C#, using XNA. Actually FNA.
+I knew that both Celeste and Terraria were written in C# using the FNA engine, so it was seemingly possible to port Terraria too, and that's what we set out to do.
+<!-- Celeste was written in C#, using XNA. Actually FNA.
 
 XNA *was* a proprietary low level game "engine" developed and subsequently abandoned by Microsoft. It was eventually replaced with the community maintained FNA library, including a SDL backend and greater platform support.
 
-Terraria was also built with XNA/FNA, so I assumed we co
-
+Terraria was also built with XNA/FNA, so I assumed we co -->
 
 The original post didn't have too many details to go off of, but we figured a good place to start was setting up a development environment for modding. In theory, all we needed to do was decompile the game, change the target to webassembly, and then recompile it.
 
-Like Java, C# compiles to a platform-independent bytecode format. Common Intermediate Language (referred to as MSIL or just IL) was designed to map very closely to the original code. The game binaries are typically provided with symbols for both function names and local variables, so the output from the decompiler is typically about as close to the original source as possible.
+It turns out that we were very lucky with the game being C#— since the bytecode format (referred to as MSIL or just IL) maps very closely to the original code, and the game was shipped with the .pdb symbol database for mapping function names (and local variables!), we could get decompilation output that was more or less identical to the original code.
 
 ## Setting up a project
 
-Running `ilspycmd` on Terraria.exe, decompilation *failed* because of a missing `ReLogic.dll`. It turned out that the library was actually embedded into the game itself as a resource.
+<!-- Running `ilspycmd` on Terraria.exe, decompilation *failed* because of a missing `ReLogic.dll`. It turned out that the library was actually embedded into the game itself as a resource.
 
 That's.. odd, but we can extract it from the binary pretty easily. Easiest way is just to create a new c# project and dynamically load in the assembly..
 
@@ -36,8 +34,9 @@ FileStream outstream = File.OpenWrite("ReLogic.dll");
 stream.CopyTo(outstream);
 ```
 
-After putting `ReLogic.dll` into the library path, decompilation succeeded, and after installing all the dependencies Terraria uses, the project recompiles and launches on linux.
+After putting `ReLogic.dll` into the library path, decompilation succeeded, and after installing all the dependencies Terraria uses, the project recompiles and launches on linux. -->
 
+After extracting `ReLogic.dll` and putting it into the library path, decompilation succeeded, and after installing all the dependencies Terraria uses, the project recompiles and launches on linux.
 Now that we knew the decompilation was good, I created a project file for the new code targetting WASM and configuring emscripten.
 
 ```xml
@@ -57,7 +56,7 @@ Now that we knew the decompilation was good, I created a project file for the ne
 </Project>
 ```
 
-Somewhat surprisingly, all of the project code compiles without issue, but the FNA engine is partially written in c++ and needs to be linked against its native components. The web target isn't officially supported by FNA, but its native components compile without issue under emscripten's opengl emulation layer. This process is automated by [FNA-WASM-BUILD](https://github.com/r58Playz/FNA-WASM-Build).
+Somewhat surprisingly, all of the project code compiles without issue, but the FNA engine is partially written in c++ and needs to be linked against its native components. The web target isn't officially supported by FNA, but its native components compile without issue under emscripten's [opengl emulation layer](https://emscripten.org/docs/porting/multimedia_and_graphics/OpenGL-support.html#opengl-support-opengl-es2-0-emulation). This process is automated by [FNA-WASM-BUILD](https://github.com/r58Playz/FNA-WASM-Build) on github actions to make things slightly less painful.
 
 The archive files from the build system can be added with `<NativeFileReference>` and then will automatically get linked together with the rest of the runtime during emscripten compilation.
 
@@ -72,7 +71,7 @@ The archive files from the build system can be added with `<NativeFileReference>
 Now, it fully builds and generates web output, and we can try and get the game running.
 
 ## Running the game
-Everything now compiles, but for the game to actually launch we have to get the game assets into the environment. Since everything goes through emscripten's filesystem emulation, this part is pretty easy, since it uses the browser's [Origin Private File System](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system) for the site, and we can simply ask the user to select their game directory with `window.showDirectoryPicker()`, then mount it in the emscripten filesystem.
+Everything compiles, but for the game to actually launch we have to get the game assets into the environment, meaning we have another chance to use one of my favorite browser APIs, the [Origin Private File System](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system). Since everything goes through emscripten's filesystem emulation, we can just ask the user to select their game directory with `window.showDirectoryPicker()`, then copy in the assets and mount it in the emscripten filesystem.
 
 image here
 
@@ -80,9 +79,9 @@ After a [quick patch to FNA](https://github.com/MercuryWorkshop/terraria-wasm/bl
 
 image of relogic logo
 
-After trying to enter a world though, the game immediately crashes after trying to create a new thread, which was not supported in .NET 8.0 wasm.
+...and then immediately crashed after trying to create a new thread, which was not supported in .NET 8.0 wasm.
 
-We knew that they would be supported in the next version, so we waited about a month for NET 9.0 to get a stable release before continuing. Once it was packaged, we added the `<WasmEnableThreads>true</WasmEnableThreads>` option to the project and recompiled.
+Fortunately we found a clever solution: waiting about a month for NET 9.0 to get a stable release. Once it was packaged, we acould just add the new `<WasmEnableThreads>true</WasmEnableThreads>` option to the project and recompiled.
 
 This time though, FNA failed to initialize.
 
@@ -178,7 +177,7 @@ Okay cool. Now Everest. I wanna play the [strawberry jam](https://gamebanana.com
 
 A mod loader is generally built around two components, a patched version of the game that provides an api, and a method of loading code at runtime and modifying behavior
 
-Both are provided by MonoMod, an instrumentation framework for c# specifically built for game modding. 
+Both are provided by MonoMod, an instrumentation framework for c# specifically built for game modding.
 
 the patcher part modifies the game on disk, so no problem there. but the runtime modifications use a module called `RuntimeDetour`, which is very not supported on WebAssembly.
 
@@ -201,10 +200,10 @@ Internally, it's powered by function detouring, a common tool for game modding/c
 
 Oversimplifying a little, the process MonoMod uses to hook into functions on desktop is:
 
-- Copy the original method's IL bytecode into a new controlled method with modifications  
-- Call MethodBase.GetFunctionPointer() or "thunk" the runtime to retrieve pointers to the executable regions in memory that the jit code is held in  
-- Ask the OS kernel to disable write protection on the pages of memory where the jitted code is  
-- Write the bytes for a long jmp (`0xFF 0x25 <pointer>`) into the start of the function to redirect the control flow back into MonoMod.  
+- Copy the original method's IL bytecode into a new controlled method with modifications
+- Call MethodBase.GetFunctionPointer() or "thunk" the runtime to retrieve pointers to the executable regions in memory that the jit code is held in
+- Ask the OS kernel to disable write protection on the pages of memory where the jitted code is
+- Write the bytes for a long jmp (`0xFF 0x25 <pointer>`) into the start of the function to redirect the control flow back into MonoMod.
 - Force the JIT code for the new modified method to generate and move the control flow there.
 
 This works because on desktop, all functions run through the CoreCLR JIT before they're executed, so all functions are guaranteed to have corresponding native code regions before they're even executed.
@@ -237,7 +236,7 @@ By looking at the MSIL documentation and [this post](https://phrack.org/issues/7
 - call `System.Reflection.Emit` to generate a new dynamic function with the exact same signature as the original method
 - insert an `ldc.i4` (`0x20 <int32>`) and put in the delegate pointer for the function we just created
 - insert `calli` (`0x29`) to jump to the dynamic method
-- add a return (`0x2A`) to prevent executing the rest of the function 
+- add a return (`0x2A`) to prevent executing the rest of the function
 
 Once the hooked function is called, it runs our dynamic method, which will:
 - `ldarg` each argument and store it in a temporary array
@@ -246,7 +245,7 @@ Once the hooked function is called, it runs our dynamic method, which will:
 
 Calling the function would make Mono assert at runtime though. It turns out that we need to load a "metadata token" to determine the method's signature before we run `calli`, and since the dynamic method is technically in a different assembly, it wouldn't be able to resolve it by default.
 
-This was a simple fix though, since the dyn method has the same signature as the original one, we just had to clone the parent method's metadata in C and insert it into the internal mono hash table. 
+This was a simple fix though, since the dyn method has the same signature as the original one, we just had to clone the parent method's metadata in C and insert it into the internal mono hash table.
 This gave us a working detour system, but it turned out that last step broke in multithreaded mode, since each thread had it's own struct that needed to be modified.
 
 There's probably a bypass for that, but at this point we figured it would just be easier to patch the runtime itself. After all, it's not like we have to worry about a user's individual setup, it's all running on the web.
@@ -285,7 +284,7 @@ celeste.GetType("Celeste.RunThread").GetMethod("WaitAll").Invoke(null, []);
 ```
 It feels a little weird to be talking about running an *exe file* in the browser, but since it's really just CIL bytecode inside a PE32 container, there's no reason it shouldn't work. And since we have dependencies directly added to the loader project, the runtime will find our web FNA before the real game's desktop FNA, so the game will call our libraries with no need for patching.
 
-Of course, the game won't work, since we needed patches in a few places to get it to run in the browser without crashing. 
+Of course, the game won't work, since we needed patches in a few places to get it to run in the browser without crashing.
 
 We just made an entire framework for patching code at runtime though, so we can just use that, we just need to instantiate a `Hook` for the functions we need to patch then make our changes.
 
@@ -307,7 +306,7 @@ Hook hook = new Hook(Celeste.GetMethod("ApplyScreen"), (Action<object> orig, obj
 });
 ```
 
-Now that the loader doesn't care where the code comes from, we can just swap out `Celeste.exe` with the patched version from an everest install. 
+Now that the loader doesn't care where the code comes from, we can just swap out `Celeste.exe` with the patched version from an everest install.
 
 image
 
@@ -329,7 +328,7 @@ now that mm patcher worked, we converted the Hook patches to aot patches
 
 we could even install everest all in the browser by downloading the everest dll directly from github and running the patcher again
 
-our patching system went from 
+our patching system went from
 uploading entire source code to a git repo -> automated diff generation of `.patch` files -> hooking functions with RuntimeDetour -> patching Celeste.exe bytecode in the browser before the game starts
 
 and now we're not hosting any Celeste IP, since all proprietary code gets loaded externally
@@ -344,13 +343,13 @@ image
 The Strawberry Jam mod uses over 60 individual mods. Most would load fine, but a lot didn't.
 
 we had to get all of them working.
- 
+
 
 Here's a fun issue - one of the mods tries to RuntimeDetour a function that's so small that the bytes of our jump patch overflow the code buffer. For cases like these, we found out how to abuse mono's hot reload module to replace function bodies instead of directly modifying the memory.
 
 another one, apparently wasm .NET is just straight up broken in a lot of cases. it makes sense, it's a pretty niche thing. the main use case is the Blazor web framework, and no one really uses it, not even microsoft. here's [another .NET bug](https://github.com/dotnet/runtime/issues/112262) we had to work around
 
-But years later and no one really uses blazor, so despite a pretty good effort on the parts of the .NET maintainers the web support is best considered a beta. A not-insignificant amount of time was spent working around 
+But years later and no one really uses blazor, so despite a pretty good effort on the parts of the .NET maintainers the web support is best considered a beta. A not-insignificant amount of time was spent working around
 
 Surprisingly, the rest of the mod compatibility issues were actually just subtle differences between the Mono Runtime and CoreCLR. No one plays Celeste on mono so no one noticed it.
 
@@ -408,8 +407,8 @@ The helpful `[MonoModRelinkFrom]` attribute lets us declare a class to replace a
 
 Oh! Thats not good. We kinda need AOT
 
-This is an error during code generation, so it's something that would have also happened at runtime during interpreted mode if the function was used. So something else is tripping up 
+This is an error during code generation, so it's something that would have also happened at runtime during interpreted mode if the function was used. So something else is tripping up
 
-Hey you know what time it is. Let's clone mono again and start recompiling with some new debug prints  
-\[machelpers.cs\]  
+Hey you know what time it is. Let's clone mono again and start recompiling with some new debug prints
+\[machelpers.cs\]
 Awesome. Fuck mac. Lets delete that file
