@@ -28,6 +28,8 @@
 		<WasmNativeStrip>false</WasmNativeStrip>
 		<WasmNativeDebugSymbols>true</WasmNativeDebugSymbols>
 
+		<WebAssemblyEnableStreamingResponse>true</WebAssemblyEnableStreamingResponse>
+
 		<!-- MAXIMUM_MEMORY is 4GiB - 1 wasm page (64kib) -->
 		<EmccExtraLDFlags>-sMIN_WEBGL_VERSION=2 -sWASMFS -sOFFSCREENCANVAS_SUPPORT -sSUPPORT_LONGJMP=wasm -Wl,--no-check-features -sMAXIMUM_MEMORY=4294901760</EmccExtraLDFlags>
 		<EmccLinkOptimizationFlag>-O3</EmccLinkOptimizationFlag>

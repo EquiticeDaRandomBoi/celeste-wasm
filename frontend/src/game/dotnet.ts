@@ -42,12 +42,13 @@ function proxyConsole(name: string, color: string) {
 			logger({ color, log: str });
 		}
 	};
+	return old;
 }
-proxyConsole("error", "var(--error)");
-proxyConsole("warn", "var(--warning)");
-proxyConsole("log", "var(--fg)");
-proxyConsole("info", "var(--info)");
-proxyConsole("debug", "var(--fg4)");
+export const bypassError = proxyConsole("error", "var(--error)");
+export const bypassWarn = proxyConsole("warn", "var(--warning)");
+export const bypassLog = proxyConsole("log", "var(--fg)");
+export const bypassInfo = proxyConsole("info", "var(--info)");
+export const bypassDebug = proxyConsole("debug", "var(--fg4)");
 
 function hookfmod() {
 	let contexts: AudioContext[] = [];
@@ -260,7 +261,9 @@ export async function preInit() {
 		if (typeof args[0] !== "string" || !args[0].includes("/depot/")) {
 			try {
 				return await nativefetch(...args);
-			} catch (e) { }
+			} catch (e) {
+				bypassLog("native fetch failed for", args, ", fetching with epoxy instead");
+			}
 		} else if (downloadsFolder != null) {
 			let last = args[0].split("/").pop()!;
 			try {
@@ -285,6 +288,7 @@ export async function preInit() {
 				await new Promise((r) => setTimeout(r, 100));
 			}
 		}
+
 
 		// @ts-expect-error
 		return await epoxyFetch(...args);
