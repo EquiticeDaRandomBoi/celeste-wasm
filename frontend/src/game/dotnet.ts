@@ -3,7 +3,6 @@ import { DotnetHostBuilder } from "./dotnetdefs";
 import { rootFolder } from "../fs";
 import { SteamJS } from "../achievements";
 import { JsSplash } from "./loading";
-import { STEAM_ENABLED } from "../main";
 import { epoxyFetch, EpxTcpWs, EpxWs, getWispUrl } from "../epoxy";
 import { steamState } from "../steam";
 
@@ -342,12 +341,10 @@ export async function preInit() {
 	await exports.CelesteLoader.PreInit();
 	console.debug("dotnet initialized");
 
-	if (STEAM_ENABLED) {
-		await exports.Steam.Init();
-		if (await exports.Steam.InitSteamSaved()) {
-			console.log("Steam saved login success");
-			steamState.login = 2;
-		}
+	await exports.Steam.Init();
+	if (await exports.Steam.InitSteamSaved()) {
+		console.log("Steam saved login success");
+		steamState.login = 2;
 	}
 
 	try {
@@ -405,7 +402,7 @@ const SEAMLESSCOUNT = 5;
 export async function play() {
 	gameState.playing = true;
 	gameState.initting = true;
-	if (STEAM_ENABLED && steamState.login == 2) {
+	if (steamState.login == 2) {
 		console.debug("Syncing Steam Cloud");
 		await exports.Steam.DownloadSteamCloud();
 	}

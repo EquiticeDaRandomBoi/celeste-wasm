@@ -16,8 +16,6 @@ import iconTrophy from "@ktibow/iconset-material-symbols/trophy";
 import iconDownload from "@ktibow/iconset-material-symbols/download";
 import iconSettings from "@ktibow/iconset-material-symbols/settings";
 
-export const STEAM_ENABLED = import.meta.env.VITE_STEAM_ENABLED;
-
 export const NAME = "webleste";
 
 export const Logo: Component<{}, {}> = function () {

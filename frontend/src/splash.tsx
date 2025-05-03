@@ -1,4 +1,4 @@
-import { Logo, NAME, STEAM_ENABLED } from "./main";
+import { Logo, NAME } from "./main";
 import { Switch } from "./ui/Switch";
 import { Button, Icon, Link } from "./ui/Button";
 import { copyFile, copyFolder, countFolder, extractTar, hasContent, PICKERS_UNAVAILABLE, rootFolder, TAR_TYPES } from "./fs";
@@ -96,15 +96,6 @@ const Intro: Component<{
 					You will be unable to copy game assets from your local install of Celeste or extract a {NAME} archive to play or use the upload features in the filesystem viewer.
 				</div>
 				: null}
-			{STEAM_ENABLED ? null :
-				<div class="warning">
-					<span>This deployment of {NAME} does not support downloading game assets from Steam.</span>
-				</div>}
-			{PICKERS_UNAVAILABLE && !STEAM_ENABLED ?
-				<div class="error">
-					All methods of obtaining game assets are unavailable on your browser. Please switch to a Chromium-based browser.
-				</div>
-				: null}
 
 			<Button on:click={() => next("copy")} type="primary" icon="left" disabled={use(this.disabled, x => x || PICKERS_UNAVAILABLE)}>
 				<Icon icon={iconFolderOpen} />
@@ -114,9 +105,9 @@ const Intro: Component<{
 				<Icon icon={iconUnarchive} />
 				{PICKERS_UNAVAILABLE ? `Extracting ${NAME} archive is unsupported` : `Extract ${NAME} archive`}
 			</Button>
-			<Button on:click={() => next("download")} type="primary" icon="left" disabled={use(this.disabled, x => x || !STEAM_ENABLED)}>
+			<Button on:click={() => next("download")} type="primary" icon="left" disabled={use(this.disabled)}>
 				<Icon icon={iconDownload} />
-				{STEAM_ENABLED ? "Download assets with Steam Login" : "Download through Steam is disabled"}
+				Download assets with Steam Login
 			</Button>
 		</div>
 	)
@@ -377,9 +368,11 @@ export const Download: Component<{
 				</div>
 			)}
 
-			<div class="console">
-				<LogView scrolling={false} />
-			</div>
+			{$if(use(steamState.login, l => l == 2),
+				<div class="console">
+					<LogView scrolling={false} />
+				</div>
+			)}
 		</div>
 	)
 }

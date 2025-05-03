@@ -19,8 +19,6 @@ A mostly-complete port of Celeste (2018) to WebAssembly using dotnet 9's threade
 4. run `sudo dotnet workload restore` in the loader dir
 5. run `make serve` for a dev server and `make publish` for a release build
 
-to enable steam downloads set the env var `VITE_STEAM_ENABLED` to true 
-
 ## I want to port this to a newer version of celeste (once it exists)
 1. fix any issues with the hooks
 2. make a pr!
