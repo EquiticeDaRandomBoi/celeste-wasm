@@ -1,4 +1,5 @@
 import { achievements, glowingAchievements } from "./achievementData";
+import { steamState } from "./steam";
 
 export type Achievement = {
 	hidden: boolean;
@@ -41,6 +42,9 @@ export const SteamJS = {
 	},
 	SetStat(stat: string, value: number) {
 		console.debug(`SetStat("${stat}", ${value})`);
+	},
+	NewQR(url: string) {
+		steamState.qr = url;
 	}
 };
 

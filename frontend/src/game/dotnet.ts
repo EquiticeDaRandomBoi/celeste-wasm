@@ -297,6 +297,7 @@ export async function preInit() {
 
 	const config = runtime.getConfig();
 	exports = await runtime.getAssemblyExports(config.mainAssemblyName!);
+	exports.SteamJS = (await runtime.getAssemblyExports("Steamworks.NET.dll")).Steamworks.SteamJS;
 
 	// TODO: replace with native openssl
 	runtime.setModuleImports("interop.js", {
@@ -309,13 +310,6 @@ export async function preInit() {
 			let exponent = BigInt("0x" + publicKeyExponentHex);
 			let encrypted = encryptRSA(data, modulus, exponent);
 			return new Uint8Array(encrypted);
-		},
-	});
-
-	runtime.setModuleImports("depot.js", {
-		newqr: (qr: string) => {
-			console.log("QR DATA" + qr);
-			steamState.qr = qr;
 		},
 	});
 
@@ -341,8 +335,8 @@ export async function preInit() {
 	await exports.CelesteLoader.PreInit();
 	console.debug("dotnet initialized");
 
-	await exports.Steam.Init();
-	if (await exports.Steam.InitSteamSaved()) {
+	await exports.SteamJS.Init();
+	if (await exports.SteamJS.InitSteamSaved()) {
 		console.log("Steam saved login success");
 		steamState.login = 2;
 	}
@@ -390,12 +384,12 @@ export async function initSteam(
 	username: string | null,
 	password: string | null,
 	qr: boolean,
-) {
-	return await exports.Steam.InitSteam(username, password, qr);
+): Promise<boolean> {
+	return await exports.SteamJS.InitSteam(username, password, qr);
 }
 
 export async function downloadApp() {
-	return await exports.Steam.DownloadApp();
+	return await exports.SteamJS.DownloadApp();
 }
 const SEAMLESSCOUNT = 5;
 
@@ -404,7 +398,7 @@ export async function play() {
 	gameState.initting = true;
 	if (steamState.login == 2) {
 		console.debug("Syncing Steam Cloud");
-		await exports.Steam.DownloadSteamCloud();
+		await exports.SteamJS.DownloadSteamCloud();
 	}
 
 	console.debug("Init...");
