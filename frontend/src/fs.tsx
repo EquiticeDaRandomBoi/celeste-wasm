@@ -414,12 +414,12 @@ export const OpfsExplorer: Component<{
 	return (
 		<div>
 			<div class="path">
-			  {$if(use(this.components, x => x.length > 0), (
-          <Button type="normal" icon="full" disabled={false} on:click={async () => {
-            this.path = this.entries[0].entry as FileSystemDirectoryHandle;
-          }} title={"Up A Level"}>
-            <Icon icon={iconArrowBack} />
-          </Button>
+				{$if(use(this.components, x => x.length > 0), (
+					<Button type="normal" icon="full" disabled={false} on:click={async () => {
+						this.path = this.entries[0].entry as FileSystemDirectoryHandle;
+					}} title={"Up A Level"}>
+						<Icon icon={iconArrowBack} />
+					</Button>
 				))}
 				<h3>{use(this.components, x => (x.length == 0 ? "Root Directory" : "/" + x.join("/")))}</h3>
 				<div class="expand" />
@@ -514,17 +514,17 @@ export const OpfsExplorer: Component<{
 					)
 				}
 			})}
-			<div style={{flexGrow: 1 }} />
-      <div class="archive">
-     			<Button type="normal" icon="full" disabled={uploadDisabled} on:click={uploadArchive}>
-      				<Icon icon={iconUnarchive} />{" "}
-      				Upload Folder Archive
-     			</Button>
-     			<Button type="normal" icon="full" disabled={downloadDisabled} on:click={downloadArchive}>
-      				<Icon icon={iconArchive} />{" "}
-      				Download Folder Archive
-     			</Button>
-      </div>
+			<div style={{ flexGrow: 1 }} />
+			<div class="archive">
+				<Button type="normal" icon="full" disabled={uploadDisabled} on:click={uploadArchive}>
+					<Icon icon={iconUnarchive} />{" "}
+					Upload Folder Archive
+				</Button>
+				<Button type="normal" icon="full" disabled={downloadDisabled} on:click={downloadArchive}>
+					<Icon icon={iconArchive} />{" "}
+					Download Folder Archive
+				</Button>
+			</div>
 		</div>
 	)
 }

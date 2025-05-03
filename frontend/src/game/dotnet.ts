@@ -61,18 +61,19 @@ function hookfmod() {
 		return context;
 	};
 
-	window.addEventListener("focus", async () => {
-		for (let context of contexts) {
-			try {
-				await context.resume();
-			} catch { }
-		}
-	});
-	window.addEventListener("blur", async () => {
-		for (let context of contexts) {
-			try {
-				await context.suspend();
-			} catch { }
+	window.addEventListener("visibilitychange", async () => {
+		if (document.visibilityState === "visible") {
+			for (let context of contexts) {
+				try {
+					await context.resume();
+				} catch { }
+			}
+		} else {
+			for (let context of contexts) {
+				try {
+					await context.suspend();
+				} catch { }
+			}
 		}
 	});
 }
