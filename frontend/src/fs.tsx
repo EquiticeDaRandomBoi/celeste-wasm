@@ -518,11 +518,11 @@ export const OpfsExplorer: Component<{
       <div class="archive">
      			<Button type="normal" icon="full" disabled={uploadDisabled} on:click={uploadArchive}>
       				<Icon icon={iconUnarchive} />{" "}
-      				Upload Filesystem Archive
+      				Upload Folder Archive
      			</Button>
      			<Button type="normal" icon="full" disabled={downloadDisabled} on:click={downloadArchive}>
       				<Icon icon={iconArchive} />{" "}
-      				Download Filesystem Archive
+      				Download Folder Archive
      			</Button>
       </div>
 		</div>
