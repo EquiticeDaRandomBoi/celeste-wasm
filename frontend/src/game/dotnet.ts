@@ -391,15 +391,19 @@ export async function initSteam(
 export async function downloadApp() {
 	return await exports.SteamJS.DownloadApp();
 }
+
+export async function DownloadSteamCloud() {
+	return await exports.SteamJS.DownloadSteamCloud();
+}
+export async function UploadSteamCloud() {
+	return await exports.SteamJS.UploadSteamCloud();
+}
+
 const SEAMLESSCOUNT = 5;
 
 export async function play() {
 	gameState.playing = true;
 	gameState.initting = true;
-	if (steamState.login == 2) {
-		console.debug("Syncing Steam Cloud");
-		await exports.SteamJS.DownloadSteamCloud();
-	}
 
 	console.debug("Init...");
 	const before = performance.now();

@@ -1,5 +1,5 @@
 import { gameState, LogView } from "./game";
-import { initSteam } from "./game/dotnet";
+import { DownloadSteamCloud, initSteam, UploadSteamCloud } from "./game/dotnet";
 import { TextField } from "./ui/TextField";
 import { Button, Icon } from "./ui/Button";
 
@@ -27,6 +27,9 @@ export const SteamCloud: Component<{
         use(steamState.login, (l) => l == 2),
         <div>
           <p>Logged Into Steam</p>
+		  <Button type="normal" icon="none" on:click={() => DownloadSteamCloud()} disabled={false}>Download Steam Cloud</Button>
+		  <Button type="normal" icon="none" on:click={() => UploadSteamCloud()} disabled={false}>Upload Steam Cloud</Button>
+		  <LogView scrolling={true} />
         </div>,
         <div>
           <SteamLogin />
