@@ -186,7 +186,7 @@ namespace MonoMod
             if (!context.Instrs[cursor.Index].MatchLdcI4(out var _))
                 throw new Exception("[FMODPatcher] Unable to find FMOD version in FMOD.Studio.System.create");
 
-            context.Instrs[cursor.Index].Operand = (int)0x00020222;
+            context.Instrs[cursor.Index].Operand = (int)0x00020307;
 
             MonoModRule.Modder.Log("[FMODPatcher] Patched FMOD Version");
         }

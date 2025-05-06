@@ -16,3 +16,5 @@ obj
 
 .env.local
 .DS_Store
+
+/loader/fmod/
