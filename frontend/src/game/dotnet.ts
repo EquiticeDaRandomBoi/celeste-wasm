@@ -182,17 +182,6 @@ export async function downloadEverest() {
 	console.log("Successfully downloaded Everest");
 }
 
-export async function wispSanityCheck() {
-	let r;
-	try {
-		r = await epoxyFetch("https://google.com");
-	} catch (e) {
-		console.error(e);
-	}
-
-	if (!r || !r.ok) throw new Error("wisp sanity check failed");
-}
-
 let downloadsFolder: FileSystemDirectoryHandle | null = null;
 
 export async function pickDownloadsFolder() {
@@ -223,7 +212,7 @@ export async function preInit() {
 			`--jiterpreter-trace-monitoring-max-average-penalty=${150}`,
 			// increase jit function limits
 			`--jiterpreter-wasm-bytes-limit=${64 * 1024 * 1024}`,
-			`--jiterpreter-table-size=${16 * 1024}`,
+			`--jiterpreter-table-size=${32 * 1024}`,
 			// print jit stats
 			`--jiterpreter-stats-enabled`
 		])
@@ -233,7 +222,6 @@ export async function preInit() {
 	runtime.setModuleImports("JsSplash", JsSplash);
 
 	console.log("loading epoxy");
-	await wispSanityCheck();
 
 	window.WebSocket = new Proxy(WebSocket, {
 		construct(t, a, n) {

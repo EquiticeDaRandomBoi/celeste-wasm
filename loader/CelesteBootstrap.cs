@@ -12,12 +12,6 @@ struct Dll
     public string MappedName;
 }
 
-[AttributeUsage(AttributeTargets.Method)]
-sealed class MonoPInvokeCallbackAttribute : Attribute
-{
-    public MonoPInvokeCallbackAttribute(Type t) { }
-}
-
 public static partial class CelesteBootstrap
 {
     [DllImport("Emscripten")]
@@ -46,7 +40,6 @@ public static partial class CelesteBootstrap
 		mount_fetch("_framework/", "/fetchdlls/");
         foreach (var dll in dlls)
         {
-            Console.WriteLine($"Mounting {dll.RealName}");
             int ret = mount_fetch_file($"/fetchdlls/{dll.RealName}");
             if (ret != 0)
             {
@@ -62,7 +55,6 @@ public static partial class CelesteBootstrap
         try
         {
             int ret = mount_opfs();
-            Console.WriteLine($"called mount_opfs: {ret}");
             if (ret != 0)
             {
                 throw new Exception($"Failed to mount OPFS: error code {ret}");
@@ -74,10 +66,7 @@ public static partial class CelesteBootstrap
             File.CreateSymbolicLink("/Content", "/libsdl/Content");
             File.CreateSymbolicLink("/Saves", "/libsdl/Celeste/Saves");
             File.CreateSymbolicLink("/remote/%GameInstall%Saves", "/libsdl/Celeste/Saves");
-            Console.WriteLine("created symlinks");
-
             MountDlls(rawDlls);
-            Console.WriteLine("mounted dlls");
         }
         catch (Exception err)
         {

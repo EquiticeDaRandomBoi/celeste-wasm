@@ -6,11 +6,8 @@
 #include <unistd.h>
 
 int mount_opfs() {
-	printf("mount_opfs: starting\n");
 	backend_t opfs = wasmfs_create_opfs_backend();
-	printf("mount_opfs: created opfs backend\n");
 	int ret = wasmfs_create_directory("/libsdl", 0777, opfs);
-	printf("mount_opfs: mounted opfs\n");
 	return ret;
 }
 
