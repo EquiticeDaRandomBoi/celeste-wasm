@@ -207,6 +207,8 @@ export const Main: Component<
 		steamOpen: boolean;
 		settingsOpen: boolean;
 		logcontainer: HTMLDivElement;
+
+		dialogs?: HTMLDivElement;
 	},
 	{
 		start: () => Promise<void>;
@@ -266,6 +268,25 @@ export const Main: Component<
 
 	this.start = async () => {
 		await (game.$ as ComponentType<typeof GameView>).start();
+		this.dialogs = (
+			<div>
+				<Dialog name="Steam Cloud" bind:open={use(this.steamOpen)}>
+					<SteamCloud open={use(this.steamOpen)} />
+				</Dialog>
+				<Dialog name="File System" bind:open={use(this.fsOpen)}>
+					<OpfsExplorer open={use(this.fsOpen)} />
+				</Dialog>
+				<Dialog name="Achievements" bind:open={use(this.achievementsOpen)}>
+					<Achievements open={use(this.achievementsOpen)} />
+				</Dialog>
+				<Dialog name="Mod Installer" bind:open={use(this.modInstallerOpen)}>
+					<ModInstaller open={use(this.modInstallerOpen)} />
+				</Dialog>
+				<Dialog name="Settings" bind:open={use(this.settingsOpen)}>
+					<Settings />
+				</Dialog>
+			</div>
+		) as HTMLDivElement;
 	};
 
 	return (
@@ -308,21 +329,7 @@ export const Main: Component<
 					</div>
 				</>,
 			)}
-			<Dialog name="Steam Cloud" bind:open={use(this.steamOpen)}>
-				<SteamCloud open={use(this.steamOpen)} />
-			</Dialog>
-			<Dialog name="File System" bind:open={use(this.fsOpen)}>
-				<OpfsExplorer open={use(this.fsOpen)} />
-			</Dialog>
-			<Dialog name="Achievements" bind:open={use(this.achievementsOpen)}>
-				<Achievements open={use(this.achievementsOpen)} />
-			</Dialog>
-			<Dialog name="Mod Installer" bind:open={use(this.modInstallerOpen)}>
-				<ModInstaller open={use(this.modInstallerOpen)} />
-			</Dialog>
-			<Dialog name="Settings" bind:open={use(this.settingsOpen)}>
-				<Settings />
-			</Dialog>
+			{use(this.dialogs)}
 		</div>
 	);
 };

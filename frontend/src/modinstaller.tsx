@@ -7,31 +7,31 @@ import iconSearch from "@ktibow/iconset-material-symbols/search";
 import iconDownload from "@ktibow/iconset-material-symbols/download";
 
 type Mod = {
-  Screenshots: string[];
-  PageURL: string;
-  Name: string;
-  Text: string;
-  Files: {
-    URL: string;
-    Name: string;
-  }[];
+	Screenshots: string[];
+	PageURL: string;
+	Name: string;
+	Text: string;
+	Files: {
+		URL: string;
+		Name: string;
+	}[];
 };
 
 export const ModInstaller: Component<
-  {
-    open: boolean;
-  },
-  {
-    entries: Mod[];
-    query: string;
-  }
-> = function () {
-  // https://maddie480.ovh/celeste/gamebanana-categories
-  // https://maddie480.ovh/celeste/gamebanana-subcategories?itemtype=...&categoryId=...
+	{
+		open: boolean;
+	},
+	{
+		entries: Mod[];
+		query: string;
+	}
+> = function() {
+	// https://maddie480.ovh/celeste/gamebanana-categories
+	// https://maddie480.ovh/celeste/gamebanana-subcategories?itemtype=...&categoryId=...
 
-  this.query = "";
-  this.entries = [];
-  this.css = `
+	this.query = "";
+	this.entries = [];
+	this.css = `
   height: 100%;
 
   .mods {
@@ -173,122 +173,122 @@ export const ModInstaller: Component<
   }
  `;
 
-  const loadFrom = async (url: string) => {
-    await loadedLibcurlPromise;
-    let res = await fetch(url);
-    this.entries = [];
+	const loadFrom = async (url: string) => {
+		await loadedLibcurlPromise;
+		let res = await fetch(url);
+		this.entries = [];
 
-    let entries: Mod[] = await res.json();
-    this.entries = entries.map((ent) => {
-      let e = $state(ent);
-      for (let i = 0; i < e.Screenshots.length; i++) {
-        let url = e.Screenshots[i];
-        e.Screenshots[i] = "";
-        epoxyFetch(url)
-          .then((b) => b.blob())
-          .then((blob) => {
-            let url = URL.createObjectURL(blob);
-            e.Screenshots[i] = url;
-            e.Screenshots = e.Screenshots;
-          });
-      }
+		let entries: Mod[] = await res.json();
+		this.entries = entries.map(e => $state(e));
 
-      return e;
-    });
-  };
+		for (const e of this.entries) {
+			for (let i = 0; i < e.Screenshots.length; i++) {
+				let url = e.Screenshots[i];
+				e.Screenshots[i] = "";
+				await new Promise(r => setTimeout(r, 100));
+				epoxyFetch(url)
+					.then((b) => b.blob())
+					.then((blob) => {
+						let url = URL.createObjectURL(blob);
+						e.Screenshots[i] = url;
+						e.Screenshots = e.Screenshots;
+					});
+			}
+		}
+	};
 
-  const search = async () => {
-    console.log(this.query);
-    await loadFrom(
-      "https://maddie480.ovh/celeste/gamebanana-search?q=" + this.query,
-    );
-    this.query = "";
-  };
+	const search = async () => {
+		console.log(this.query);
+		await loadFrom(
+			"https://maddie480.ovh/celeste/gamebanana-search?q=" + this.query,
+		);
+		this.query = "";
+	};
 
-  const download = async (mod: Mod) => {
-    let celeste = await rootFolder.getDirectoryHandle("Celeste", {
-      create: true,
-    });
-    let mods = await celeste.getDirectoryHandle("Mods", { create: true });
+	const download = async (mod: Mod) => {
+		let celeste = await rootFolder.getDirectoryHandle("Celeste", {
+			create: true,
+		});
+		let mods = await celeste.getDirectoryHandle("Mods", { create: true });
 
-    try {
-      await mods.getFileHandle(mod.Files[0].Name, { create: false });
-      alert("Mod already installed");
-      return;
-    } catch (e) {}
+		try {
+			await mods.getFileHandle(mod.Files[0].Name, { create: false });
+			alert("Mod already installed");
+			return;
+		} catch (e) { }
 
-    let resp = await epoxyFetch(mod.Files[0].URL);
-    let modfile = await mods.getFileHandle(mod.Files[0].Name, { create: true });
-    let writable = await modfile.createWritable();
-    // @ts-expect-error
-    await resp.body.pipeTo(writable);
+		let resp = await epoxyFetch(mod.Files[0].URL);
+		let modfile = await mods.getFileHandle(mod.Files[0].Name, { create: true });
+		let writable = await modfile.createWritable();
+		// @ts-expect-error
+		await resp.body.pipeTo(writable);
 
-    console.log("Downloaded mod");
-  };
+		console.log("Downloaded mod");
+	};
 
-  this.mount = async () => {
-    loadFrom("https://maddie480.ovh/celeste/gamebanana-featured");
-  };
+	this.mount = async () => {
+		loadFrom("https://maddie480.ovh/celeste/gamebanana-featured");
+	};
 
-  return (
-    <div>
-      <div id="modsearch">
-        <TextField
-          placeholder={"Search mods..."}
-          on:keydown={(e: any) => {
-            this.query = e.target.value;
-            e.key === "Enter" && search();
-          }}
-          bind:value={use(this.query)}
-          class={"modsearchbar"}
-        />
-        <Button
-          on:click={search}
-          class={"searchbtn"}
-          type={"primary"}
-          icon={"full"}
-          disabled={false}
-        >
-          <Icon icon={iconSearch} />
-        </Button>
-      </div>
-      <div class="mods">
-        {$if(
-          use(this.entries, (entries) => entries.length === 0),
-          <div class="empty-message">No mods found! Try searching for something else</div>,
-        )}
-        {use(this.entries, (e) =>
-          e.map((e) => (
-            <div class="mod">
-              <img class="bg" src={use(e.Screenshots, s=> s[0])} />
-              <div class="gradient-overlay"></div>
-              <div class="detail">
-                <h2>{e.Name}</h2>
-                {(() => {
-                  let p = <p />;
-                  p.innerHTML = e.Text;
-                  return p;
-                })()}
-                <div class="screenshots">
-                  {use(e.Screenshots, (e) => e.slice(1).map((s) => <img src={s} />))}
-                </div>
-              </div>
-              <Button
-                on:click={() => {
-                  download(e);
-                }}
-                icon="full"
-                type="primary"
-                class="moddownload"
-                disabled={false}
-                title={"Download Mod"}
-              >
-                <Icon icon={iconDownload} />
-              </Button>
-            </div>
-          )),
-        )}
-      </div>
-    </div>
-  );
+	return (
+		<div>
+			<div id="modsearch">
+				<TextField
+					placeholder={"Search mods..."}
+					on:keydown={(e: any) => {
+						this.query = e.target.value;
+						e.key === "Enter" && search();
+					}}
+					bind:value={use(this.query)}
+					class={"modsearchbar"}
+				/>
+				<Button
+					on:click={search}
+					class={"searchbtn"}
+					type={"primary"}
+					icon={"full"}
+					disabled={false}
+				>
+					<Icon icon={iconSearch} />
+				</Button>
+			</div>
+			<div class="mods">
+				{$if(
+					use(this.entries, (entries) => entries.length === 0),
+					<div class="empty-message">No mods found! Try searching for something else</div>,
+				)}
+				{use(this.entries, (e) =>
+					e.map((e) => (
+						<div class="mod">
+							<img class="bg" src={use(e.Screenshots, s => s[0])} />
+							<div class="gradient-overlay"></div>
+							<div class="detail">
+								<h2>{e.Name}</h2>
+								{(() => {
+									let p = <p />;
+									p.innerHTML = e.Text;
+									return p;
+								})()}
+								<div class="screenshots">
+									{use(e.Screenshots, (e) => e.slice(1).map((s) => <img src={s} />))}
+								</div>
+							</div>
+							<Button
+								on:click={() => {
+									download(e);
+								}}
+								icon="full"
+								type="primary"
+								class="moddownload"
+								disabled={false}
+								title={"Download Mod"}
+							>
+								<Icon icon={iconDownload} />
+							</Button>
+						</div>
+					)),
+				)}
+			</div>
+		</div>
+	);
 };
