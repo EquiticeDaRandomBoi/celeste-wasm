@@ -180,22 +180,28 @@ export const ModInstaller: Component<
 
 		let entries: Mod[] = await res.json();
 		this.entries = entries.map(e => $state(e));
+	};
 
-		for (const e of this.entries) {
-			for (let i = 0; i < e.Screenshots.length; i++) {
-				let url = e.Screenshots[i];
-				e.Screenshots[i] = "";
-				await new Promise(r => setTimeout(r, 100));
-				epoxyFetch(url)
-					.then((b) => b.blob())
-					.then((blob) => {
-						let url = URL.createObjectURL(blob);
-						e.Screenshots[i] = url;
-						e.Screenshots = e.Screenshots;
-					});
+	useChange([this.open, this.entries], async () => {
+		if (this.open) {
+			await loadedLibcurlPromise;
+			for (const e of this.entries) {
+				for (let i = 0; i < e.Screenshots.length; i++) {
+					let url = e.Screenshots[i];
+					if (url.startsWith("blob:")) continue;
+					e.Screenshots[i] = "";
+					await new Promise(r => setTimeout(r, 100));
+					epoxyFetch(url)
+						.then((b) => b.blob())
+						.then((blob) => {
+							let url = URL.createObjectURL(blob);
+							e.Screenshots[i] = url;
+							e.Screenshots = e.Screenshots;
+						});
+				}
 			}
 		}
-	};
+	});
 
 	const search = async () => {
 		console.log(this.query);
@@ -260,7 +266,7 @@ export const ModInstaller: Component<
 				{use(this.entries, (e) =>
 					e.map((e) => (
 						<div class="mod">
-							<img class="bg" src={use(e.Screenshots, s => s[0])} />
+							<img class="bg" src={use(e.Screenshots, s => s[0].startsWith("blob:") ? s[0] : "")} />
 							<div class="gradient-overlay"></div>
 							<div class="detail">
 								<h2>{e.Name}</h2>
@@ -270,7 +276,7 @@ export const ModInstaller: Component<
 									return p;
 								})()}
 								<div class="screenshots">
-									{use(e.Screenshots, (e) => e.slice(1).map((s) => <img src={s} />))}
+									{use(e.Screenshots, (e) => e.slice(1).filter(x => x.startsWith("blob:")).map((s) => <img src={s} />))}
 								</div>
 							</div>
 							<Button
