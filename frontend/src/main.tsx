@@ -209,6 +209,8 @@ export const Main: Component<
 		logcontainer: HTMLDivElement;
 
 		dialogs?: HTMLDivElement;
+
+		logsize: number;
 	},
 	{
 		start: () => Promise<void>;
@@ -261,6 +263,7 @@ export const Main: Component<
 	this.mount = () => {
 		useChange([store.logs], (x) => {
 			this.logcontainer.style.height = `${x}px`;
+			this.logsize = x;
 		});
 	};
 
@@ -289,8 +292,10 @@ export const Main: Component<
 		) as HTMLDivElement;
 	};
 
+	this.logsize = 0;
+
 	return (
-		<div>
+		<div style={use`--logsize: ${use(this.logsize, x => x || 0)}px;`}>
 			<TopBar
 				canvas={use(this.canvas)}
 				bind:fsOpen={use(this.fsOpen)}
@@ -314,11 +319,13 @@ export const Main: Component<
 							const onMouseMove = (e: MouseEvent) => {
 								height = startHeight + startY - e.clientY;
 								this.logcontainer.style.height = `${height}px`;
+								this.logsize = height;
 							};
 							const onMouseUp = () => {
 								document.removeEventListener("mousemove", onMouseMove);
 								document.removeEventListener("mouseup", onMouseUp);
 								store.logs = height;
+								this.logsize = height;
 							};
 							document.addEventListener("mousemove", onMouseMove);
 							document.addEventListener("mouseup", onMouseUp);

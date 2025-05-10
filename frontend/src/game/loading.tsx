@@ -19,8 +19,6 @@ export const splashState: Stateful<{
 
 export const JsSplash = {
 	StartSplash() {
-		console.debug("StartSplash...");
-
 		splashState.text = "Initializing Everest";
 	},
 	OnMessage(message: string) {
@@ -103,7 +101,6 @@ export const Loader: Component<{}, {
 	logs: HTMLElement,
 }> = function() {
 	this.css = `
-
 		position: relative;
 
 		width: 100%;
@@ -116,6 +113,9 @@ export const Loader: Component<{}, {
 		overflow: hidden;
 
 		z-index: 10;
+
+		/*--loader-width: min(calc(calc(100vh - var(--logsize) - 80px) * 16 / 9), 100vw);*/
+		--loader-width: 100vw;
 
 		.overlay {
 			position: absolute;
@@ -130,7 +130,7 @@ export const Loader: Component<{}, {
 			display: flex;
 			flex-direction: column;
 
-			padding: 1.5vw;
+			padding: calc(var(--loader-width) * 1.5 / 100);
 		}
 
 		.logs {
@@ -177,10 +177,10 @@ export const Loader: Component<{}, {
 		.gear {
 			color: color-mix(in srgb, var(--loader-bg), white 35%);
 			position: absolute;
-			top: 5vw;
-			right: 5vw;
-			width: 105vw;
-			height: 105vw;
+			top: calc(var(--loader-width) * 5 / 100);
+			right: calc(var(--loader-width) * 5 / 100);
+			width: calc(var(--loader-width) * 105 / 100);
+			height: calc(var(--loader-width) * 105 / 100);
 			transform: translate(50%, -50%);
 
 			animation: spin 12.5s infinite linear;
@@ -195,7 +195,7 @@ export const Loader: Component<{}, {
 			bottom: 0;
 			left: 0;
 			width: 100%;
-			height: calc(min(max(14px, 2vw), 20px) + 2.5vw);
+			height: calc(min(max(14px, calc(var(--loader-width) * 2 / 100)), 20px) + calc(var(--loader-width) * 2.5 / 100));
 			background-color: rgba(4, 0, 1, 0.6);
 			backdrop-filter: blur(18px);
 			z-index: 22;
@@ -206,18 +206,18 @@ export const Loader: Component<{}, {
 		}
 
 		.component-log {
-			overflow-y: scroll!important;
+			overflow-y: scroll !important;
 			scrollbar-width: none;
 		}
 
 		.progresswrap {
-			height: min(max(14px, 2vw), 20px);
-			margin-top: 1.25vw;
+			height: min(max(14px, calc(var(--loader-width) * 2 / 100)), 20px);
+			margin-top: calc(var(--loader-width) * 1.25 / 100);
 		}
 
-		.large { font-size: min(max(26px, 4.1vw), 40px); }
-		.body { font-size: min(max(14px, 2vw), 20px); }
-		.smaller { font-size: min(max(10px, 1.5vw), 16px); }
+		.large { font-size: min(max(26px, calc(var(--loader-width) * 4.1 / 100)), 40px); }
+		.body { font-size: min(max(14px, calc(var(--loader-width) * 2 / 100)), 20px); }
+		.smaller { font-size: min(max(10px, calc(var(--loader-width) * 1.5 / 100)), 16px); }
 
 		@keyframes spin {
 			100% { transform: translate(50%, -50%) rotate(360deg); }

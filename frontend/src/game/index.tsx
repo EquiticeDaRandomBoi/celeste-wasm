@@ -40,7 +40,7 @@ export const LogView: Component<{ scrolling: boolean, }> = function() {
 				logroot.appendChild(frag);
 				logroot.scrollTop = logroot.scrollHeight;
 			}
-		}, 100);
+		}, 250);
 	};
 
 	return <div class="component-log" style={this.scrolling ? "overflow: auto" : "overflow: hidden"} />

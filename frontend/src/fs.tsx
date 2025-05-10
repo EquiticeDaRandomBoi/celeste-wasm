@@ -243,7 +243,7 @@ export async function extractTar(
 	await promise;
 }
 
-async function recursiveGetDirectory(dir: FileSystemDirectoryHandle, path: string[]): Promise<FileSystemDirectoryHandle> {
+export async function recursiveGetDirectory(dir: FileSystemDirectoryHandle, path: string[]): Promise<FileSystemDirectoryHandle> {
 	if (path.length === 0) return dir;
 	return recursiveGetDirectory(await dir.getDirectoryHandle(path[0]), path.slice(1));
 }

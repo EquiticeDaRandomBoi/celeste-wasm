@@ -1,6 +1,6 @@
 import { RingBuffer } from "ring-buffer-ts";
 import { DotnetHostBuilder } from "./dotnetdefs";
-import { rootFolder } from "../fs";
+import { recursiveGetDirectory, rootFolder } from "../fs";
 import { SteamJS } from "../achievements";
 import { JsSplash } from "./loading";
 import { epoxyFetch, EpxTcpWs, EpxWs, getWispUrl } from "../epoxy";
@@ -17,7 +17,7 @@ export const gameState: Stateful<{
 	timebuf: RingBuffer<number>;
 }> = $state({
 	ready: false,
-	initting: false,
+	initting: true,
 	playing: false,
 	hasEverest: false,
 
@@ -78,9 +78,9 @@ function hookfmod() {
 }
 hookfmod();
 
-useChange([gameState.playing], () => {
+useChange([gameState.playing, gameState.initting], () => {
 	try {
-		if (gameState.playing) {
+		if (gameState.playing && !gameState.initting) {
 			// @ts-expect-error
 			navigator.keyboard.lock();
 		} else {
@@ -88,7 +88,6 @@ useChange([gameState.playing], () => {
 			navigator.keyboard.unlock();
 		}
 	} catch (err) {
-		console.log("keyboard lock error:", err);
 	}
 });
 
@@ -169,8 +168,7 @@ export async function downloadEverest() {
 
 	const build = versions.filter((v: any) => v.branch == branch)[0];
 
-	console.log(`Installing Everest ${branch} ${build.commit} ${build.date}`);
-	console.log("Downloading Everest from", build.mainDownload);
+	console.log(`Installing Everest ${branch} ${build.commit} ${build.date} from ${build.mainDownload}`);
 	const zipres = await epoxyFetch(build.mainDownload);
 	const zipbin = await zipres.arrayBuffer();
 
@@ -313,26 +311,21 @@ export async function preInit() {
 
 	const dlls = await getDlls();
 
-	console.debug("runMain...");
 	await runtime.runMain();
-	console.debug("MountFilesystems...");
 	await exports.CelesteBootstrap.MountFilesystems(
 		dlls.map((x) => `${x[0]}|${x[1]}`),
 	);
-	console.debug("PreInit...");
 	await exports.CelesteLoader.PreInit();
 	console.debug("dotnet initialized");
 
 	await exports.SteamJS.Init();
 	if (await exports.SteamJS.InitSteamSaved()) {
-		console.log("Steam saved login success");
+		console.log("Logged in via saved login");
 		steamState.login = 2;
 	}
 
 	try {
-		await (
-			await rootFolder.getDirectoryHandle("Celeste")
-		).getDirectoryHandle("Everest");
+		await recursiveGetDirectory(rootFolder, ["Celeste", "Everest"]);
 		gameState.hasEverest = true;
 	} catch {
 		gameState.hasEverest = false;
@@ -345,9 +338,7 @@ export async function PatchCeleste(installEverest: boolean) {
 	if (installEverest) {
 		try {
 			await (
-				await (
-					await rootFolder.getDirectoryHandle("Celeste")
-				).getDirectoryHandle("Everest")
+				await recursiveGetDirectory(rootFolder, ["Celeste", "Everest"])
 			).getFileHandle("Celeste.Mod.mm.dll", { create: false });
 		} catch {
 			try {
@@ -357,13 +348,13 @@ export async function PatchCeleste(installEverest: boolean) {
 			}
 
 			if (!await exports.Patcher.ExtractEverest()) {
-				throw ":3";
+				throw "failed to extract everest";
 			}
 		}
 	}
 
 	if (!await exports.Patcher.PatchCeleste(installEverest)) {
-		throw ":3";
+		throw "failed to patch celeste";
 	}
 	gameState.hasEverest = true;
 }
