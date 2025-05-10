@@ -125,7 +125,7 @@ export const Achievements: Component<
 			left: -10px;
 		}
 		.image .glow-root {
-			mask-image: url("steam-glow-outer.png");
+			mask-image: url("steam-glow-outer.webp");
 			mask-repeat: repeat;
 			mask-size: 100%;	
 		}
@@ -135,7 +135,7 @@ export const Achievements: Component<
 			animation-timing-function: linear;
 			animation-iteration-count: infinite;
 			animation-direction: reverse;
-			mask-image: url("steam-glow-inner.png");
+			mask-image: url("steam-glow-inner.webp");
 			mask-repeat: repeat;
 			mask-size: 100%;
 		}

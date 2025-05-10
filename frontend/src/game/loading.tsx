@@ -166,7 +166,7 @@ export const Loader: Component<{}, {
 
 		.bg {
 			background-color: color-mix(in srgb, var(--loader-bg), white 1%);
-			background-image: url("loader_gradient.png");
+			background-image: url("loader_gradient.webp");
 			background-blend-mode: overlay;
 			background-size: cover;
 
