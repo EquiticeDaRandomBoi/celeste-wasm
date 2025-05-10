@@ -17,7 +17,7 @@ export const gameState: Stateful<{
 	timebuf: RingBuffer<number>;
 }> = $state({
 	ready: false,
-	initting: true,
+	initting: false,
 	playing: false,
 	hasEverest: false,
 
