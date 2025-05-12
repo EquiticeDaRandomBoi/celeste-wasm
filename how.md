@@ -1,6 +1,6 @@
 # Porting Terraria and Celeste to WebAssembly
 
-One of my favorite genres of weird project is "thing running in the browser that should absolutely not be running in the browser". Some of my favorites are the [Half Life 1 port](https://github.com/btarg/Xash3D-Emscripten) that uses a reimplementation of goldsrc, the [direct recompilation of Minecraft 1.12](https://eaglercraft.com) from java bytecode to WebAssembly, and even an [emulated Pentium II capable of running modern linux](https://copy.sh/v86/).
+One of my favorite genres of weird project is "thing running in the browser that should absolutely not be running in the browser". Some of my favorites are the [Half Life 1 port](https://github.com/btarg/Xash3D-Emscripten) that uses a reimplementation of goldsrc, the [direct recompilation of Minecraft 1.12](https://eaglercraft.com) from java bytecode to WebAssembly, and even an [emulated Pentium 4 capable of running modern linux](https://copy.sh/v86/).
 
 In early 2024 I came across an old post of someone running a half working copy of the game [Celeste](https://www.celestegame.com) entirely in the browser. When I saw that they had never posted their work publicly, I became about as obsessed with the idea as you would expect, leading to a year long journey of bytecode hacks, runtime bugs, patch files, and horrible build systems all to create something that really should have never existed.
 
@@ -92,7 +92,7 @@ This is an issue since FNA is solely in the worker, and the `<canvas>` can only 
 ## FNA Proxy
 If we couldn't run the game on the main thread, and we couldn't transfer the canvas over to the worker, the only option left was to proxy the OpenGL calls to the main thread.
 
-We wrote a [fish script](https://github.com/r58Playz/FNA-WASM-Build/blob/b05cbc703753c917499bf955091f62c3b845ba8f/wrap_fna.fish) that would automatically parse every single method from FNA3D's exported symbols (FNA's native C component), and automatically compile and export a wrapper method method that would use `emscripten_proxy_sync` to proxy the call from `dotnet-worker-001` to the DOM thread.
+We wrote a [fish script](https://github.com/r58Playz/FNA-WASM-Build/blob/b05cbc703753c917499bf955091f62c3b845ba8f/wrap_fna.fish) that would automatically parse every single method from FNA3D's exported symbols (FNA's native C component), and automatically compile and export a wrapper method that would use `emscripten_proxy_sync` to proxy the call from `dotnet-worker-001` to the DOM thread.
 
 Let's look at the native method `FNA3D_Device* FNA3D_CreateDevice(FNA3D_PresentationParameters *presentationParameters,uint8_t debugMode);`, the first one that gets called in any program
 
@@ -310,30 +310,18 @@ Now that the loader doesn't care where the code comes from, we can just swap out
 
 image
 
-Everest loads but there was one more step in getting mods to run
+Do mods load finally? Nope, apparently it's crashing after trying to patch with monomod.
 
-we couldn't load mods though because we needed monomod
+Wait, why is the mod loader patching the mod file?
 
-wait. what is it patching at runtime for
+Ah. I see. Everest is using monomod to modify the mod's calls to monomod. Sure. I think this is for compatibility reasons? Anyway there's no reason monomod.patcher shouldn't just work at runtime, it's just the thing that patches il binaries on disk. We just needed to copy all the original dependencies into the filesystem so that monomod has all the symbols. And since we're already shipping MonoMod.Patcher, we might as well just install Everest all in the browser by downloading the everest dll directly from github and running the patcher on Celeste.exe
 
-well that's simple. everest uses monomod to modify the mod's calls to monomod
-
-monomod.patcher should just work at runtime, it's just the thing that patches il binaries on disk. we needed to load up the dependencies thought
-
-but the deps were all webcil
-
-convert the webcil back to dlls, load them all up to the fs.
-
-now that mm patcher worked, we converted the Hook patches to aot patches
-
-we could even install everest all in the browser by downloading the everest dll directly from github and running the patcher again
-
-our patching system went from
+That's a lot of patches!! Throughout the project, our patching system went from:
 uploading entire source code to a git repo -> automated diff generation of `.patch` files -> hooking functions with RuntimeDetour -> patching Celeste.exe bytecode in the browser before the game starts
 
-and now we're not hosting any Celeste IP, since all proprietary code gets loaded externally
+And as a bonus, now we're not hosting any Celeste IP, since all proprietary code gets loaded and patched inside the user's browser.
 
-and now finally, mods and custom maps work
+finally, mods and custom maps work
 
 image
 
@@ -347,7 +335,7 @@ we had to get all of them working.
 
 Here's a fun issue - one of the mods tries to RuntimeDetour a function that's so small that the bytes of our jump patch overflow the code buffer. For cases like these, we found out how to abuse mono's hot reload module to replace function bodies instead of directly modifying the memory.
 
-another one, apparently wasm .NET is just straight up broken in a lot of cases. it makes sense, it's a pretty niche thing. the main use case is the Blazor web framework, and no one really uses it, not even microsoft. here's [another .NET bug](https://github.com/dotnet/runtime/issues/112262) we had to work around
+Another one, apparently wasm .NET is just straight up broken in a lot of cases. it makes sense, it's a pretty niche thing. the main use case is the Blazor web framework, and no one really uses it, not even microsoft. here's [another .NET bug](https://github.com/dotnet/runtime/issues/112262) we had to work around
 
 But years later and no one really uses blazor, so despite a pretty good effort on the parts of the .NET maintainers the web support is best considered a beta. A not-insignificant amount of time was spent working around
 
@@ -384,7 +372,7 @@ And.. uhh. oh. ok
 
 So it turns out that mono's internal implementation of `System.Reflection.Module.GetTypes` is Broken and does not follow spec. Since the mods we're loading have extremely excessive use of reflection, a few of them are crashing. That's not a trivial fix, but after patching the runtime again with a [reimplementation of the broken icall](https://github.com/r58Playz/FNA-WASM-Build/blob/1231d08a85a236bbae04c49803f36b80833bc2ac/dotnet.patch#L85) in c, all the the mono bugs are finally fixed and we can move on.
 
-Just kidding. static initializer order [doesn't follow spec](https://github.com/dotnet/runtime/issues/77513) and is breaking some of our mods. Another runtime patch? Another runtime [patch](https://github.com/r58Playz/FNA-WASM-Build/blob/main/dotnet.patch#L193).
+Just kidding. Apparently static initializer order [doesn't follow spec](https://github.com/dotnet/runtime/issues/77513) and is breaking some of our mods. Another runtime patch? Another runtime [patch](https://github.com/r58Playz/FNA-WASM-Build/blob/main/dotnet.patch#L193).
 
 
 
@@ -394,13 +382,13 @@ Just kidding. static initializer order [doesn't follow spec](https://github.com/
 Was it worth it? Probably.
 [image]
 
-One last mod to fix! Since no one asked, how about we get the celeste multiplayer mod running in a browser?
+Since no one asked, how about we get the celeste multiplayer mod running in a browser?
 
 [image]
 
 The helpful `[MonoModRelinkFrom]` attribute lets us declare a class to replace any system one, letting us intercept [CelesteNet](https://github.com/0x0ade/CelesteNet)'s creation of a `System.Net.Socket` with our own class that makes TCP connections over a [wisp protocol](https://github.com/MercuryWorkshop/wisp-protocol) proxy. We'll use the same wisp connection to download mods from gamebananna too, since it's normally blocked by CORS policy.
 
-
+<!--
 # Steam for wasm
 
 \[sgen-alloc error\]
@@ -411,4 +399,4 @@ This is an error during code generation, so it's something that would have also 
 
 Hey you know what time it is. Let's clone mono again and start recompiling with some new debug prints
 \[machelpers.cs\]
-Awesome. Fuck mac. Lets delete that file
+Awesome. Fuck mac. Lets delete that file -->
