@@ -85,7 +85,7 @@ Fortunately we found a clever solution: waiting about a month for NET 9.0 to get
 
 This time though, FNA failed to initialize.
 
-It turns out that in NET threaded mode, *all* code runs inside web workers, not just the secondary threads. What would usually be called the "main" thread is actually running on `dotnet-worker-001`, referred to as the "deputy thread".
+It turns out that in NET threaded mode, *all* code runs inside web workers, not just the secondary threads. What would usually be called the "main" thread is actually running on `dotnet-worker-001`, referred to as the "deputy thread", which is created during dotnet initialization.
 
 This is an issue since FNA is solely in the worker, and the `<canvas>` can only be accessed on the DOM thread. This is solved by the browser's `OffscreenCanvas` API, but we were still working with SDL2, which didn't support it, and FNA didn't work with SDL3 at the time we wrote this.
 
@@ -158,14 +158,13 @@ Now does it work?
 # celeste
 We also wanted to get Celeste working, since the person who shared the initial snippet had never released their work publicly. We thought that we could get it running, and maybe also get the Everest mod loader running with the game.
 
-
 Celeste is also written in FNA, so we went through more or less the same process that we took to get Terraria compiled.
 
-At this point, the SDL3 tooling was stable enough for us to upgrade, giving us access to `OffscreenCanvas`, so we would no longer need the proxy hack. Naturally, we still needed to [patch emscripten](https://github.com/MercuryWorkshop/celeste-wasm/blob/threads-v2/Makefile#L52) to work around some bugs. nothing is ever without jank :)
+At this point, the SDL3 tooling was stable enough for us to upgrade, giving us access to `OffscreenCanvas`, so we would no longer need the proxy hack. Naturally, we still needed to [patch emscripten](https://github.com/MercuryWorkshop/celeste-wasm/blob/threads-v2/Makefile#L52) to work around not being able to "transfer" the canvas using the official api (because the threads are created by dotnet). nothing is ever without jank :)
 
 We had another dependency issue though: Celeste uses the proprietary [FMOD](https://www.fmod.com) library for game audio instead of FAudio like Terraria.
 
-FMOD *does* provide emscripten builds, distributed as archive files, but as luck would have it- it also didn't like being run in a worker. We could use the wrap script again, but it isn't open source, so we couldn't just recompile it like we did for FNA. But, since we weren't modifying the native code itself, we could just extract the `.o` files from the FMOD build, and insert the codegenned c compiled as an object.
+FMOD *does* provide emscripten builds, distributed as archive files, but as luck would have it- it also didn't like being run in a worker. We could use the wrap script again, but it isn't open source, so we couldn't just recompile it like we did for FNA. But, since we weren't modifying the native code itself, we could just extract the `.o` files from the FMOD build, and insert the codegenned c compiled as an object. However, FMOD is releasing actual multithreaded builds soon™.
 
 After a couple of patches that aren't worth mentioning here:
 
@@ -210,7 +209,7 @@ This works because on desktop, all functions run through the CoreCLR JIT before 
 
 However, Mono WASM does not work this way. It runs in mostly interpreted mode with a limited “jit-traces” engine called the "jiterpreter", meaning not every method will have corresponding native code.
 
-And even if it did - WebAssembly modules are *read only*, you can add new code at runtime, but you can't just hot patch existing code to mess with the internal state. WebAssembly is AOT compiled to native code on module instantiation, so it would be infeasible to allow runtime modification while keeping internal guarantees.
+And even if it did - WebAssembly modules are *read only*, you can add new code at runtime, but you can't just hot patch existing code to mess with the internal state. WebAssembly is AOT compiled to native code on module instantiation, so it would be infeasible to allow runtime modification while keeping internal guarantees (and it's [also a security issue](https://developer.mozilla.org/en-US/docs/WebAssembly/Guides/Understanding_the_text_format#webassembly-tables#:~:text=WebAssembly%20could%20add%20an%20anyfunc,web)).
 
 So instead of creating a detour by modifying raw assembly, what if we just disabled the jiterpreter and modified the IL bytecode? Since it's all interpreted on the fly, we should just be able to mess with the instructions loaded into memory.
 
@@ -333,7 +332,7 @@ The Strawberry Jam mod uses over 60 individual mods. Most would load fine, but a
 we had to get all of them working.
 
 
-Here's a fun issue - one of the mods tries to RuntimeDetour a function that's so small that the bytes of our jump patch overflow the code buffer. For cases like these, we found out how to abuse mono's hot reload module to replace function bodies instead of directly modifying the memory.
+Here's a fun issue - one of the mods tries to RuntimeDetour a function that's so small that the bytes of our jump patch overflow the code buffer. For cases like these, we found out how to abuse mono's hot reload system (which is a "module" that gets statically linked right at the end of the build, making it replaceable without a runtime patch) to replace function bodies instead of directly modifying the memory.
 
 Another one, apparently wasm .NET is just straight up broken in a lot of cases. it makes sense, it's a pretty niche thing. the main use case is the Blazor web framework, and no one really uses it, not even microsoft. here's [another .NET bug](https://github.com/dotnet/runtime/issues/112262) we had to work around
 
@@ -370,7 +369,7 @@ SecurityException? Who needs security anyway?
 
 And.. uhh. oh. ok
 
-So it turns out that mono's internal implementation of `System.Reflection.Module.GetTypes` is Broken and does not follow spec. Since the mods we're loading have extremely excessive use of reflection, a few of them are crashing. That's not a trivial fix, but after patching the runtime again with a [reimplementation of the broken icall](https://github.com/r58Playz/FNA-WASM-Build/blob/1231d08a85a236bbae04c49803f36b80833bc2ac/dotnet.patch#L85) in c, all the the mono bugs are finally fixed and we can move on.
+So it turns out that mono's internal implementation of `System.Reflection.Module.GetTypes` is Broken and does not follow spec (specifically, it doesn't properly work when some types can't be loaded, which is a Problem when you have "optional dependencies" on other mods). Since mod loaders are basically built around reflection and dynamic patching, Everest can't properly load some mods. That's not a trivial fix, but after patching the runtime again with a [reimplementation of the broken icall](https://github.com/r58Playz/FNA-WASM-Build/blob/1231d08a85a236bbae04c49803f36b80833bc2ac/dotnet.patch#L85) in c, all the the mono bugs are finally fixed and we can move on.
 
 Just kidding. Apparently static initializer order [doesn't follow spec](https://github.com/dotnet/runtime/issues/77513) and is breaking some of our mods. Another runtime patch? Another runtime [patch](https://github.com/r58Playz/FNA-WASM-Build/blob/main/dotnet.patch#L193).
 
@@ -387,6 +386,8 @@ Since no one asked, how about we get the celeste multiplayer mod running in a br
 [image]
 
 The helpful `[MonoModRelinkFrom]` attribute lets us declare a class to replace any system one, letting us intercept [CelesteNet](https://github.com/0x0ade/CelesteNet)'s creation of a `System.Net.Socket` with our own class that makes TCP connections over a [wisp protocol](https://github.com/MercuryWorkshop/wisp-protocol) proxy. We'll use the same wisp connection to download mods from gamebananna too, since it's normally blocked by CORS policy.
+
+[mod downloader image]
 
 <!--
 # Steam for wasm
