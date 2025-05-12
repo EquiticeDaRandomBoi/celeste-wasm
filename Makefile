@@ -1,4 +1,4 @@
-STATICS_RELEASE=963aed71-8323-43c3-9848-e14d5f1b1620
+STATICS_RELEASE=866eb1ea-276c-48ce-8413-f6a048fbf3e8
 DOTNETFLAGS=--nodereuse:false
 
 statics:
@@ -16,8 +16,8 @@ SteamKit2.WASM:
 	git clone https://github.com/MercuryWorkshop/SteamKit2.WASM --recursive
 
 FNA:
-	git clone https://github.com/FNA-XNA/FNA --recursive
-	cd FNA && git checkout 3ee5399 && git apply ../FNA.patch
+	git clone https://github.com/FNA-XNA/FNA --recursive -b 25.02
+	cd FNA && git apply ../FNA.patch
 
 NLua:
 	git clone https://github.com/NLua/NLua --recursive

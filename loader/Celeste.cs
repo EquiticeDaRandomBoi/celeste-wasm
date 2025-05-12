@@ -68,7 +68,6 @@ public static partial class CelesteLoader
             }
 
             celeste = Assembly.LoadFrom("/libsdl/CustomCeleste.dll");
-            Console.WriteLine($"CELESTE: {celeste}");
 
             AssemblyLoadContext.Default.ResolvingUnmanagedDll += (assembly, name) =>
             {
@@ -132,8 +131,8 @@ public static partial class CelesteLoader
         try
         {
             celeste.GetType("Celeste.RunThread").GetMethod("WaitAll").Invoke(null, []);
-            game.Dispose();
             celeste.GetType("Celeste.Audio").GetMethod("Unload").Invoke(null, []);
+            game.Dispose();
         }
         catch (Exception e)
         {

@@ -1,9 +1,8 @@
 import { RingBuffer } from "ring-buffer-ts";
 import { DotnetHostBuilder } from "./dotnetdefs";
-import { rootFolder } from "../fs";
+import { recursiveGetDirectory, rootFolder } from "../fs";
 import { SteamJS } from "../achievements";
 import { JsSplash } from "./loading";
-import { STEAM_ENABLED } from "../main";
 import { epoxyFetch, EpxTcpWs, EpxWs, getWispUrl } from "../epoxy";
 import { steamState } from "../steam";
 
@@ -42,12 +41,13 @@ function proxyConsole(name: string, color: string) {
 			logger({ color, log: str });
 		}
 	};
+	return old;
 }
-proxyConsole("error", "var(--error)");
-proxyConsole("warn", "var(--warning)");
-proxyConsole("log", "var(--fg)");
-proxyConsole("info", "var(--info)");
-proxyConsole("debug", "var(--fg4)");
+export const bypassError = proxyConsole("error", "var(--error)");
+export const bypassWarn = proxyConsole("warn", "var(--warning)");
+export const bypassLog = proxyConsole("log", "var(--fg)");
+export const bypassInfo = proxyConsole("info", "var(--info)");
+export const bypassDebug = proxyConsole("debug", "var(--fg4)");
 
 function hookfmod() {
 	let contexts: AudioContext[] = [];
@@ -60,26 +60,27 @@ function hookfmod() {
 		return context;
 	};
 
-	window.addEventListener("focus", async () => {
-		for (let context of contexts) {
-			try {
-				await context.resume();
-			} catch { }
-		}
-	});
-	window.addEventListener("blur", async () => {
-		for (let context of contexts) {
-			try {
-				await context.suspend();
-			} catch { }
+	window.addEventListener("visibilitychange", async () => {
+		if (document.visibilityState === "visible") {
+			for (let context of contexts) {
+				try {
+					await context.resume();
+				} catch { }
+			}
+		} else {
+			for (let context of contexts) {
+				try {
+					await context.suspend();
+				} catch { }
+			}
 		}
 	});
 }
 hookfmod();
 
-useChange([gameState.playing], () => {
+useChange([gameState.playing, gameState.initting], () => {
 	try {
-		if (gameState.playing) {
+		if (gameState.playing && !gameState.initting) {
 			// @ts-expect-error
 			navigator.keyboard.lock();
 		} else {
@@ -87,7 +88,6 @@ useChange([gameState.playing], () => {
 			navigator.keyboard.unlock();
 		}
 	} catch (err) {
-		console.log("keyboard lock error:", err);
 	}
 });
 
@@ -168,8 +168,7 @@ export async function downloadEverest() {
 
 	const build = versions.filter((v: any) => v.branch == branch)[0];
 
-	console.log(`Installing Everest ${branch} ${build.commit} ${build.date}`);
-	console.log("Downloading Everest from", build.mainDownload);
+	console.log(`Installing Everest ${branch} ${build.commit} ${build.date} from ${build.mainDownload}`);
 	const zipres = await epoxyFetch(build.mainDownload);
 	const zipbin = await zipres.arrayBuffer();
 
@@ -179,17 +178,6 @@ export async function downloadEverest() {
 	await writable.close();
 
 	console.log("Successfully downloaded Everest");
-}
-
-export async function wispSanityCheck() {
-	let r;
-	try {
-		r = await epoxyFetch("https://google.com");
-	} catch (e) {
-		console.error(e);
-	}
-
-	if (!r || !r.ok) throw new Error("wisp sanity check failed");
 }
 
 let downloadsFolder: FileSystemDirectoryHandle | null = null;
@@ -222,7 +210,7 @@ export async function preInit() {
 			`--jiterpreter-trace-monitoring-max-average-penalty=${150}`,
 			// increase jit function limits
 			`--jiterpreter-wasm-bytes-limit=${64 * 1024 * 1024}`,
-			`--jiterpreter-table-size=${16 * 1024}`,
+			`--jiterpreter-table-size=${32 * 1024}`,
 			// print jit stats
 			`--jiterpreter-stats-enabled`
 		])
@@ -232,7 +220,6 @@ export async function preInit() {
 	runtime.setModuleImports("JsSplash", JsSplash);
 
 	console.log("loading epoxy");
-	await wispSanityCheck();
 
 	window.WebSocket = new Proxy(WebSocket, {
 		construct(t, a, n) {
@@ -260,7 +247,9 @@ export async function preInit() {
 		if (typeof args[0] !== "string" || !args[0].includes("/depot/")) {
 			try {
 				return await nativefetch(...args);
-			} catch (e) { }
+			} catch (e) {
+				bypassLog("native fetch failed for", args, ", fetching with epoxy instead");
+			}
 		} else if (downloadsFolder != null) {
 			let last = args[0].split("/").pop()!;
 			try {
@@ -286,6 +275,7 @@ export async function preInit() {
 			}
 		}
 
+
 		// @ts-expect-error
 		return await epoxyFetch(...args);
 	};
@@ -293,6 +283,7 @@ export async function preInit() {
 
 	const config = runtime.getConfig();
 	exports = await runtime.getAssemblyExports(config.mainAssemblyName!);
+	exports.SteamJS = (await runtime.getAssemblyExports("Steamworks.NET.dll")).Steamworks.SteamJS;
 
 	// TODO: replace with native openssl
 	runtime.setModuleImports("interop.js", {
@@ -308,13 +299,6 @@ export async function preInit() {
 		},
 	});
 
-	runtime.setModuleImports("depot.js", {
-		newqr: (qr: string) => {
-			console.log("QR DATA" + qr);
-			steamState.qr = qr;
-		},
-	});
-
 	(self as any).wasm = {
 		Module: runtime.Module,
 		// @ts-expect-error
@@ -327,28 +311,21 @@ export async function preInit() {
 
 	const dlls = await getDlls();
 
-	console.debug("runMain...");
 	await runtime.runMain();
-	console.debug("MountFilesystems...");
 	await exports.CelesteBootstrap.MountFilesystems(
 		dlls.map((x) => `${x[0]}|${x[1]}`),
 	);
-	console.debug("PreInit...");
 	await exports.CelesteLoader.PreInit();
 	console.debug("dotnet initialized");
 
-	if (STEAM_ENABLED) {
-		await exports.Steam.Init();
-		if (await exports.Steam.InitSteamSaved()) {
-			console.log("Steam saved login success");
-			steamState.login = 2;
-		}
+	await exports.SteamJS.Init();
+	if (await exports.SteamJS.InitSteamSaved()) {
+		console.log("Logged in via saved login");
+		steamState.login = 2;
 	}
 
 	try {
-		await (
-			await rootFolder.getDirectoryHandle("Celeste")
-		).getDirectoryHandle("Everest");
+		await recursiveGetDirectory(rootFolder, ["Celeste", "Everest"]);
 		gameState.hasEverest = true;
 	} catch {
 		gameState.hasEverest = false;
@@ -361,9 +338,7 @@ export async function PatchCeleste(installEverest: boolean) {
 	if (installEverest) {
 		try {
 			await (
-				await (
-					await rootFolder.getDirectoryHandle("Celeste")
-				).getDirectoryHandle("Everest")
+				await recursiveGetDirectory(rootFolder, ["Celeste", "Everest"])
 			).getFileHandle("Celeste.Mod.mm.dll", { create: false });
 		} catch {
 			try {
@@ -373,13 +348,13 @@ export async function PatchCeleste(installEverest: boolean) {
 			}
 
 			if (!await exports.Patcher.ExtractEverest()) {
-				throw ":3";
+				throw "failed to extract everest";
 			}
 		}
 	}
 
 	if (!await exports.Patcher.PatchCeleste(installEverest)) {
-		throw ":3";
+		throw "failed to patch celeste";
 	}
 	gameState.hasEverest = true;
 }
@@ -388,22 +363,26 @@ export async function initSteam(
 	username: string | null,
 	password: string | null,
 	qr: boolean,
-) {
-	return await exports.Steam.InitSteam(username, password, qr);
+): Promise<boolean> {
+	return await exports.SteamJS.InitSteam(username, password, qr);
 }
 
 export async function downloadApp() {
-	return await exports.Steam.DownloadApp();
+	return await exports.SteamJS.DownloadApp();
 }
+
+export async function DownloadSteamCloud() {
+	return await exports.SteamJS.DownloadSteamCloud();
+}
+export async function UploadSteamCloud() {
+	return await exports.SteamJS.UploadSteamCloud();
+}
+
 const SEAMLESSCOUNT = 5;
 
 export async function play() {
 	gameState.playing = true;
 	gameState.initting = true;
-	if (STEAM_ENABLED && steamState.login == 2) {
-		console.debug("Syncing Steam Cloud");
-		await exports.Steam.DownloadSteamCloud();
-	}
 
 	console.debug("Init...");
 	const before = performance.now();

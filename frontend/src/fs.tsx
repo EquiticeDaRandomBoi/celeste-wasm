@@ -15,6 +15,7 @@ import iconUploadFile from "@ktibow/iconset-material-symbols/upload-file";
 import iconUploadFolder from "@ktibow/iconset-material-symbols/drive-folder-upload";
 import iconArchive from "@ktibow/iconset-material-symbols/archive";
 import iconUnarchive from "@ktibow/iconset-material-symbols/unarchive";
+import iconArrowBack from "@ktibow/iconset-material-symbols/arrow-back";
 
 export const PICKERS_UNAVAILABLE = !window.showDirectoryPicker || !window.showOpenFilePicker;
 
@@ -242,7 +243,7 @@ export async function extractTar(
 	await promise;
 }
 
-async function recursiveGetDirectory(dir: FileSystemDirectoryHandle, path: string[]): Promise<FileSystemDirectoryHandle> {
+export async function recursiveGetDirectory(dir: FileSystemDirectoryHandle, path: string[]): Promise<FileSystemDirectoryHandle> {
 	if (path.length === 0) return dir;
 	return recursiveGetDirectory(await dir.getDirectoryHandle(path[0]), path.slice(1));
 }
@@ -269,6 +270,7 @@ export const OpfsExplorer: Component<{
 		display: flex;
 		flex-direction: column;
 		gap: 1em;
+  min-height: min(44rem, 90vh);
 
 		.path {
 			display: flex;
@@ -323,6 +325,17 @@ export const OpfsExplorer: Component<{
 
 		.expand { flex: 1 }
 		.hidden { visibility: hidden }
+
+		.archive {
+			display: flex;
+			flex-direction: row;
+			gap: 0.5em;
+
+		}
+
+		.archive > * {
+		  flex-grow: 1;
+		}
 	`;
 
 	useChange([this.open], () => this.path = this.path);
@@ -401,14 +414,15 @@ export const OpfsExplorer: Component<{
 	return (
 		<div>
 			<div class="path">
+				{$if(use(this.components, x => x.length > 0), (
+					<Button type="normal" icon="full" disabled={false} on:click={async () => {
+						this.path = this.entries[0].entry as FileSystemDirectoryHandle;
+					}} title={"Up A Level"}>
+						<Icon icon={iconArrowBack} />
+					</Button>
+				))}
 				<h3>{use(this.components, x => (x.length == 0 ? "Root Directory" : "/" + x.join("/")))}</h3>
 				<div class="expand" />
-				<Button type="normal" icon="full" disabled={uploadDisabled} on:click={uploadArchive} title={"Upload Filesystem Archive"}>
-					<Icon icon={iconUnarchive} />
-				</Button>
-				<Button type="normal" icon="full" disabled={downloadDisabled} on:click={downloadArchive} title={"Download Filesystem Archive"}>
-					<Icon icon={iconArchive} />
-				</Button>
 				<Button type="normal" icon="full" disabled={uploadDisabled} on:click={uploadFile} title={"Upload File"}>
 					<Icon icon={iconUploadFile} />
 				</Button>
@@ -419,7 +433,7 @@ export const OpfsExplorer: Component<{
 			{$if(use(this.uploading), <span>Uploading files...</span>)}
 			{$if(use(this.downloading), <span>Downloading files...</span>)}
 			<div class="entries">
-				{use(this.entries, x => x.map(x => {
+				{use(this.entries, x => x.filter(x => x.name != "..").map(x => {
 					const icon = x.entry.kind === "directory" ? iconFolder : iconDraft;
 					const remove = async (e: Event) => {
 						e.stopImmediatePropagation();
@@ -500,6 +514,17 @@ export const OpfsExplorer: Component<{
 					)
 				}
 			})}
+			<div style={{ flexGrow: 1 }} />
+			<div class="archive">
+				<Button type="normal" icon="full" disabled={uploadDisabled} on:click={uploadArchive}>
+					<Icon icon={iconUnarchive} />{" "}
+					Upload Folder Archive
+				</Button>
+				<Button type="normal" icon="full" disabled={downloadDisabled} on:click={downloadArchive}>
+					<Icon icon={iconArchive} />{" "}
+					Download Folder Archive
+				</Button>
+			</div>
 		</div>
 	)
 }
