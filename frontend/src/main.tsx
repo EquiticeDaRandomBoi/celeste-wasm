@@ -270,7 +270,6 @@ export const Main: Component<
 	const game = <GameView bind:canvas={use(this.canvas)} />;
 
 	this.start = async () => {
-		await (game.$ as ComponentType<typeof GameView>).start();
 		this.dialogs = (
 			<div>
 				<Dialog name="Steam Cloud" bind:open={use(this.steamOpen)}>
@@ -290,6 +289,7 @@ export const Main: Component<
 				</Dialog>
 			</div>
 		) as HTMLDivElement;
+		await (game.$ as ComponentType<typeof GameView>).start();
 	};
 
 	this.logsize = 0;
