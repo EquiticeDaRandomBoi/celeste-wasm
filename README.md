@@ -29,6 +29,5 @@ A mostly-complete port of Celeste (2018) to WebAssembly using dotnet 9's threade
     - `celeste/Patcher.cs` runs MonoMod on celeste assemblies provided by the user to patch it for WASM
     - `patcher/` has the source for the `MonoMod.Patcher` mod used for WASM patches
 - A WASM port of MonoMod is used to provide detours/hooks to Everest and other runtime mods, it functions completely on the IL level and is mono specific
-- FMOD's WASM builds don't support threads so a wrapper that proxies it to the main thread is built and used instead (but FMOD is releasing threaded versions [soon!](https://qa.fmod.com/t/are-there-fmod-html5-w32-libs-that-can-link-with-emscripten-wasm-pthread-enabled-code/22811/2))
-    - See `tools/fmod-patch` for more information
+- FMOD pthread builds are used for audio, with slight patching of the bindings so that using FMOD 2 works
 - The game canvas is transferred to dotnet's "deputy thread" and all rendering is done from there through FNA's OpenGL driver
