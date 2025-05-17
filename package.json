@@ -14,7 +14,6 @@
 		"@types/xxhashjs": "^0.2.4",
 		"dreamland": "^0.0.25",
 		"events": "^3.3.0",
-		"ring-buffer-ts": "^1.2.0",
 		"rollup-plugin-node-polyfills": "^0.2.1",
 		"streamx-webstream": "^1.2.12",
 		"tar-stream": "^3.1.7",

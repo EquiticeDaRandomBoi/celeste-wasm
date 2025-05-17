@@ -23,9 +23,6 @@ importers:
       events:
         specifier: ^3.3.0
         version: 3.3.0
-      ring-buffer-ts:
-        specifier: ^1.2.0
-        version: 1.2.0
       rollup-plugin-node-polyfills:
         specifier: ^0.2.1
         version: 0.2.1
@@ -393,9 +390,6 @@ packages:
     resolution: {integrity: sha512-dle9A3yYxlBSrt8Fu+IpjGT8SY8hN0mlaA6GY8t0P5PjIOZemULz/E2Bnm/2dcUOena75OTNkHI76uZBNUUq3A==}
     engines: {node: ^10 || ^12 || >=14}
 
-  ring-buffer-ts@1.2.0:
-    resolution: {integrity: sha512-dkGqA7YHZgXp1dWwcNIsmt+4EgHK1RmY9sp7eqHLLfTkhYhQQ4agAwqgED7hJakELMaXkBgZ5568vqaI3/wV6Q==}
-
   rollup-plugin-inject@3.0.2:
     resolution: {integrity: sha512-ptg9PQwzs3orn4jkgXJ74bfs5vYz1NCZlSQMBUA0wKcGp5i5pA1AO3fOUEte8enhGUC+iapTCzEWw2jEFFUO/w==}
     deprecated: This package has been deprecated and is no longer maintained. Please use @rollup/plugin-inject.
@@ -715,8 +709,6 @@ snapshots:
       nanoid: 3.3.11
       picocolors: 1.1.1
       source-map-js: 1.2.1
-
-  ring-buffer-ts@1.2.0: {}
 
   rollup-plugin-inject@3.0.2:
     dependencies:

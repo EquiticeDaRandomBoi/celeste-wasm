@@ -1,4 +1,3 @@
-import { RingBuffer } from "ring-buffer-ts";
 import { DotnetHostBuilder } from "./dotnetdefs";
 import { recursiveGetDirectory, rootFolder } from "../fs";
 import { SteamJS } from "../achievements";
@@ -7,21 +6,16 @@ import { epoxyFetch, EpxTcpWs, EpxWs, getWispUrl } from "../epoxy";
 import { steamState } from "../steam";
 
 export type Log = { color: string; log: string };
-export const TIMEBUF_SIZE = 60;
 export const gameState: Stateful<{
 	ready: boolean;
 	initting: boolean;
 	playing: boolean;
 	hasEverest: boolean;
-
-	timebuf: RingBuffer<number>;
 }> = $state({
 	ready: false,
 	initting: false,
 	playing: false,
 	hasEverest: false,
-
-	timebuf: new RingBuffer<number>(TIMEBUF_SIZE),
 });
 export const loglisteners: ((log: Log) => void)[] = [];
 
@@ -392,34 +386,19 @@ export async function play() {
 	// run some frames for seamless transition
 	for (let i = 0; i < SEAMLESSCOUNT; i++) {
 		console.debug(`SeamlessInit${i}...`);
-		if (!(await exports.CelesteLoader.MainLoop()))
-			throw new Error("CelesteLoader.MainLoop() Failed!");
+		if (!(await exports.CelesteLoader.RunOneFrame()))
+			throw new Error("CelesteLoader.RunOneFrame() Failed!");
 	}
 
 	const after = performance.now();
 	console.debug(`Init : ${(after - before).toFixed(2)}ms`);
 	gameState.initting = false;
 
-	const main = async () => {
-		const before = performance.now();
-		const ret = await exports.CelesteLoader.MainLoop();
-		const after = performance.now();
+	await exports.CelesteLoader.MainLoop();
 
-		gameState.timebuf.add(after - before);
+	console.debug("Cleanup...");
 
-		if (!ret) {
-			console.debug("Cleanup...");
-
-			gameState.timebuf.clear();
-
-			await exports.CelesteLoader.Cleanup();
-			gameState.ready = false;
-			gameState.playing = false;
-
-			return;
-		}
-
-		requestAnimationFrame(main);
-	};
-	requestAnimationFrame(main);
+	await exports.CelesteLoader.Cleanup();
+	gameState.ready = false;
+	gameState.playing = false;
 }

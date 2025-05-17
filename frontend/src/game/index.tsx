@@ -1,4 +1,4 @@
-import { gameState, loglisteners, preInit, TIMEBUF_SIZE } from "./dotnet";
+import { gameState, loglisteners, preInit } from "./dotnet";
 import { Loader } from "./loading";
 
 export const LogView: Component<{ scrolling: boolean, }> = function() {
@@ -135,7 +135,6 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}, { start: () 
 			<div class={notRunning}>
 				Game not running.
 			</div>
-			{$if(use(gameState.playing), <FpsView />)}
 			<canvas
 				id="canvas"
 				class={canvas}
@@ -144,32 +143,6 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}, { start: () 
 			/>
 		</div>
 	)
-}
-
-export const FpsView: Component<{}, { fps: HTMLElement }> = function() {
-	this.css = `
-		color: rgba(255, 225, 235, 0.6);
-		background: rgba(0, 0, 0, 0.3);
-		font-size: 0.775rem;
-		padding-inline: 0.5em;
-		padding-block: 0.5em;
-		min-width: 5em;
-		text-align: center;
-		border-bottom-left-radius: 0.3em;
-	`;
-
-	this.mount = () => {
-		const interval = 250;
-		setInterval(() => {
-			if (gameState.playing) {
-				const avgFrametime = gameState.timebuf.toArray().reduce((acc, x) => acc + x, 0) / TIMEBUF_SIZE;
-				const avgFps = (1000 / avgFrametime).toFixed(0);
-				this.fps.innerText = "" + avgFps;
-			}
-		}, interval);
-	}
-
-	return <span id="fps"><span bind:this={use(this.fps)} /> FPS</span>
 }
 
 export { gameState, play, loadedLibcurlPromise } from "./dotnet";

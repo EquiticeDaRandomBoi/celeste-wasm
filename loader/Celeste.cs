@@ -144,7 +144,7 @@ public static partial class CelesteLoader
     }
 
     [JSExport]
-    internal static Task<bool> MainLoop()
+    internal static Task<bool> RunOneFrame()
     {
         try
         {
@@ -152,10 +152,26 @@ public static partial class CelesteLoader
         }
         catch (Exception e)
         {
-            Console.Error.WriteLine("Error in MainLoop()!");
+            Console.Error.WriteLine("Error in RunOneFrame()!");
             Console.Error.WriteLine(e);
             return (Task<bool>)Task.FromException(e);
         }
         return Task.FromResult((bool)RunApplication.GetValue(game));
+    }
+
+    [JSExport]
+    internal static Task MainLoop()
+    {
+        try
+        {
+            game.Run();
+        }
+        catch (Exception e)
+        {
+            Console.Error.WriteLine("Error in MainLoop()!");
+            Console.Error.WriteLine(e);
+            return Task.FromException(e);
+        }
+		return Task.Delay(0);
     }
 }

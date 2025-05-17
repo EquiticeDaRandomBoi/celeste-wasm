@@ -269,7 +269,10 @@ export const Main: Component<
 
 	const game = <GameView bind:canvas={use(this.canvas)} />;
 
+	let started = false;
 	this.start = async () => {
+		if (started) return;
+		started = true;
 		this.dialogs = (
 			<div>
 				<Dialog name="Steam Cloud" bind:open={use(this.steamOpen)}>

@@ -21,7 +21,7 @@
 		<WasmBuildNative>true</WasmBuildNative>
 		<WasmEnableThreads>true</WasmEnableThreads>
 		<WasmEnableSIMD>true</WasmEnableSIMD>
-		<WasmEnableExceptionHandling>false</WasmEnableExceptionHandling>
+		<WasmEnableExceptionHandling>true</WasmEnableExceptionHandling>
 		<WasmEnableWebcil>false</WasmEnableWebcil>
 		<WasmRunWasmOpt>true</WasmRunWasmOpt>
 
@@ -32,7 +32,7 @@
 		<WebAssemblyEnableStreamingResponse>true</WebAssemblyEnableStreamingResponse>
 
 		<!-- MAXIMUM_MEMORY is 4GiB - 1 wasm page (64kib) -->
-		<EmccExtraLDFlags>-sMIN_WEBGL_VERSION=2 -sWASMFS -sOFFSCREENCANVAS_SUPPORT -Wl,--no-check-features -sMAXIMUM_MEMORY=4294901760</EmccExtraLDFlags>
+		<EmccExtraLDFlags>-sMIN_WEBGL_VERSION=2 -sWASMFS -sOFFSCREENCANVAS_SUPPORT -sMAXIMUM_MEMORY=4294901760 -sMALLOC=mimalloc</EmccExtraLDFlags>
 		<EmccLinkOptimizationFlag>-O3</EmccLinkOptimizationFlag>
 		<EmccCompileOptimizationFlag>-O3</EmccCompileOptimizationFlag>
 		<EmccEnvironment>web,worker</EmccEnvironment>
@@ -41,7 +41,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<WasmOptConfigurationFlags Include="--converge -O4 --flatten --rereloop --code-folding --const-hoisting --dae --flatten --merge-locals -O4 -Oz"></WasmOptConfigurationFlags>
+		<WasmOptConfigurationFlags Include="-O4 -O4 -O4"></WasmOptConfigurationFlags>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -61,6 +61,7 @@
 
 		<!-- WASMFS + SDL fixes -->
 		<NativeFileReference Include="Emscripten.c" />
+		<NativeFileReference Include="__Native.c" />
 
 		<!-- Everest -->
 		<NativeFileReference Include="lua54.a" />
