@@ -52,7 +52,10 @@ build: deps
 	cp -r loader/bin/Release/net9.0/publish/wwwroot/_framework frontend/public/
 	# emscripten sucks
 	sed -i 's/var offscreenCanvases \?= \?{};/var offscreenCanvases={};if(globalThis.window\&\&!window.TRANSFERRED_CANVAS){transferredCanvasNames=[".canvas"];window.TRANSFERRED_CANVAS=true;}/' frontend/public/_framework/dotnet.native.*.js
+	# dotnet messed up
 	sed -i 's/this.appendULeb(32768)/this.appendULeb(65535)/' frontend/public/_framework/dotnet.runtime.*.js
+	# fmod messed up
+	sed -i 's/return runEmAsmFunction(code, sigPtr, argbuf);/return runMainThreadEmAsm(code, sigPtr, argbuf, 1);/' frontend/public/_framework/dotnet.native.*.js
 
 serve: build
 	pnpm dev

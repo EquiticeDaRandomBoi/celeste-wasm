@@ -53,11 +53,7 @@ namespace MonoMod
                 modder.LogVerbose($"[FMODPatcher] Wrapping {method.FullName} -> {method.PInvokeInfo.Module.Name}::{method.PInvokeInfo.EntryPoint}");
                 if (FMODMappings.TryGetValue(method.PInvokeInfo.EntryPoint, out var remapped))
                 {
-                    method.PInvokeInfo.EntryPoint = "WRAP_" + remapped;
-                }
-                else
-                {
-                    method.PInvokeInfo.EntryPoint = "WRAP_" + method.PInvokeInfo.EntryPoint;
+                    method.PInvokeInfo.EntryPoint = remapped;
                 }
             }
         }
