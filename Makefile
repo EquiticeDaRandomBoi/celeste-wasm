@@ -1,5 +1,5 @@
 STATICS_RELEASE=866eb1ea-276c-48ce-8413-f6a048fbf3e8
-DOTNETFLAGS=--nodereuse:false
+DOTNETFLAGS=--nodereuse:false -v d
 
 statics:
 	mkdir statics
@@ -34,8 +34,10 @@ emsdk:
 	patch -p1 --directory emsdk/upstream/emscripten/ < emsdk.patch
 	rm -rvf emsdk/upstream/emscripten/cache/*
 
-clean:
-	rm -rvf statics loader/obj loader/bin frontend/public/_framework nuget MonoMod NLua FNA SteamKit2.WASM emsdk || true
+dotnetclean:
+	rm -rvf {loader,patcher,corefier,Steamworks}/{bin,obj} frontend/public/_framework nuget || true
+clean: dotnetclean
+	rm -rvf statics MonoMod NLua FNA SteamKit2.WASM emsdk || true
 
 deps: statics FNA MonoMod NLua SteamKit2.WASM emsdk
 
