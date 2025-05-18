@@ -46,7 +46,7 @@ export function getWispUrl() {
 
 export async function createEpoxy() {
 	let options = new EpoxyClientOptions();
-	options.user_agent = navigator.userAgent;
+	options.user_agent = navigator.userAgent + " Celeste/1.4.0.0.WASM";
 	options.udp_extension_required = false;
 
 	currentWispUrl = store.wispServer;
