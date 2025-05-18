@@ -4,10 +4,13 @@ import { Main } from "./main";
 import { Splash } from "./splash";
 import { store } from "./store";
 
-const App: Component<{}, {
-	el: HTMLElement
-	showInstructions: boolean,
-}> = function() {
+const App: Component<
+	{},
+	{
+		el: HTMLElement;
+		showInstructions: boolean;
+	}
+> = function () {
 	this.css = `
 		position: relative;
 
@@ -38,19 +41,17 @@ const App: Component<{}, {
 			this.el.remove();
 		}
 		start();
-	}
+	};
 
 	return (
 		<div id="app" class={use`${store.theme} ${store.accentColor}`}>
 			<div id="splash" bind:this={use(this.el)}>
 				<Splash on:next={next} start={start} />
 			</div>
-			<div id="main">
-				{main}
-			</div>
+			<div id="main">{main}</div>
 		</div>
-	)
-}
+	);
+};
 
 const root = document.getElementById("app")!;
 try {

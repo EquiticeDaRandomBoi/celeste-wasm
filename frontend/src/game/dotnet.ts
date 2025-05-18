@@ -47,7 +47,7 @@ function hookfmod() {
 	let contexts: AudioContext[] = [];
 
 	let ctx = AudioContext;
-	(AudioContext as any) = function() {
+	(AudioContext as any) = function () {
 		let context = new ctx();
 
 		contexts.push(context);
@@ -59,13 +59,13 @@ function hookfmod() {
 			for (let context of contexts) {
 				try {
 					await context.resume();
-				} catch { }
+				} catch {}
 			}
 		} else {
 			for (let context of contexts) {
 				try {
 					await context.suspend();
-				} catch { }
+				} catch {}
 			}
 		}
 	});
@@ -81,8 +81,7 @@ useChange([gameState.playing, gameState.initting], () => {
 			// @ts-expect-error
 			navigator.keyboard.unlock();
 		}
-	} catch (err) {
-	}
+	} catch (err) {}
 });
 
 let wasm;
@@ -91,12 +90,12 @@ let exports: any;
 
 export async function getDlls(): Promise<(readonly [string, string])[]> {
 	const resources: any = await fetch("/_framework/blazor.boot.json").then((r) =>
-		r.json(),
+		r.json()
 	);
 
-	return Object.entries(resources.resources.fingerprinting).map(
-		x => [x[0] as string, x[1] as string] as const,
-	).filter(x => x[1].endsWith(".dll"));
+	return Object.entries(resources.resources.fingerprinting)
+		.map((x) => [x[0] as string, x[1] as string] as const)
+		.filter((x) => x[1].endsWith(".dll"));
 }
 
 // the funny custom rsa
@@ -128,15 +127,15 @@ function encryptRSA(data: Uint8Array, n: bigint, e: bigint): Uint8Array {
 
 		return BigInt(
 			"0x" +
-			[
-				"00",
-				"02",
-				...padding.map((byte) => byte.toString(16).padStart(2, "0")),
-				"00",
-				...Array.from(messageBytes).map((byte: any) =>
-					byte.toString(16).padStart(2, "0"),
-				),
-			].join(""),
+				[
+					"00",
+					"02",
+					...padding.map((byte) => byte.toString(16).padStart(2, "0")),
+					"00",
+					...Array.from(messageBytes).map((byte: any) =>
+						byte.toString(16).padStart(2, "0")
+					),
+				].join("")
 		);
 	};
 	const paddedMessage = pkcs1v15Pad(data, n);
@@ -149,20 +148,26 @@ function encryptRSA(data: Uint8Array, n: bigint, e: bigint): Uint8Array {
 
 	// ????
 	return new Uint8Array(
-		Array.from(hex.match(/.{2}/g) || []).map((byte) => parseInt(byte, 16)),
+		Array.from(hex.match(/.{2}/g) || []).map((byte) => parseInt(byte, 16))
 	);
 }
 
 export async function downloadEverest() {
 	const branch = "stable";
-	const res = await epoxyFetch("https://everestapi.github.io/everestupdater.txt");
+	const res = await epoxyFetch(
+		"https://everestapi.github.io/everestupdater.txt"
+	);
 	const versionsUrl = await res.text();
-	const versRes = await epoxyFetch(versionsUrl.trim() + "?supportsNativeBuilds=true");
+	const versRes = await epoxyFetch(
+		versionsUrl.trim() + "?supportsNativeBuilds=true"
+	);
 	const versions = await versRes.json();
 
 	const build = versions.filter((v: any) => v.branch == branch)[0];
 
-	console.log(`Installing Everest ${branch} ${build.commit} ${build.date} from ${build.mainDownload}`);
+	console.log(
+		`Installing Everest ${branch} ${build.commit} ${build.date} from ${build.mainDownload}`
+	);
 	const zipres = await epoxyFetch(build.mainDownload);
 	const zipbin = await zipres.arrayBuffer();
 
@@ -206,7 +211,7 @@ export async function preInit() {
 			`--jiterpreter-wasm-bytes-limit=${64 * 1024 * 1024}`,
 			`--jiterpreter-table-size=${32 * 1024}`,
 			// print jit stats
-			`--jiterpreter-stats-enabled`
+			`--jiterpreter-stats-enabled`,
 		])
 		.create();
 
@@ -223,7 +228,7 @@ export async function preInit() {
 			if (url.hostname.startsWith("__celestewasm_wisp_proxy_ws__"))
 				return new EpxTcpWs(
 					url.pathname.substring(1),
-					url.hostname.replace("__celestewasm_wisp_proxy_ws__", ""),
+					url.hostname.replace("__celestewasm_wisp_proxy_ws__", "")
 				);
 
 			// @ts-expect-error
@@ -242,7 +247,11 @@ export async function preInit() {
 			try {
 				return await nativefetch(...args);
 			} catch (e) {
-				bypassLog("native fetch failed for", args, ", fetching with epoxy instead");
+				bypassLog(
+					"native fetch failed for",
+					args,
+					", fetching with epoxy instead"
+				);
 			}
 		} else if (downloadsFolder != null) {
 			let last = args[0].split("/").pop()!;
@@ -251,7 +260,7 @@ export async function preInit() {
 				let h = await file.getFile();
 				console.log("got file cached", last);
 				return new Response(h.stream());
-			} catch { }
+			} catch {}
 			dl.download = "cross origin lol";
 			dl.href = args[0];
 			dl.click();
@@ -264,11 +273,10 @@ export async function preInit() {
 					let h = await file.getFile();
 					console.log("got file", last);
 					return new Response(h.stream());
-				} catch { }
+				} catch {}
 				await new Promise((r) => setTimeout(r, 100));
 			}
 		}
-
 
 		// @ts-expect-error
 		return await epoxyFetch(...args);
@@ -277,14 +285,16 @@ export async function preInit() {
 
 	const config = runtime.getConfig();
 	exports = await runtime.getAssemblyExports(config.mainAssemblyName!);
-	exports.SteamJS = (await runtime.getAssemblyExports("Steamworks.NET.dll")).Steamworks.SteamJS;
+	exports.SteamJS = (
+		await runtime.getAssemblyExports("Steamworks.NET.dll")
+	).Steamworks.SteamJS;
 
 	// TODO: replace with native openssl
 	runtime.setModuleImports("interop.js", {
 		encryptrsa: (
 			publicKeyModulusHex: string,
 			publicKeyExponentHex: string,
-			data: Uint8Array,
+			data: Uint8Array
 		) => {
 			let modulus = BigInt("0x" + publicKeyModulusHex);
 			let exponent = BigInt("0x" + publicKeyExponentHex);
@@ -307,7 +317,7 @@ export async function preInit() {
 
 	await runtime.runMain();
 	await exports.CelesteBootstrap.MountFilesystems(
-		dlls.map((x) => `${x[0]}|${x[1]}`),
+		dlls.map((x) => `${x[0]}|${x[1]}`)
 	);
 	await exports.CelesteLoader.PreInit();
 	console.debug("dotnet initialized");
@@ -341,13 +351,13 @@ export async function PatchCeleste(installEverest: boolean) {
 				await downloadEverest();
 			}
 
-			if (!await exports.Patcher.ExtractEverest()) {
+			if (!(await exports.Patcher.ExtractEverest())) {
 				throw "failed to extract everest";
 			}
 		}
 	}
 
-	if (!await exports.Patcher.PatchCeleste(installEverest)) {
+	if (!(await exports.Patcher.PatchCeleste(installEverest))) {
 		throw "failed to patch celeste";
 	}
 	gameState.hasEverest = true;
@@ -356,7 +366,7 @@ export async function PatchCeleste(installEverest: boolean) {
 export async function initSteam(
 	username: string | null,
 	password: string | null,
-	qr: boolean,
+	qr: boolean
 ): Promise<boolean> {
 	return await exports.SteamJS.InitSteam(username, password, qr);
 }

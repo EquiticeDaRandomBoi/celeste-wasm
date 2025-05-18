@@ -2,11 +2,14 @@ import { Switch } from "./ui/Switch";
 import { store } from "./store";
 import { TextField } from "./ui/TextField";
 
-export const Settings: Component<{}, {
-  darkMode: boolean,
-  showLogs: boolean
-}> = function() {
-  this.css = `
+export const Settings: Component<
+	{},
+	{
+		darkMode: boolean;
+		showLogs: boolean;
+	}
+> = function () {
+	this.css = `
   display: flex;
   overflow-x: hidden;
   overflow-y: auto;
@@ -27,33 +30,49 @@ export const Settings: Component<{}, {
   }
   `;
 
-  this.darkMode = store.theme === "dark";
+	this.darkMode = store.theme === "dark";
 
-  this.showLogs = store.logs > 0;
+	this.showLogs = store.logs > 0;
 
-  return (
-    <div>
-      <Switch title="Dark Mode" bind:on={use(this.darkMode)} on:change={(e: Event)=>{
-        store.theme = (e.target as HTMLInputElement).checked ? "dark" : "light";
-      }} disabled={false} />
-      <Switch title="Show Logs" bind:on={use(this.showLogs)} disabled={false} on:change={(e: Event)=>{
-        store.logs = (e.target as HTMLInputElement).checked ? 1 : -1;
-      }} />
-      <div class="setting">
-        <span>Wisp Server</span>
-        <TextField bind:value={use(store.wispServer)} placeholder={"wss://" + import.meta.env.VITE_WISP_URL} />
-      </div>
-      <div>
-        <div style="margin-inline: 0.2rem; user-select: none;">Accent Color</div>
-        <AccentPicker />
-      </div>
-    </div>
-  )
-}
+	return (
+		<div>
+			<Switch
+				title="Dark Mode"
+				bind:on={use(this.darkMode)}
+				on:change={(e: Event) => {
+					store.theme = (e.target as HTMLInputElement).checked
+						? "dark"
+						: "light";
+				}}
+				disabled={false}
+			/>
+			<Switch
+				title="Show Logs"
+				bind:on={use(this.showLogs)}
+				disabled={false}
+				on:change={(e: Event) => {
+					store.logs = (e.target as HTMLInputElement).checked ? 1 : -1;
+				}}
+			/>
+			<div class="setting">
+				<span>Wisp Server</span>
+				<TextField
+					bind:value={use(store.wispServer)}
+					placeholder={"wss://" + import.meta.env.VITE_WISP_URL}
+				/>
+			</div>
+			<div>
+				<div style="margin-inline: 0.2rem; user-select: none;">
+					Accent Color
+				</div>
+				<AccentPicker />
+			</div>
+		</div>
+	);
+};
 
-
-const AccentPicker: Component<{}> = function() {
-  this.css = `
+const AccentPicker: Component<{}> = function () {
+	this.css = `
     display: flex;
     flex-wrap: nowrap;
     max-width: 100%;
@@ -93,23 +112,26 @@ const AccentPicker: Component<{}> = function() {
       user-select: none;
       -webkit-user-select: none;
     }
-  `
+  `;
 
-  const options = [undefined, "orange", "yellow", "green", "blue", "purple"];
-  return (
-    <div>
-      {options.map(option => (
-        <button
-          key={option}
-          // @ts-ignore i hate you typescript
-          on:click={() => store.accentColor = option}
-          class={use`${store.theme} ${option}`}
-          // @ts-ignore is there really no way to ignore a whole scope
-          title={(option?.charAt(0).toUpperCase() + option?.slice(1))||"Red"}
-        >
-          {$if(use(store.accentColor, c=>c==option), <div class="selected">✓</div>)}
-        </button>
-      ))}
-    </div>
-  )
-}
+	const options = [undefined, "orange", "yellow", "green", "blue", "purple"];
+	return (
+		<div>
+			{options.map((option) => (
+				<button
+					key={option}
+					// @ts-ignore i hate you typescript
+					on:click={() => (store.accentColor = option)}
+					class={use`${store.theme} ${option}`}
+					// @ts-ignore is there really no way to ignore a whole scope
+					title={option?.charAt(0).toUpperCase() + option?.slice(1) || "Red"}
+				>
+					{$if(
+						use(store.accentColor, (c) => c == option),
+						<div class="selected">✓</div>
+					)}
+				</button>
+			))}
+		</div>
+	);
+};

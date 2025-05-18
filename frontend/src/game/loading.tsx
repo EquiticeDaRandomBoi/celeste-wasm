@@ -6,10 +6,10 @@ import iconSettings from "@ktibow/iconset-material-symbols/settings";
 // all the units are in vw so that it looks like it's in the game screen
 
 export const splashState: Stateful<{
-	text: string,
-	modsFinished: number,
-	modsTotal: number,
-	progress: number,
+	text: string;
+	modsFinished: number;
+	modsTotal: number;
+	progress: number;
 }> = $state({
 	text: "Initializing Celeste",
 	modsFinished: 0,
@@ -48,11 +48,12 @@ export const JsSplash = {
 	},
 	EndSplash() {
 		splashState.progress = -1;
-	}
+	},
 };
 
-const Progress: Component<{ indeterminate: boolean, progress: number }> = function() {
-	this.css = `
+const Progress: Component<{ indeterminate: boolean; progress: number }> =
+	function () {
+		this.css = `
 		position: absolute;
 		bottom: 0;
 		left: 0;
@@ -90,16 +91,24 @@ const Progress: Component<{ indeterminate: boolean, progress: number }> = functi
 		}
 	`;
 
-	return (
-		<div>
-			<div class={use(this.indeterminate, x => x ? "value indeterminate" : "value")} style={use(this.progress, x => `--percent: ${x * 100}%;`)} />
-		</div>
-	);
-}
+		return (
+			<div>
+				<div
+					class={use(this.indeterminate, (x) =>
+						x ? "value indeterminate" : "value"
+					)}
+					style={use(this.progress, (x) => `--percent: ${x * 100}%;`)}
+				/>
+			</div>
+		);
+	};
 
-export const Loader: Component<{}, {
-	logs: HTMLElement,
-}> = function() {
+export const Loader: Component<
+	{},
+	{
+		logs: HTMLElement;
+	}
+> = function () {
 	this.css = `
 		position: relative;
 
@@ -225,7 +234,7 @@ export const Loader: Component<{}, {
 	`;
 
 	return (
-		<div class='loader'>
+		<div class="loader">
 			<div class="overlay main">
 				<div class="large">
 					Starting <span class="case">{NAME}</span>...
@@ -234,22 +243,26 @@ export const Loader: Component<{}, {
 					<LogView scrolling={false} />
 				</div>
 				<div class="progresswrap">
-				{$if(use(splashState.text, x => x.length > 0),
-					<div class="body progress-container">
-						<div class="progress-text">
-							{use(splashState.text)}
-						</div>
+					{$if(
+						use(splashState.text, (x) => x.length > 0),
+						<div class="body progress-container">
+							<div class="progress-text">{use(splashState.text)}</div>
 							<div class="progress-counter">
-								{use(splashState.modsFinished)}<span style="color: var(--fg6)">/</span>{use(splashState.modsTotal)}
+								{use(splashState.modsFinished)}
+								<span style="color: var(--fg6)">/</span>
+								{use(splashState.modsTotal)}
 							</div>
-					</div>
-				)}
+						</div>
+					)}
 				</div>
 			</div>
-			<Progress indeterminate={use(splashState.progress, x => x === -1)} progress={use(splashState.progress)} />
+			<Progress
+				indeterminate={use(splashState.progress, (x) => x === -1)}
+				progress={use(splashState.progress)}
+			/>
 			<div class="overlay bg" />
 			<Icon class="gear" icon={iconSettings} />
 			<div class="bottom-bar" />
 		</div>
-	)
-}
+	);
+};

@@ -1,8 +1,16 @@
-import epoxyInit, { EpoxyClient, EpoxyClientOptions, EpoxyHandlers, EpoxyIoStream, EpoxyWebSocket, info as epoxyInfo } from "@mercuryworkshop/epoxy-tls/epoxy";
-import EPOXY_PATH from "../../node_modules/@mercuryworkshop/epoxy-tls/full/epoxy.wasm?url"
+import epoxyInit, {
+	EpoxyClient,
+	EpoxyClientOptions,
+	EpoxyHandlers,
+	EpoxyIoStream,
+	EpoxyWebSocket,
+	info as epoxyInfo,
+} from "@mercuryworkshop/epoxy-tls/epoxy";
+import EPOXY_PATH from "../../node_modules/@mercuryworkshop/epoxy-tls/full/epoxy.wasm?url";
 import { store } from "./store";
 
-export let epoxyVersion = epoxyInfo.version + epoxyInfo.commit + epoxyInfo.release;
+export let epoxyVersion =
+	epoxyInfo.version + epoxyInfo.commit + epoxyInfo.release;
 
 let cache: Cache = await window.caches.open("epoxy");
 let initted: boolean = false;
@@ -15,7 +23,7 @@ async function evict() {
 }
 
 async function instantiate() {
-	if (!await cache.match(EPOXY_PATH)) {
+	if (!(await cache.match(EPOXY_PATH))) {
 		await cache.add(EPOXY_PATH);
 	}
 	const module = await cache.match(EPOXY_PATH);
@@ -30,7 +38,9 @@ async function tryInit() {
 		} else {
 			await evict();
 			await instantiate();
-			console.log(`evicted epoxy "${store.epoxyVersion}" from cache because epoxy "${epoxyVersion}" is available`);
+			console.log(
+				`evicted epoxy "${store.epoxyVersion}" from cache because epoxy "${epoxyVersion}" is available`
+			);
 			store.epoxyVersion = epoxyVersion;
 		}
 	}
@@ -53,7 +63,10 @@ export async function createEpoxy() {
 	currentClient = new EpoxyClient(currentWispUrl, options);
 }
 
-export async function epoxyFetch(url: string, options?: any): Promise<Response> {
+export async function epoxyFetch(
+	url: string,
+	options?: any
+): Promise<Response> {
 	await tryInit();
 
 	try {
@@ -104,7 +117,7 @@ export class EpxTcpWs extends EventTarget {
 		const onopen = () => {
 			this.readyState = WebSocketFields.OPEN;
 
-			const event = new Event("open")
+			const event = new Event("open");
 			this.dispatchEvent(event);
 
 			if (this.onopen) this.onopen(event);
@@ -115,14 +128,14 @@ export class EpxTcpWs extends EventTarget {
 			if (this.binaryType === "blob") data = new Blob([payload]);
 			else if (this.binaryType === "arraybuffer") data = payload.buffer;
 
-			const event = new MessageEvent("message", { data, });
+			const event = new MessageEvent("message", { data });
 			this.dispatchEvent(event);
 			if (this.onmessage) this.onmessage(event);
 		};
 
 		const onclose = (code: number, reason: string) => {
 			this.readyState = WebSocketFields.CLOSED;
-			const event = new CloseEvent("close", { code, reason })
+			const event = new CloseEvent("close", { code, reason });
 			this.dispatchEvent(event);
 			if (this.onclose) this.onclose(event);
 		};
@@ -188,7 +201,11 @@ export class EpxTcpWs extends EventTarget {
 		}
 
 		let data = args[0];
-		if (data.buffer) data = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
+		if (data.buffer)
+			data = data.buffer.slice(
+				data.byteOffset,
+				data.byteOffset + data.byteLength
+			);
 
 		this.bufferedAmount++;
 		this.ws.write(data).then(() => {
@@ -202,7 +219,7 @@ export class EpxTcpWs extends EventTarget {
 		console.log("closing");
 		this.readyState = WebSocketFields.CLOSING;
 
-		this.ws?.close().then(x => console.log("really closed", x));
+		this.ws?.close().then((x) => console.log("really closed", x));
 
 		console.log("closed");
 		this.readyState = WebSocketFields.CLOSED;
@@ -226,7 +243,10 @@ export class EpxWs extends EventTarget {
 	onmessage?: (evt: Event) => void;
 	onerror?: (evt: Event) => void;
 
-	constructor(remote: string | URL, protocols: string | string[] | undefined = []) {
+	constructor(
+		remote: string | URL,
+		protocols: string | string[] | undefined = []
+	) {
 		super();
 
 		this.url = remote.toString();
@@ -235,7 +255,7 @@ export class EpxWs extends EventTarget {
 		const onopen = () => {
 			this.readyState = WebSocketFields.OPEN;
 
-			const event = new Event("open")
+			const event = new Event("open");
 			this.dispatchEvent(event);
 			if (this.onopen) this.onopen(event);
 		};
@@ -245,14 +265,14 @@ export class EpxWs extends EventTarget {
 			if (this.binaryType === "blob") data = new Blob([payload]);
 			else if (this.binaryType === "arraybuffer") data = payload.buffer;
 
-			const event = new MessageEvent("message", { data, });
+			const event = new MessageEvent("message", { data });
 			this.dispatchEvent(event);
 			if (this.onmessage) this.onmessage(event);
 		};
 
 		const onclose = (code: number, reason: string) => {
 			this.readyState = WebSocketFields.CLOSED;
-			const event = new CloseEvent("close", { code, reason })
+			const event = new CloseEvent("close", { code, reason });
 			this.dispatchEvent(event);
 			if (this.onclose) this.onclose(event);
 		};
@@ -276,7 +296,12 @@ export class EpxWs extends EventTarget {
 			}
 
 			try {
-				this.ws = await currentClient.connect_websocket(handlers, remote, protos, {});
+				this.ws = await currentClient.connect_websocket(
+					handlers,
+					remote,
+					protos,
+					{}
+				);
 			} catch (err) {
 				console.error(err);
 				onerror();
@@ -293,7 +318,11 @@ export class EpxWs extends EventTarget {
 		}
 
 		let data = args[0];
-		if (data.buffer) data = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
+		if (data.buffer)
+			data = data.buffer.slice(
+				data.byteOffset,
+				data.byteOffset + data.byteLength
+			);
 
 		this.bufferedAmount++;
 		this.ws.send(data).then(() => {

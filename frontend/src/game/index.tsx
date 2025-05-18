@@ -1,7 +1,7 @@
 import { gameState, loglisteners, preInit } from "./dotnet";
 import { Loader } from "./loading";
 
-export const LogView: Component<{ scrolling: boolean, }> = function() {
+export const LogView: Component<{ scrolling: boolean }> = function () {
 	this.css = `
 		min-height: 0;
 		flex: 1;
@@ -28,7 +28,7 @@ export const LogView: Component<{ scrolling: boolean, }> = function() {
 		el.innerText = log;
 		el.style.color = color;
 		return el;
-	}
+	};
 
 	this.mount = () => {
 		const logroot = this.root as HTMLElement;
@@ -43,10 +43,19 @@ export const LogView: Component<{ scrolling: boolean, }> = function() {
 		}, 250);
 	};
 
-	return <div class="component-log" style={this.scrolling ? "overflow: auto" : "overflow: hidden"} />
-}
+	return (
+		<div
+			class="component-log"
+			style={this.scrolling ? "overflow: auto" : "overflow: hidden"}
+		/>
+	);
+};
 
-export const GameView: Component<{ canvas: HTMLCanvasElement }, {}, { start: () => Promise<void>, }> = function() {
+export const GameView: Component<
+	{ canvas: HTMLCanvasElement },
+	{},
+	{ start: () => Promise<void> }
+> = function () {
 	this.css = `
 		aspect-ratio: 16 / 9;
 		user-select: none;
@@ -119,9 +128,15 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}, { start: () 
 			z-index: 2;
 		}
 	`;
-	const notRunning = use(gameState.playing, x => x ? "gameoverlay notrunning started" : "gameoverlay notrunning stopped");
-	const loader = use(gameState.initting, x => x ? "gameoverlay loader active" : "gameoverlay loader");
-	const canvas = use(gameState.playing, x => x ? "canvas started" : "canvas stopped");
+	const notRunning = use(gameState.playing, (x) =>
+		x ? "gameoverlay notrunning started" : "gameoverlay notrunning stopped"
+	);
+	const loader = use(gameState.initting, (x) =>
+		x ? "gameoverlay loader active" : "gameoverlay loader"
+	);
+	const canvas = use(gameState.playing, (x) =>
+		x ? "canvas started" : "canvas stopped"
+	);
 
 	this.start = async () => {
 		await preInit();
@@ -132,9 +147,7 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}, { start: () 
 			<div class={loader}>
 				<Loader />
 			</div>
-			<div class={notRunning}>
-				Game not running.
-			</div>
+			<div class={notRunning}>Game not running.</div>
 			<canvas
 				id="canvas"
 				class={canvas}
@@ -142,7 +155,7 @@ export const GameView: Component<{ canvas: HTMLCanvasElement }, {}, { start: () 
 				on:contextmenu={(e: Event) => e.preventDefault()}
 			/>
 		</div>
-	)
-}
+	);
+};
 
 export { gameState, play, loadedLibcurlPromise } from "./dotnet";

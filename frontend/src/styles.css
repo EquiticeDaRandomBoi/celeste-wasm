@@ -1,9 +1,14 @@
 :root {
-	--font-body: 'Adwaita Sans', 'Inter', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
-		Roboto, "Helvetica Neue", Arial, sans-serif;
-	--font-display: 'Renogare', 'Inter Tight', 'Adwaita Sans', 'Inter', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
-		Roboto, "Helvetica Neue", Arial, sans-serif;
-	--font-mono: 'Adwaita Mono', "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+	--font-body:
+		"Adwaita Sans", "Inter", -apple-system, system-ui, BlinkMacSystemFont,
+		"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	--font-display:
+		"Renogare", "Inter Tight", "Adwaita Sans", "Inter", -apple-system,
+		system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+		sans-serif;
+	--font-mono:
+		"Adwaita Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo,
+		Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 body,
@@ -191,7 +196,8 @@ body.error {
 
 @font-face {
 	font-family: "Adwaita Sans";
-	src: local("Adwaita Sans"),
+	src:
+		local("Adwaita Sans"),
 		url("/fonts/body/AdwaitaSans-Regular.woff2") format("woff2"),
 		url("/fonts/body/AdwaitaSans-Regular.woff") format("woff"),
 		url("/fonts/body/AdwaitaSans-Regular.ttf") format("truetype");
@@ -202,7 +208,8 @@ body.error {
 
 @font-face {
 	font-family: "Adwaita Sans";
-	src: local("Adwaita Sans"),
+	src:
+		local("Adwaita Sans"),
 		url("/fonts/body/AdwaitaSans-Italic.woff2") format("woff2"),
 		url("/fonts/body/AdwaitaSans-Italic.woff") format("woff"),
 		url("/fonts/body/AdwaitaSans-Italic.ttf") format("truetype");
@@ -213,7 +220,8 @@ body.error {
 
 @font-face {
 	font-family: "Adwaita Mono";
-	src: local("Adwaita Mono"),
+	src:
+		local("Adwaita Mono"),
 		url("/fonts/mono/AdwaitaMono-Regular.woff2") format("woff2"),
 		url("/fonts/mono/AdwaitaMono-Regular.woff") format("woff"),
 		url("/fonts/mono/AdwaitaMono-Regular.ttf") format("truetype");
@@ -224,7 +232,8 @@ body.error {
 
 @font-face {
 	font-family: "Adwaita Mono";
-	src: local("Adwaita Mono"),
+	src:
+		local("Adwaita Mono"),
 		url("/fonts/mono/AdwaitaMono-Italic.woff2") format("woff2"),
 		url("/fonts/mono/AdwaitaMono-Italic.woff") format("woff"),
 		url("/fonts/mono/AdwaitaMono-Italic.ttf") format("truetype");
@@ -235,7 +244,8 @@ body.error {
 
 @font-face {
 	font-family: "Adwaita Mono";
-	src: local("Adwaita Mono"),
+	src:
+		local("Adwaita Mono"),
 		url("/fonts/mono/AdwaitaMono-Bold.woff2") format("woff2"),
 		url("/fonts/mono/AdwaitaMono-Bold.woff") format("woff"),
 		url("/fonts/mono/AdwaitaMono-Bold.ttf") format("truetype");
@@ -246,7 +256,8 @@ body.error {
 
 @font-face {
 	font-family: "Adwaita Mono";
-	src: local("Adwaita Mono"),
+	src:
+		local("Adwaita Mono"),
 		url("/fonts/mono/AdwaitaMono-BoldItalic.woff2") format("woff2"),
 		url("/fonts/mono/AdwaitaMono-BoldItalic.woff") format("woff"),
 		url("/fonts/mono/AdwaitaMono-BoldItalic.ttf") format("truetype");
@@ -293,11 +304,11 @@ a {
 }
 
 .light .mod .gradient-overlay {
-    background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.75));
+	background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.75));
 }
 
 path {
-    transition: fill 0.1s ease;
+	transition: fill 0.1s ease;
 }
 
 .warning {

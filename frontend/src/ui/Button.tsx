@@ -1,19 +1,23 @@
 import type { IconifyIcon } from "@iconify/types";
 
-export const Button: Component<{
-	"on:click": (() => void) | ((e: PointerEvent) => void);
+export const Button: Component<
+	{
+		"on:click": (() => void) | ((e: PointerEvent) => void);
 
-	class?: string;
-	type: "primary" | "normal" | "listitem" | "listaction";
-	icon: "full" | "left" | "none";
-	disabled: boolean;
-	title?: string;
-}, {
-	children: any;
-}> = function() {
+		class?: string;
+		type: "primary" | "normal" | "listitem" | "listaction";
+		icon: "full" | "left" | "none";
+		disabled: boolean;
+		title?: string;
+	},
+	{
+		children: any;
+	}
+> = function () {
 	// @ts-expect-error
 	this._leak = true;
-	const transition = "background 0.15s, color 0.15s, transform 0.15s, border-color 0.15s, border 0.15s, border-bottom 0.15s";
+	const transition =
+		"background 0.15s, color 0.15s, transform 0.15s, border-color 0.15s, border 0.15s, border-bottom 0.15s";
 	this.css = `
 		button {
 			display: flex;
@@ -153,31 +157,39 @@ export const Button: Component<{
 				class={`icon-${this.icon} type-${this.type} ${this.class}`}
 				disabled={use(this.disabled)}
 				title={use(this.title)}
-			>{use(this.children)}</button>
+			>
+				{use(this.children)}
+			</button>
 		</div>
 	);
 };
 
-export const Icon: Component<{ icon: IconifyIcon; class?: string; }, {}> = function() {
-	// @ts-expect-error
-	this._leak = true;
-	this.mount = () => {
-		this.root.innerHTML = this.icon.body;
-		useChange([this.icon], () => {
+export const Icon: Component<{ icon: IconifyIcon; class?: string }, {}> =
+	function () {
+		// @ts-expect-error
+		this._leak = true;
+		this.mount = () => {
 			this.root.innerHTML = this.icon.body;
-		});
+			useChange([this.icon], () => {
+				this.root.innerHTML = this.icon.body;
+			});
+		};
+		return (
+			<svg
+				width="1em"
+				height="1em"
+				viewBox={use`0 0 ${this.icon.width} ${this.icon.height}`}
+				xmlns="http://www.w3.org/2000/svg"
+				class={`component-icon ${this.class}`}
+			></svg>
+		);
 	};
-	return (
-		<svg
-			width="1em"
-			height="1em"
-			viewBox={use`0 0 ${this.icon.width} ${this.icon.height}`}
-			xmlns="http://www.w3.org/2000/svg"
-			class={`component-icon ${this.class}`}
-		></svg>
-	);
-};
 
-export const Link: Component<{ href: string; }, { children: any[]; }> = function() {
-	return <a href={this.href} class="component-link" target="_blank">{this.children}</a>;
-};
+export const Link: Component<{ href: string }, { children: any[] }> =
+	function () {
+		return (
+			<a href={this.href} class="component-link" target="_blank">
+				{this.children}
+			</a>
+		);
+	};

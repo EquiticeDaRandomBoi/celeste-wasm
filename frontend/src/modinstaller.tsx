@@ -25,7 +25,7 @@ export const ModInstaller: Component<
 		entries: Mod[];
 		query: string;
 	}
-> = function() {
+> = function () {
 	// https://maddie480.ovh/celeste/gamebanana-categories
 	// https://maddie480.ovh/celeste/gamebanana-subcategories?itemtype=...&categoryId=...
 
@@ -175,11 +175,11 @@ export const ModInstaller: Component<
 
 	const loadFrom = async (url: string) => {
 		await loadedLibcurlPromise;
-		let res = await fetch(url);
+		let res = await epoxyFetch(url);
 		this.entries = [];
 
 		let entries: Mod[] = await res.json();
-		this.entries = entries.map(e => $state(e));
+		this.entries = entries.map((e) => $state(e));
 	};
 
 	useChange([this.open, this.entries], async () => {
@@ -190,7 +190,7 @@ export const ModInstaller: Component<
 					let url = e.Screenshots[i];
 					if (url.startsWith("blob:")) continue;
 					e.Screenshots[i] = "";
-					await new Promise(r => setTimeout(r, 100));
+					await new Promise((r) => setTimeout(r, 100));
 					epoxyFetch(url)
 						.then((b) => b.blob())
 						.then((blob) => {
@@ -206,7 +206,7 @@ export const ModInstaller: Component<
 	const search = async () => {
 		console.log(this.query);
 		await loadFrom(
-			"https://maddie480.ovh/celeste/gamebanana-search?q=" + this.query,
+			"https://maddie480.ovh/celeste/gamebanana-search?q=" + this.query
 		);
 		this.query = "";
 	};
@@ -221,7 +221,7 @@ export const ModInstaller: Component<
 			await mods.getFileHandle(mod.Files[0].Name, { create: false });
 			alert("Mod already installed");
 			return;
-		} catch (e) { }
+		} catch (e) {}
 
 		let resp = await epoxyFetch(mod.Files[0].URL);
 		let modfile = await mods.getFileHandle(mod.Files[0].Name, { create: true });
@@ -261,12 +261,19 @@ export const ModInstaller: Component<
 			<div class="mods">
 				{$if(
 					use(this.entries, (entries) => entries.length === 0),
-					<div class="empty-message">No mods found! Try searching for something else</div>,
+					<div class="empty-message">
+						No mods found! Try searching for something else
+					</div>
 				)}
 				{use(this.entries, (e) =>
 					e.map((e) => (
 						<div class="mod">
-							<img class="bg" src={use(e.Screenshots, s => s[0].startsWith("blob:") ? s[0] : "")} />
+							<img
+								class="bg"
+								src={use(e.Screenshots, (s) =>
+									s[0].startsWith("blob:") ? s[0] : ""
+								)}
+							/>
 							<div class="gradient-overlay"></div>
 							<div class="detail">
 								<h2>{e.Name}</h2>
@@ -276,7 +283,12 @@ export const ModInstaller: Component<
 									return p;
 								})()}
 								<div class="screenshots">
-									{use(e.Screenshots, (e) => e.slice(1).filter(x => x.startsWith("blob:")).map((s) => <img src={s} />))}
+									{use(e.Screenshots, (e) =>
+										e
+											.slice(1)
+											.filter((x) => x.startsWith("blob:"))
+											.map((s) => <img src={s} />)
+									)}
 								</div>
 							</div>
 							<Button
@@ -292,7 +304,7 @@ export const ModInstaller: Component<
 								<Icon icon={iconDownload} />
 							</Button>
 						</div>
-					)),
+					))
 				)}
 			</div>
 		</div>

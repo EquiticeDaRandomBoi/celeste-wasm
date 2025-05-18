@@ -7,7 +7,9 @@ In early 2024 I came across an old post of someone running a half working copy o
 thanks to [r58](https://www.r58playz.dev) for figuring most of this stuff out with me and [bomberfish](https://bomberfish.ca) for making a cool ui
 
 # Terraria
+
 I knew that both Celeste and Terraria were written in C# using the FNA engine, so it was seemingly possible to port Terraria too, and that's what we set out to do.
+
 <!-- Celeste was written in C#, using XNA. Actually FNA.
 
 XNA *was* a proprietary low level game "engine" developed and subsequently abandoned by Microsoft. It was eventually replaced with the community maintained FNA library, including a SDL backend and greater platform support.
@@ -71,6 +73,7 @@ The archive files from the build system can be added with `<NativeFileReference>
 Now, it fully builds and generates web output, and we can try and get the game running.
 
 ## Running the game
+
 Everything compiles, but for the game to actually launch we have to get the game assets into the environment, meaning we have another chance to use one of my favorite browser APIs, the [Origin Private File System](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system). Since everything goes through emscripten's filesystem emulation, we can just ask the user to select their game directory with `window.showDirectoryPicker()`, then copy in the assets and mount it in the emscripten filesystem.
 
 image here
@@ -85,11 +88,12 @@ Fortunately we found a clever solution: waiting about a month for NET 9.0 to get
 
 This time though, FNA failed to initialize.
 
-It turns out that in NET threaded mode, *all* code runs inside web workers, not just the secondary threads. What would usually be called the "main" thread is actually running on `dotnet-worker-001`, referred to as the "deputy thread", which is created during dotnet initialization.
+It turns out that in NET threaded mode, _all_ code runs inside web workers, not just the secondary threads. What would usually be called the "main" thread is actually running on `dotnet-worker-001`, referred to as the "deputy thread", which is created during dotnet initialization.
 
 This is an issue since FNA is solely in the worker, and the `<canvas>` can only be accessed on the DOM thread. This is solved by the browser's `OffscreenCanvas` API, but we were still working with SDL2, which didn't support it, and FNA didn't work with SDL3 at the time we wrote this.
 
 ## FNA Proxy
+
 If we couldn't run the game on the main thread, and we couldn't transfer the canvas over to the worker, the only option left was to proxy the OpenGL calls to the main thread.
 
 We wrote a [fish script](https://github.com/r58Playz/FNA-WASM-Build/blob/b05cbc703753c917499bf955091f62c3b845ba8f/wrap_fna.fish) that would automatically parse every single method from FNA3D's exported symbols (FNA's native C component), and automatically compile and export a wrapper method that would use `emscripten_proxy_sync` to proxy the call from `dotnet-worker-001` to the DOM thread.
@@ -134,6 +138,7 @@ FNA3D_Device* WRAP_FNA3D_CreateDevice(FNA3D_PresentationParameters *presentation
 	return wrap_ret;
 }
 ```
+
 And the wrapper is compiled in with the rest of FNA3D.
 
 Then in the FNA C# code, where the native C is linked to, we replace the PInvoke binding:
@@ -142,11 +147,14 @@ Then in the FNA C# code, where the native C is linked to, we replace the PInvoke
 [DllImport(FNA3D, EntryPoint = "FNA3D_CreateDevice", CallingConvention = CallingConvention.Cdecl)]`
 public static extern IntPtr FNA3D_CreateDevice(...);
 ```
+
 ...With one that calls our wrapper instead
+
 ```csharp
 [DllImport(FNA3D, EntryPoint = "WRAP_FNA3D_CreateDevice", CallingConvention = CallingConvention.Cdecl)]`
 public static extern IntPtr FNA3D_CreateDevice(...);
 ```
+
 Ensuring that all the native calls to SDL went through the DOM thread instead of C#'s "main" deputy thread.
 
 Okay. That was a lot. Does it work?
@@ -156,6 +164,7 @@ uh.. okay. sure. i guess i'll just implement crypto myself.
 Now does it work?
 
 # celeste
+
 We also wanted to get Celeste working, since the person who shared the initial snippet had never released their work publicly. We thought that we could get it running, and maybe also get the Everest mod loader running with the game.
 
 Celeste is also written in FNA, so we went through more or less the same process that we took to get Terraria compiled.
@@ -164,7 +173,7 @@ At this point, the SDL3 tooling was stable enough for us to upgrade, giving us a
 
 We had another dependency issue though: Celeste uses the proprietary [FMOD](https://www.fmod.com) library for game audio instead of FAudio like Terraria.
 
-FMOD *does* provide emscripten builds, distributed as archive files, but as luck would have it- it also didn't like being run in a worker. We could use the wrap script again, but it isn't open source, so we couldn't just recompile it like we did for FNA. But, since we weren't modifying the native code itself, we could just extract the `.o` files from the FMOD build, and insert the codegenned c compiled as an object. However, FMOD is releasing actual multithreaded builds soon™.
+FMOD _does_ provide emscripten builds, distributed as archive files, but as luck would have it- it also didn't like being run in a worker. We could use the wrap script again, but it isn't open source, so we couldn't just recompile it like we did for FNA. But, since we weren't modifying the native code itself, we could just extract the `.o` files from the FMOD build, and insert the codegenned c compiled as an object. However, FMOD is releasing actual multithreaded builds soon™.
 
 After a couple of patches that aren't worth mentioning here:
 
@@ -193,6 +202,7 @@ This left the original mono project to fall behind, and eventually was left up t
 What does this mean for us? Microsoft's browser NET runtime is actually just regular Mono compiled to emscripten, with bits of .NET Core merged in. Outside of the browser though, Mono isn't used at all, since code runs on the new CoreCLR runtime.
 
 # MonoMod.RuntimeDetour
+
 Everest mods use this
 
 Internally, it's powered by function detouring, a common tool for game modding/cheating. Typically though, it's associated with unmanaged languages like c/c++. It works a little differently in a language like c#.
@@ -209,7 +219,7 @@ This works because on desktop, all functions run through the CoreCLR JIT before 
 
 However, Mono WASM does not work this way. It runs in mostly interpreted mode with a limited “jit-traces” engine called the "jiterpreter", meaning not every method will have corresponding native code.
 
-And even if it did - WebAssembly modules are *read only*, you can add new code at runtime, but you can't just hot patch existing code to mess with the internal state. WebAssembly is AOT compiled to native code on module instantiation, so it would be infeasible to allow runtime modification while keeping internal guarantees (and it's [also a security issue](https://developer.mozilla.org/en-US/docs/WebAssembly/Guides/Understanding_the_text_format#webassembly-tables#:~:text=WebAssembly%20could%20add%20an%20anyfunc,web)).
+And even if it did - WebAssembly modules are _read only_, you can add new code at runtime, but you can't just hot patch existing code to mess with the internal state. WebAssembly is AOT compiled to native code on module instantiation, so it would be infeasible to allow runtime modification while keeping internal guarantees (and it's [also a security issue](https://developer.mozilla.org/en-US/docs/WebAssembly/Guides/Understanding_the_text_format#webassembly-tables#:~:text=WebAssembly%20could%20add%20an%20anyfunc,web)).
 
 So instead of creating a detour by modifying raw assembly, what if we just disabled the jiterpreter and modified the IL bytecode? Since it's all interpreted on the fly, we should just be able to mess with the instructions loaded into memory.
 
@@ -238,6 +248,7 @@ By looking at the MSIL documentation and [this post](https://phrack.org/issues/7
 - add a return (`0x2A`) to prevent executing the rest of the function
 
 Once the hooked function is called, it runs our dynamic method, which will:
+
 - `ldarg` each argument and store it in a temporary array
 - call into our c method, restoring the original IL and invalidating the source method
 - run the mod's hook function and return to monomod
@@ -276,12 +287,14 @@ Now that we had a functional detour factory that worked in WebAssembly, we could
 So far, we've just been porting games by decompiling, editing source, then making a new project with all the celeste code included and recompiling. How is that going to work with everest? It patches the celeste binary's bytecode itself, and we can't just use that as the base for decompilation because the patcher's output can't be translated to normal c#.
 
 What we could do though is load the game binary at runtime, instead of compiling it with the project. The project we compile to wasm would just be a stub loader, and we could load any celeste binary.
+
 ```cs
 Assembly celeste = Assembly.LoadFrom("/libsdl/Celeste.exe");
 var Celeste = celeste.GetType("Celeste.Celeste");
 celeste.GetType("Celeste.RunThread").GetMethod("WaitAll").Invoke(null, []);
 ```
-It feels a little weird to be talking about running an *exe file* in the browser, but since it's really just CIL bytecode inside a PE32 container, there's no reason it shouldn't work. And since we have dependencies directly added to the loader project, the runtime will find our web FNA before the real game's desktop FNA, so the game will call our libraries with no need for patching.
+
+It feels a little weird to be talking about running an _exe file_ in the browser, but since it's really just CIL bytecode inside a PE32 container, there's no reason it shouldn't work. And since we have dependencies directly added to the loader project, the runtime will find our web FNA before the real game's desktop FNA, so the game will call our libraries with no need for patching.
 
 Of course, the game won't work, since we needed patches in a few places to get it to run in the browser without crashing.
 
@@ -324,13 +337,11 @@ finally, mods and custom maps work
 
 image
 
-
 ## race to strawberry jam
 
 The Strawberry Jam mod uses over 60 individual mods. Most would load fine, but a lot didn't.
 
 we had to get all of them working.
-
 
 Here's a fun issue - one of the mods tries to RuntimeDetour a function that's so small that the bytes of our jump patch overflow the code buffer. For cases like these, we found out how to abuse mono's hot reload system (which is a "module" that gets statically linked right at the end of the build, making it replaceable without a runtime patch) to replace function bodies instead of directly modifying the memory.
 
@@ -372,9 +383,6 @@ And.. uhh. oh. ok
 So it turns out that mono's internal implementation of `System.Reflection.Module.GetTypes` is Broken and does not follow spec (specifically, it doesn't properly work when some types can't be loaded, which is a Problem when you have "optional dependencies" on other mods). Since mod loaders are basically built around reflection and dynamic patching, Everest can't properly load some mods. That's not a trivial fix, but after patching the runtime again with a [reimplementation of the broken icall](https://github.com/r58Playz/FNA-WASM-Build/blob/1231d08a85a236bbae04c49803f36b80833bc2ac/dotnet.patch#L85) in c, all the the mono bugs are finally fixed and we can move on.
 
 Just kidding. Apparently static initializer order [doesn't follow spec](https://github.com/dotnet/runtime/issues/77513) and is breaking some of our mods. Another runtime patch? Another runtime [patch](https://github.com/r58Playz/FNA-WASM-Build/blob/main/dotnet.patch#L193).
-
-
-
 
 200 lines of mono patches, 53 mods, and roughly a year passed since we started the project.
 

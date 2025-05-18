@@ -2,7 +2,10 @@ import { Button, Icon } from "./ui/Button";
 
 import tar, { Headers as TarHeaders, Pack } from "tar-stream";
 // @ts-expect-error
-import { fromWeb as streamFromWeb, toWeb as streamToWeb } from "streamx-webstream";
+import {
+	fromWeb as streamFromWeb,
+	toWeb as streamToWeb,
+} from "streamx-webstream";
 import { h64 as XXH64 } from "xxhashjs";
 
 import iconFolder from "@ktibow/iconset-material-symbols/folder";
@@ -17,33 +20,44 @@ import iconArchive from "@ktibow/iconset-material-symbols/archive";
 import iconUnarchive from "@ktibow/iconset-material-symbols/unarchive";
 import iconArrowBack from "@ktibow/iconset-material-symbols/arrow-back";
 
-export const PICKERS_UNAVAILABLE = !window.showDirectoryPicker || !window.showOpenFilePicker;
+export const PICKERS_UNAVAILABLE =
+	!window.showDirectoryPicker || !window.showOpenFilePicker;
 
 export const rootFolder = await navigator.storage.getDirectory();
 
 export const TAR_TYPES = [
-	{ description: "TAR archive (.tar)", accept: { "application/x-tar": ".tar" } } as FilePickerAcceptType,
-	{ description: "GZip compressed TAR archive (.tar.gz)", accept: { "application/x-gzip": ".tar.gz", "application/gzip": ".tar.gz" } } as FilePickerAcceptType
+	{
+		description: "TAR archive (.tar)",
+		accept: { "application/x-tar": ".tar" },
+	} as FilePickerAcceptType,
+	{
+		description: "GZip compressed TAR archive (.tar.gz)",
+		accept: { "application/x-gzip": ".tar.gz", "application/gzip": ".tar.gz" },
+	} as FilePickerAcceptType,
 ];
 
 export async function calculateCelesteHash(): Promise<string> {
 	const celesteFile = await rootFolder.getFileHandle("CustomCeleste.dll");
-	const celeste = await celesteFile.getFile().then(r => r.arrayBuffer());
+	const celeste = await celesteFile.getFile().then((r) => r.arrayBuffer());
 
 	const hash = XXH64();
 	hash.init(0);
 	hash.update(celeste);
 	const out = hash.digest();
 
-	return out.toString(16).toUpperCase().padStart(16, '0');
+	return out.toString(16).toUpperCase().padStart(16, "0");
 }
 
 export async function replaceHashes(hash: string) {
-	const cacheDir = await recursiveGetDirectory(rootFolder, ["Celeste", "Mods", "Cache"]);
+	const cacheDir = await recursiveGetDirectory(rootFolder, [
+		"Celeste",
+		"Mods",
+		"Cache",
+	]);
 	for await (const [name, file] of cacheDir) {
 		if (!name.endsWith(".sum") || file.kind !== "file") continue;
 
-		const contents = await file.getFile().then(r => r.text());
+		const contents = await file.getFile().then((r) => r.text());
 		const split = contents.split("\n");
 
 		const old = split[0];
@@ -61,21 +75,37 @@ export async function replaceHashes(hash: string) {
 async function skipOobe() {
 	await rootFolder.getFileHandle(".ContentExists", { create: true });
 	await rootFolder.getFileHandle("CustomCeleste.dll", { create: true });
-	const content = await rootFolder.getDirectoryHandle("Content", { create: true });
-	for (const folder of ["Dialog", "Effects", "FMOD", "Graphics", "Maps", "Monocle", "Overworld", "Tutorials"]) {
+	const content = await rootFolder.getDirectoryHandle("Content", {
+		create: true,
+	});
+	for (const folder of [
+		"Dialog",
+		"Effects",
+		"FMOD",
+		"Graphics",
+		"Maps",
+		"Monocle",
+		"Overworld",
+		"Tutorials",
+	]) {
 		await content.getDirectoryHandle(folder, { create: true });
 	}
 }
 (self as any).skipOobe = skipOobe;
 
-export async function copyFile(file: FileSystemFileHandle, to: FileSystemDirectoryHandle) {
-	const data = await file.getFile().then(r => r.stream());
+export async function copyFile(
+	file: FileSystemFileHandle,
+	to: FileSystemDirectoryHandle
+) {
+	const data = await file.getFile().then((r) => r.stream());
 	const handle = await to.getFileHandle(file.name, { create: true });
-	const writable = await handle.createWritable()
+	const writable = await handle.createWritable();
 	await data.pipeTo(writable);
 }
 
-export async function countFolder(folder: FileSystemDirectoryHandle): Promise<number> {
+export async function countFolder(
+	folder: FileSystemDirectoryHandle
+): Promise<number> {
 	let count = 0;
 	async function countOne(folder: FileSystemDirectoryHandle) {
 		for await (const [_, entry] of folder) {
@@ -90,8 +120,15 @@ export async function countFolder(folder: FileSystemDirectoryHandle): Promise<nu
 	return count;
 }
 
-export async function copyFolder(folder: FileSystemDirectoryHandle, to: FileSystemDirectoryHandle, callback?: (name: string) => void) {
-	async function upload(from: FileSystemDirectoryHandle, to: FileSystemDirectoryHandle) {
+export async function copyFolder(
+	folder: FileSystemDirectoryHandle,
+	to: FileSystemDirectoryHandle,
+	callback?: (name: string) => void
+) {
+	async function upload(
+		from: FileSystemDirectoryHandle,
+		to: FileSystemDirectoryHandle
+	) {
 		for await (const [name, entry] of from) {
 			if (entry.kind === "file") {
 				await copyFile(entry, to);
@@ -108,8 +145,19 @@ export async function copyFolder(folder: FileSystemDirectoryHandle, to: FileSyst
 
 export async function hasContent(): Promise<boolean> {
 	try {
-		const directory = await rootFolder.getDirectoryHandle("Content", { create: false })
-		for (const child of ["Dialog", "Effects", "FMOD", "Graphics", "Maps", "Monocle", "Overworld", "Tutorials"]) {
+		const directory = await rootFolder.getDirectoryHandle("Content", {
+			create: false,
+		});
+		for (const child of [
+			"Dialog",
+			"Effects",
+			"FMOD",
+			"Graphics",
+			"Maps",
+			"Monocle",
+			"Overworld",
+			"Tutorials",
+		]) {
 			try {
 				await directory.getDirectoryHandle(child, { create: false });
 			} catch {
@@ -123,10 +171,17 @@ export async function hasContent(): Promise<boolean> {
 	}
 }
 
-async function createEntry(pack: Pack, header: TarHeaders, file?: ReadableStream<Uint8Array>) {
+async function createEntry(
+	pack: Pack,
+	header: TarHeaders,
+	file?: ReadableStream<Uint8Array>
+) {
 	let resolve: () => void = null!;
 	let reject: (err: any) => void = null!;
-	const promise = new Promise<void>((res, rej) => { resolve = res; reject = rej; });
+	const promise = new Promise<void>((res, rej) => {
+		resolve = res;
+		reject = rej;
+	});
 
 	const entry = pack.entry(header, (err) => {
 		if (err) reject(err);
@@ -150,7 +205,10 @@ async function createEntry(pack: Pack, header: TarHeaders, file?: ReadableStream
 	await promise;
 }
 
-export function createTar(folder: FileSystemDirectoryHandle, callback?: (type: "directory" | "file", name: string) => void): ReadableStream {
+export function createTar(
+	folder: FileSystemDirectoryHandle,
+	callback?: (type: "directory" | "file", name: string) => void
+): ReadableStream {
 	const archive = tar.pack();
 
 	async function pack(pathPrefix: string, folder: FileSystemDirectoryHandle) {
@@ -161,11 +219,15 @@ export function createTar(folder: FileSystemDirectoryHandle, callback?: (type: "
 				const file = await entry.getFile();
 				const stream = file.stream();
 
-				await createEntry(archive, {
-					name: pathPrefix + name,
-					type: entry.kind,
-					size: file.size,
-				}, stream);
+				await createEntry(
+					archive,
+					{
+						name: pathPrefix + name,
+						type: entry.kind,
+						size: file.size,
+					},
+					stream
+				);
 			} else {
 				await createEntry(archive, {
 					name: pathPrefix + name,
@@ -238,27 +300,35 @@ export async function extractTar(
 		archive.on("error", (err) => rej(err));
 	});
 
-
 	tarInput.pipe(archive);
 	await promise;
 }
 
-export async function recursiveGetDirectory(dir: FileSystemDirectoryHandle, path: string[]): Promise<FileSystemDirectoryHandle> {
+export async function recursiveGetDirectory(
+	dir: FileSystemDirectoryHandle,
+	path: string[]
+): Promise<FileSystemDirectoryHandle> {
 	if (path.length === 0) return dir;
-	return recursiveGetDirectory(await dir.getDirectoryHandle(path[0]), path.slice(1));
+	return recursiveGetDirectory(
+		await dir.getDirectoryHandle(path[0]),
+		path.slice(1)
+	);
 }
 
-export const OpfsExplorer: Component<{
-	open: boolean,
-}, {
-	path: FileSystemDirectoryHandle,
-	components: string[],
-	entries: { name: string, entry: FileSystemHandle }[],
+export const OpfsExplorer: Component<
+	{
+		open: boolean;
+	},
+	{
+		path: FileSystemDirectoryHandle;
+		components: string[];
+		entries: { name: string; entry: FileSystemHandle }[];
 
-	editing: FileSystemFileHandle | null,
-	uploading: boolean,
-	downloading: boolean,
-}> = function() {
+		editing: FileSystemFileHandle | null;
+		uploading: boolean;
+		downloading: boolean;
+	}
+> = function () {
 	this.path = rootFolder;
 	this.components = [];
 	this.entries = [];
@@ -338,22 +408,25 @@ export const OpfsExplorer: Component<{
 		}
 	`;
 
-	useChange([this.open], () => this.path = this.path);
+	useChange([this.open], () => (this.path = this.path));
 
 	useChange([this.path], async () => {
-		this.components = await rootFolder.resolve(this.path) || [];
+		this.components = (await rootFolder.resolve(this.path)) || [];
 
 		let entries = [];
 		if (this.components.length > 0) {
 			entries.push({
 				name: "..",
-				entry: await recursiveGetDirectory(rootFolder, this.components.slice(0, this.components.length - 1)),
-			})
+				entry: await recursiveGetDirectory(
+					rootFolder,
+					this.components.slice(0, this.components.length - 1)
+				),
+			});
 		}
 		for await (const [name, entry] of this.path) {
 			entries.push({
 				name,
-				entry
+				entry,
 			});
 		}
 		entries.sort((a, b) => {
@@ -380,7 +453,7 @@ export const OpfsExplorer: Component<{
 		this.uploading = false;
 	};
 	const downloadArchive = async () => {
-		const dirName = this.components.at(-1) || "celeste-wasm"
+		const dirName = this.components.at(-1) || "celeste-wasm";
 		const file = await showSaveFilePicker({
 			excludeAcceptAllOption: true,
 			suggestedName: dirName + ".tar",
@@ -389,142 +462,220 @@ export const OpfsExplorer: Component<{
 
 		this.downloading = true;
 
-		let tar = createTar(this.path, (type, name) => console.log(`tarring ${type} ${name}`));
-		if (file.name.endsWith(".gz")) tar = tar.pipeThrough(new CompressionStream("gzip"));
+		let tar = createTar(this.path, (type, name) =>
+			console.log(`tarring ${type} ${name}`)
+		);
+		if (file.name.endsWith(".gz"))
+			tar = tar.pipeThrough(new CompressionStream("gzip"));
 
 		const fileStream = await file.createWritable();
 		await tar.pipeTo(fileStream);
 
 		this.downloading = false;
-	}
+	};
 	const uploadArchive = async () => {
 		const files = await showOpenFilePicker({ multiple: true });
 		this.uploading = true;
 		for (const file of files) {
-			let tar = await file.getFile().then(r => r.stream());
-			if (file.name.endsWith(".gz")) tar = tar.pipeThrough(new DecompressionStream("gzip"));
-			await extractTar(tar, this.path, (type, name) => console.log(`untarring ${type} ${name}`));
+			let tar = await file.getFile().then((r) => r.stream());
+			if (file.name.endsWith(".gz"))
+				tar = tar.pipeThrough(new DecompressionStream("gzip"));
+			await extractTar(tar, this.path, (type, name) =>
+				console.log(`untarring ${type} ${name}`)
+			);
 		}
 		this.uploading = false;
-	}
+	};
 
-	const uploadDisabled = use(this.uploading, x => x || PICKERS_UNAVAILABLE);
-	const downloadDisabled = use(this.downloading, x => x || PICKERS_UNAVAILABLE);
+	const uploadDisabled = use(this.uploading, (x) => x || PICKERS_UNAVAILABLE);
+	const downloadDisabled = use(
+		this.downloading,
+		(x) => x || PICKERS_UNAVAILABLE
+	);
 
 	return (
 		<div>
 			<div class="path">
-				{$if(use(this.components, x => x.length > 0), (
-					<Button type="normal" icon="full" disabled={false} on:click={async () => {
-						this.path = this.entries[0].entry as FileSystemDirectoryHandle;
-					}} title={"Up A Level"}>
+				{$if(
+					use(this.components, (x) => x.length > 0),
+					<Button
+						type="normal"
+						icon="full"
+						disabled={false}
+						on:click={async () => {
+							this.path = this.entries[0].entry as FileSystemDirectoryHandle;
+						}}
+						title={"Up A Level"}
+					>
 						<Icon icon={iconArrowBack} />
 					</Button>
-				))}
-				<h3>{use(this.components, x => (x.length == 0 ? "Root Directory" : "/" + x.join("/")))}</h3>
+				)}
+				<h3>
+					{use(this.components, (x) =>
+						x.length == 0 ? "Root Directory" : "/" + x.join("/")
+					)}
+				</h3>
 				<div class="expand" />
-				<Button type="normal" icon="full" disabled={uploadDisabled} on:click={uploadFile} title={"Upload File"}>
+				<Button
+					type="normal"
+					icon="full"
+					disabled={uploadDisabled}
+					on:click={uploadFile}
+					title={"Upload File"}
+				>
 					<Icon icon={iconUploadFile} />
 				</Button>
-				<Button type="normal" icon="full" disabled={uploadDisabled} on:click={uploadFolder} title={"Upload Folder"}>
+				<Button
+					type="normal"
+					icon="full"
+					disabled={uploadDisabled}
+					on:click={uploadFolder}
+					title={"Upload Folder"}
+				>
 					<Icon icon={iconUploadFolder} />
 				</Button>
 			</div>
 			{$if(use(this.uploading), <span>Uploading files...</span>)}
 			{$if(use(this.downloading), <span>Downloading files...</span>)}
 			<div class="entries">
-				{use(this.entries, x => x.filter(x => x.name != "..").map(x => {
-					const icon = x.entry.kind === "directory" ? iconFolder : iconDraft;
-					const remove = async (e: Event) => {
-						e.stopImmediatePropagation();
-						if (this.editing?.name === x.name) {
-							this.editing = null;
-						}
-						await this.path.removeEntry(x.name, { recursive: true });
-						this.path = this.path;
-					};
-					const download = async (e: Event) => {
-						e.stopImmediatePropagation();
-						if (x.entry.kind === "file") {
-							const entry = x.entry as FileSystemFileHandle;
-							const blob = await entry.getFile();
+				{use(this.entries, (x) =>
+					x
+						.filter((x) => x.name != "..")
+						.map((x) => {
+							const icon =
+								x.entry.kind === "directory" ? iconFolder : iconDraft;
+							const remove = async (e: Event) => {
+								e.stopImmediatePropagation();
+								if (this.editing?.name === x.name) {
+									this.editing = null;
+								}
+								await this.path.removeEntry(x.name, { recursive: true });
+								this.path = this.path;
+							};
+							const download = async (e: Event) => {
+								e.stopImmediatePropagation();
+								if (x.entry.kind === "file") {
+									const entry = x.entry as FileSystemFileHandle;
+									const blob = await entry.getFile();
 
-							const url = URL.createObjectURL(blob);
-							const a = document.createElement("a");
-							a.href = url;
-							a.download = x.name;
-							a.click();
+									const url = URL.createObjectURL(blob);
+									const a = document.createElement("a");
+									a.href = url;
+									a.download = x.name;
+									a.click();
 
-							await new Promise(r => setTimeout(r, 100));
-							URL.revokeObjectURL(url);
-						}
-					}
-					const action = () => {
-						if (x.entry.kind === "directory") {
-							this.editing = null;
-							this.path = x.entry as FileSystemDirectoryHandle;
-						} else {
-							this.editing = x.entry as FileSystemFileHandle;
-						}
-					}
+									await new Promise((r) => setTimeout(r, 100));
+									URL.revokeObjectURL(url);
+								}
+							};
+							const action = () => {
+								if (x.entry.kind === "directory") {
+									this.editing = null;
+									this.path = x.entry as FileSystemDirectoryHandle;
+								} else {
+									this.editing = x.entry as FileSystemFileHandle;
+								}
+							};
 
-					return (
-						<Button on:click={action} icon="none" type="listitem" disabled={false} class="entry">
-							<Icon icon={x.name == ".." ? iconUploadFolder : icon} />
-							<span>{x.name === ".." ? "Parent Directory" : x.name}</span>
-							<div class="expand" />
-							<Button class={x.entry.kind !== "file" ? "hidden" : ""} on:click={download} icon="full" type="listaction" disabled={false} title={"Download File"}>
-								<Icon icon={iconDownload} />
-							</Button>
-							<Button class={x.name === ".." ? "hidden" : ""} on:click={remove} icon="full" type="listaction" disabled={false} title={"Delete File"}>
-								<Icon icon={iconDelete} />
-							</Button>
-						</Button>
-					)
-				}))}
+							return (
+								<Button
+									on:click={action}
+									icon="none"
+									type="listitem"
+									disabled={false}
+									class="entry"
+								>
+									<Icon icon={x.name == ".." ? iconUploadFolder : icon} />
+									<span>{x.name === ".." ? "Parent Directory" : x.name}</span>
+									<div class="expand" />
+									<Button
+										class={x.entry.kind !== "file" ? "hidden" : ""}
+										on:click={download}
+										icon="full"
+										type="listaction"
+										disabled={false}
+										title={"Download File"}
+									>
+										<Icon icon={iconDownload} />
+									</Button>
+									<Button
+										class={x.name === ".." ? "hidden" : ""}
+										on:click={remove}
+										icon="full"
+										type="listaction"
+										disabled={false}
+										title={"Delete File"}
+									>
+										<Icon icon={iconDelete} />
+									</Button>
+								</Button>
+							);
+						})
+				)}
 			</div>
-			{use(this.editing, file => {
+			{use(this.editing, (file) => {
 				if (file) {
-					const area = <textarea /> as HTMLTextAreaElement;
+					const area = (<textarea />) as HTMLTextAreaElement;
 					area.value = "Loading file...";
-					file.getFile().then(r => r.text()).then(r => area.value = r);
+					file
+						.getFile()
+						.then((r) => r.text())
+						.then((r) => (area.value = r));
 
 					const save = async () => {
-						const writable = await file.createWritable()
+						const writable = await file.createWritable();
 						await writable.write(area.value);
 						await writable.close();
 						this.editing = null;
-					}
+					};
 
 					return (
 						<div class="editor">
 							<div class="controls">
 								<div class="name">{file.name}</div>
 								<div class="expand" />
-								<Button on:click={save} icon="left" type="primary" disabled={false}>
+								<Button
+									on:click={save}
+									icon="left"
+									type="primary"
+									disabled={false}
+								>
 									<Icon icon={iconSave} />
 									Save
 								</Button>
-								<Button on:click={() => this.editing = null} icon="full" type="normal" disabled={false}>
+								<Button
+									on:click={() => (this.editing = null)}
+									icon="full"
+									type="normal"
+									disabled={false}
+								>
 									<Icon icon={iconClose} />
 								</Button>
 							</div>
 							{area}
 						</div>
-					)
+					);
 				}
 			})}
 			<div style={{ flexGrow: 1 }} />
 			<div class="archive">
-				<Button type="normal" icon="full" disabled={uploadDisabled} on:click={uploadArchive}>
-					<Icon icon={iconUnarchive} />{" "}
-					Upload Folder Archive
+				<Button
+					type="normal"
+					icon="full"
+					disabled={uploadDisabled}
+					on:click={uploadArchive}
+				>
+					<Icon icon={iconUnarchive} /> Upload Folder Archive
 				</Button>
-				<Button type="normal" icon="full" disabled={downloadDisabled} on:click={downloadArchive}>
-					<Icon icon={iconArchive} />{" "}
-					Download Folder Archive
+				<Button
+					type="normal"
+					icon="full"
+					disabled={downloadDisabled}
+					on:click={downloadArchive}
+				>
+					<Icon icon={iconArchive} /> Download Folder Archive
 				</Button>
 			</div>
 		</div>
-	)
-}
+	);
+};

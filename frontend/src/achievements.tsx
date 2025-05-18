@@ -10,10 +10,13 @@ export type Achievement = {
 };
 
 const steamStore: Stateful<{
-	achievements: string[],
-}> = $store({
-	achievements: [],
-}, { ident: "achievements", backing: "localstorage", autosave: "auto" });
+	achievements: string[];
+}> = $store(
+	{
+		achievements: [],
+	},
+	{ ident: "achievements", backing: "localstorage", autosave: "auto" }
+);
 
 export function getUnlockedAchievements(): Record<string, Achievement> {
 	return Object.fromEntries(
@@ -23,7 +26,9 @@ export function getUnlockedAchievements(): Record<string, Achievement> {
 
 export function getLockedAchievements(): Record<string, Achievement> {
 	return Object.fromEntries(
-		Object.entries(achievements).filter(([id, _]) => !steamStore.achievements.includes(id))
+		Object.entries(achievements).filter(
+			([id, _]) => !steamStore.achievements.includes(id)
+		)
 	);
 }
 
@@ -33,7 +38,7 @@ export const SteamJS = {
 	},
 	SetAchievement(achievement: string) {
 		steamStore.achievements.push(achievement);
-		steamStore.achievements = steamStore.achievements
+		steamStore.achievements = steamStore.achievements;
 	},
 
 	GetStat(stat: string) {
@@ -45,7 +50,7 @@ export const SteamJS = {
 	},
 	NewQR(url: string) {
 		steamState.qr = url;
-	}
+	},
 };
 
 (self as any).achievements = {
@@ -62,7 +67,7 @@ export const Achievements: Component<
 		unlocked: [string, Achievement][];
 		locked: [string, Achievement][];
 	}
-> = function() {
+> = function () {
 	this.unlocked = [];
 	this.locked = [];
 

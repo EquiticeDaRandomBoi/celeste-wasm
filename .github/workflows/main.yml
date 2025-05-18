@@ -1,6 +1,6 @@
 name: Build
 
-on: 
+on:
   workflow_dispatch:
   push:
     branches:
@@ -33,10 +33,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Setup Dotnet 
+      - name: Setup Dotnet
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.203'
+          dotnet-version: "9.0.203"
 
       - name: Install mono
         run: sudo apt-get install mono-devel
