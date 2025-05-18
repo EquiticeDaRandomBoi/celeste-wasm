@@ -1,10 +1,10 @@
 import { Button, Icon } from "./ui/Button";
 
 import tar, { Headers as TarHeaders, Pack } from "tar-stream";
-// @ts-expect-error
 import {
 	fromWeb as streamFromWeb,
 	toWeb as streamToWeb,
+	/* @ts-expect-error */
 } from "streamx-webstream";
 import { h64 as XXH64 } from "xxhashjs";
 

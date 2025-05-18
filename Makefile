@@ -1,5 +1,5 @@
 STATICS_RELEASE=866eb1ea-276c-48ce-8413-f6a048fbf3e8
-DOTNETFLAGS=--nodereuse:false -v d
+DOTNETFLAGS=--nodereuse:false -v n
 
 statics:
 	mkdir statics
