@@ -6,7 +6,8 @@
 
 A mostly-complete port of Celeste (2018) to WebAssembly using dotnet 9's threaded WASM support and [FNA WASM libraries](https://github.com/r58playz/FNA-WASM-Build).
 
-![Webleste demo](https://github.com/user-attachments/assets/9da839b1-0930-4534-91aa-a537a815f4ec)
+![Webleste demo image](assets/demo.png)
+<sup><i>Strawberry Jam</i> running in Webleste</sup>
 
 ## Limitations
 

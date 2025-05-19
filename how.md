@@ -80,7 +80,7 @@ image here
 
 After a [quick patch to FNA](https://github.com/MercuryWorkshop/terraria-wasm/blob/master/FNA.patch) to resolve a generics issue, the game launched.
 
-image of relogic logo
+![ReLogic Logo](assets/relogic-logo.png)
 
 ...and then immediately crashed after trying to create a new thread, which was not supported in .NET 8.0 wasm.
 
@@ -159,9 +159,13 @@ Ensuring that all the native calls to SDL went through the DOM thread instead of
 
 Okay. That was a lot. Does it work?
 
+![AES Crypto error](assets/crypto-error.png)
+
 uh.. okay. sure. i guess i'll just implement crypto myself.
 
 Now does it work?
+
+![Terraria gameplay](assets/terraria-works.png)
 
 # celeste
 
@@ -177,7 +181,7 @@ FMOD _does_ provide emscripten builds, distributed as archive files, but as luck
 
 After a couple of patches that aren't worth mentioning here:
 
-image
+![Celeste threaded](assets/celeste-works.png)
 
 This time, we used a [proper diff system]
 
@@ -223,9 +227,9 @@ And even if it did - WebAssembly modules are _read only_, you can add new code a
 
 So instead of creating a detour by modifying raw assembly, what if we just disabled the jiterpreter and modified the IL bytecode? Since it's all interpreted on the fly, we should just be able to mess with the instructions loaded into memory.
 
-To check the feasibility, I ran a simple test: run `MethodBase.GetILAsByteArray()`, then brute force search for those bytes in the webassembly memory and replace them with a bytecode NOP (`0x00 0x2A`)
+To check the feasibility, I ran a simple test: run `MethodBase.GetILAsByteArray()`, then brute force search for those bytes in the webassembly memory and replace them with a bytecode NOP and return (`0x00 0x2A`)
 
-image
+![MonoMod bruteforce](assets/brute-monomod.png)
 
 Now if we could just find the bytecode pointer programmatically...
 
@@ -320,7 +324,7 @@ Hook hook = new Hook(Celeste.GetMethod("ApplyScreen"), (Action<object> orig, obj
 
 Now that the loader doesn't care where the code comes from, we can just swap out `Celeste.exe` with the patched version from an everest install.
 
-image
+![Everest startup screen](assets/everest-works.png)
 
 Do mods load finally? Nope, apparently it's crashing after trying to patch with monomod.
 
@@ -335,7 +339,7 @@ And as a bonus, now we're not hosting any Celeste IP, since all proprietary code
 
 finally, mods and custom maps work
 
-image
+![Everest modded gameplay](assets/everest-mods-work.png)
 
 ## race to strawberry jam
 
@@ -387,11 +391,12 @@ Just kidding. Apparently static initializer order [doesn't follow spec](https://
 200 lines of mono patches, 53 mods, and roughly a year passed since we started the project.
 
 Was it worth it? Probably.
-[image]
+
+![Strawberry Jam Prologue chapter preview](assets/strawberry-jam.png)
 
 Since no one asked, how about we get the celeste multiplayer mod running in a browser?
 
-[image]
+![CelesteNet connected screen](assets/celestenet.png)
 
 The helpful `[MonoModRelinkFrom]` attribute lets us declare a class to replace any system one, letting us intercept [CelesteNet](https://github.com/0x0ade/CelesteNet)'s creation of a `System.Net.Socket` with our own class that makes TCP connections over a [wisp protocol](https://github.com/MercuryWorkshop/wisp-protocol) proxy. We'll use the same wisp connection to download mods from gamebananna too, since it's normally blocked by CORS policy.
 
