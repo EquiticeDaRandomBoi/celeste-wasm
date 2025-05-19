@@ -159,8 +159,12 @@ export const ModInstaller: Component<
   #modsearch {
     display: flex;
     gap: 0.5rem;
-    margin-bottom: 1.25rem;
-    padding: 0 0.5rem;
+    padding: 0.25rem 0.5rem 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 10000;
+    background: linear-gradient(to bottom, var(--bg-sub), color-mix(in srgb, var(--bg-sub) 80%, transparent));
+    backdrop-filter: blur(10px);
   }
 
   .modsearchbar {
