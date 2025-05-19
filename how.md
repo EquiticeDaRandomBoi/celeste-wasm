@@ -167,7 +167,7 @@ Now does it work?
 
 ![Terraria gameplay](assets/terraria-works.png)
 
-# celeste
+# Celeste
 
 We also wanted to get Celeste working, since the person who shared the initial snippet had never released their work publicly. We thought that we could get it running, and maybe also get the Everest mod loader running with the game.
 
@@ -183,7 +183,7 @@ After a couple of patches that aren't worth mentioning here:
 
 ![Celeste threaded](assets/celeste-works.png)
 
-This time, we used a [proper diff system]
+This time, we used a [proper diff system](https://github.com/MercuryWorkshop/celeste-wasm/tree/363b78fa6b10757ea2381ce3ea367eb69d6ea1fb/celeste/Patches/Code)
 
 Okay cool. Now Everest. I wanna play the [strawberry jam](https://gamebanana.com/mods/424541) mod on my chromebook.
 
@@ -195,9 +195,9 @@ the patcher part modifies the game on disk, so no problem there. but the runtime
 
 I'll explain how we ported it to NET's WASM SDK, but first it will help to take a little detour (haha) into the history of .NET Core
 
-# netcore
+## .NET Core
 
-The .NET platform used to be windows only and very closed source, along with a number of other limitations. Microsoft took so long to fix these that the [Mono Project]() was created to reimplement the .NET runtime.
+The .NET platform used to be windows only and very closed source, along with a number of other limitations. Microsoft took so long to fix these that the [Mono Project](https://www.mono-project.com/) was created to reimplement the .NET runtime.
 
 Microsoft [bought out Xamarin](https://blogs.microsoft.com/blog/2016/02/24/microsoft-to-acquire-xamarin-and-empower-more-developers-to-build-apps-on-any-device/) in 2016 and accquired Mono. A new runtime backend (CoreCLR) was merged with Mono's platform support and AOT tooling to create the horrifying amalgamation that became known as .NET Core.
 
@@ -205,9 +205,9 @@ This left the original mono project to fall behind, and eventually was left up t
 
 What does this mean for us? Microsoft's browser NET runtime is actually just regular Mono compiled to emscripten, with bits of .NET Core merged in. Outside of the browser though, Mono isn't used at all, since code runs on the new CoreCLR runtime.
 
-# MonoMod.RuntimeDetour
+## MonoMod.RuntimeDetour
 
-Everest mods use this
+This library (and MonoMod.RuntimeDetour.HookGen, which is a layer on top of this) is used by Everest mods to patch and modify the game.
 
 Internally, it's powered by function detouring, a common tool for game modding/cheating. Typically though, it's associated with unmanaged languages like c/c++. It works a little differently in a language like c#.
 
@@ -237,13 +237,13 @@ There was the address from `MethodBase.GetFunctionPointer()`, but it wasn't anyw
 
 Since it would be easier to work with the structs in c, we added a new c file to the project with `<NativeFileReference>` and copied in the mono headers. Sure enough, when we passed in the address from GetFunctionPointer, we could read `ptr->method->name` and extract metadata from the function. Even with this though, we couldn't find the actual code pointer, as it was in a hash table that we didn't have the pointer to.
 
-Suddenly, we noticed something really cool: since everything was eventually compiling to a single `.wasm` file, the c program that we had just created was linked in the same step as the mono runtime itself. This meant that we could access any internal mono function or object just by name. We were more or less executing code inside the runtime itself.
+Suddenly, we noticed something really cool: since everything was eventually compiling to a single `.wasm` file, the c program that we had just created was linked in the same step as the mono runtime. This meant that we could access any internal mono function or object just by name. We were more or less executing code inside the runtime itself.
 
 With our new ability to call any internal function, we found `mono_method_get_header_internal`, and calling it with the pointer we found earlier finally allowed us to get to the code region.
 
 Now we just needed to find out what bytes to inject into the method that would let us override the control flow in a way that's compatible with monomod.
 
-By looking at the MSIL documentation and [this post](https://phrack.org/issues/70/6) we were eventually able to come up with something that worked:
+By looking at the MSIL documentation and [this Phrack Magazine post](https://phrack.org/issues/70/6) we were eventually able to come up with something that worked:
 
 - insert one `ldarg.i` (`0xFE 0x0X`) corresponding to each argument in the original method
 - call `System.Reflection.Emit` to generate a new dynamic function with the exact same signature as the original method
@@ -288,7 +288,7 @@ Now that we had a functional detour factory that worked in WebAssembly, we could
 
 # Everest
 
-So far, we've just been porting games by decompiling, editing source, then making a new project with all the celeste code included and recompiling. How is that going to work with everest? It patches the celeste binary's bytecode itself, and we can't just use that as the base for decompilation because the patcher's output can't be translated to normal c#.
+So far, we've just been porting games by decompiling, editing source, then making a new project with all the celeste code included and recompiling. How is that going to work with everest? It patches the celeste binary's bytecode itself, and we can't just use that as the base for decompilation because the patcher's output can't be translated to normal C#.
 
 What we could do though is load the game binary at runtime, instead of compiling it with the project. The project we compile to wasm would just be a stub loader, and we could load any celeste binary.
 
@@ -307,7 +307,7 @@ We just made an entire framework for patching code at runtime though, so we can 
 Here's an example hook, we need to force the window buffer to a specific size after the screen initializes, which we can do by finding `ApplyScreen` on the dynamically loaded assembly and running our code after it
 
 ```cs
-Hook hook = new Hook(Celeste.GetMethod("ApplyScreen"), (Action<object> orig, object self) => {
+void ApplyScreenHook(Action<object> orig, object self) {
 	var Engine = celeste.GetType("Monocle.Engine");
     var Graphics = Engine.GetProperty("Graphics", BindingFlags.Public | BindingFlags.Static);
 	orig(self);
@@ -319,7 +319,8 @@ Hook hook = new Hook(Celeste.GetMethod("ApplyScreen"), (Action<object> orig, obj
 	graphics.PreferredBackBufferHeight = 1080;
 	graphics.IsFullScreen = false;
 	graphics.ApplyChanges();
-});
+}
+Hook hook = new Hook(Celeste.GetMethod("ApplyScreen"), ApplyScreenHook);
 ```
 
 Now that the loader doesn't care where the code comes from, we can just swap out `Celeste.exe` with the patched version from an everest install.
