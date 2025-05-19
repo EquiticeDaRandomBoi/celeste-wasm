@@ -40,7 +40,7 @@ export const ModInstaller: Component<
     img {
       width: auto;
       height: 5rem;
-      border: 0;
+      border: 0px solid transparent!important;
     }
   }
 
@@ -49,16 +49,18 @@ export const ModInstaller: Component<
     flex-direction: row;
     align-items: start;
     position: relative;
-    margin-bottom: 1.5rem;
-    border-radius: 8px;
+    margin-bottom: 1rem;
+    border-radius: 18px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     min-height: 12rem;
+    width: calc(100% - 10px);
+    margin-left: 5px;
   }
 
   .mod:hover {
-    transform: translateY(-2px);
+    transform: scale(1.01);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
   }
 
