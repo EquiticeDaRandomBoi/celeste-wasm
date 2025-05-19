@@ -27,6 +27,7 @@ import iconArchive from "@ktibow/iconset-material-symbols/archive";
 import iconUnarchive from "@ktibow/iconset-material-symbols/unarchive";
 import iconFolderZip from "@ktibow/iconset-material-symbols/folder-zip";
 import iconManufacturing from "@ktibow/iconset-material-symbols/manufacturing";
+import { WispServer } from "./settings";
 
 const validateDirectory = async (directory: FileSystemDirectoryHandle) => {
 	let content;
@@ -685,6 +686,7 @@ export const Splash: Component<
 							return <Patch on:done={() => this["on:next"](true)} />;
 						}
 					})}
+					<WispServer />
 				</div>
 			</div>
 		</div>

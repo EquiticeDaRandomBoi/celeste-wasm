@@ -54,19 +54,37 @@ export const Settings: Component<
 					store.logs = (e.target as HTMLInputElement).checked ? 1 : -1;
 				}}
 			/>
-			<div class="setting">
-				<span>Wisp Server</span>
-				<TextField
-					bind:value={use(store.wispServer)}
-					placeholder={"wss://" + import.meta.env.VITE_WISP_URL}
-				/>
-			</div>
+			<WispServer />
 			<div>
 				<div style="margin-inline: 0.2rem; user-select: none;">
 					Accent Color
 				</div>
 				<AccentPicker />
 			</div>
+		</div>
+	);
+};
+
+export const WispServer: Component<{}> = function () {
+	this.css = `
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		margin-inline: 0.25rem;
+		gap: 0.5rem;
+
+		input {
+			flex: 1;
+		}
+	`;
+
+	return (
+		<div>
+			<span>Wisp Proxy Server:</span>
+			<TextField
+				bind:value={use(store.wispServer)}
+				placeholder={"wss://" + import.meta.env.VITE_WISP_URL}
+			/>
 		</div>
 	);
 };
