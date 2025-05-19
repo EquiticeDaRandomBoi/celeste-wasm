@@ -63,8 +63,12 @@ export const SteamLogin: Component<
 	this.css = `
 		display: flex;
 		flex-direction: column;
+		align-items: center;
+		justify-content: space-between;
+		height: min(42rem, calc(100vh - 8rem));
 		gap: 1rem;
 		// font-size: 15pt;
+		font-size: 1rem;
 
 		input[type="file"] {
 			display: none;
@@ -99,10 +103,15 @@ export const SteamLogin: Component<
       padding: 0;
       margin: 0;
 		}
+
 		.logcontainer {
 		  font-size: initial;
-		  max-height: 5em;
+		  height: 5em;
 		  display: flex;
+		}
+
+		.logs {
+		  width: 100%;
 		}
 
 		.qrcontainer {
@@ -112,8 +121,33 @@ export const SteamLogin: Component<
       align-items: center;
       width: 100%;
 		}
+
+		.qrcontainer > div {
+		  background-color: var(--surface0);
+      animation: load 1s infinite alternate;
+      border-radius: 20px;
+      width: 40%;
+      aspect-ratio: 1;
+		}
+
+		@keyframes load {
+		  0% {
+        background-color: var(--bg);
+      }
+      100% {
+        background-color: var(--surface0);
+      }
+		}
+
 		.qrcontainer img {
-		  width: 40%;
+		  width: 100%;
+			border-radius: 20px;
+			opacity: 1;
+			transition: opacity 0.125s ease-in-out;
+
+			@starting-style {
+			  opacity: 0;
+			}
 		}
   `;
 	this.username = "";
@@ -144,87 +178,91 @@ export const SteamLogin: Component<
 	return (
 		<div>
 			<div>
-				<p>
-					This will log into Steam through a proxy, so that it can download
-					assets and achievement stats.
-				</p>
-				<p>
-					The account details are encrypted on your device and never sent to a
-					server. Still, beware of unofficial deployments.
-				</p>
-			</div>
-
-			{$if(
-				use(steamState.login, (l) => l == 0 || l == 3),
-				<div class="methods">
-					<div class="tcontainer">
-						<h3>Username and Password</h3>
-						<TextField
-							bind:value={use(this.username)}
-							placeholder={"Username"}
-						/>
-						<TextField
-							bind:value={use(this.password)}
-							type={"password"}
-							placeholder={"Password"}
-						/>
-						<div style="flex: 1"></div>
-						<Button
-							type="primary"
-							icon="left"
-							disabled={use(gameState.ready, (r) => !r)}
-							on:click={loginpass}
-						>
-							<Icon icon={iconLogin} />
-							Log In
-						</Button>
-					</div>
-					<div class="tcontainer">
-						<h3>Steam Guard</h3>
-						<p>Requires the Steam app on your phone to be installed.</p>
-						<div style="flex: 1"></div>
-						<Button
-							type="primary"
-							icon="left"
-							disabled={use(gameState.ready, (r) => !r)}
-							on:click={loginqr}
-						>
-							<Icon icon={iconQrCodeScanner} />
-							Log In with QR Code
-						</Button>
-					</div>
+				<div>
+					<p>
+						This will log into Steam through a proxy, so that it can download
+						assets and achievement stats.
+					</p>
+					<p>
+						Account credentials are encrypted on your device and never sent to a
+						server. Still, beware of unofficial deployments.
+					</p>
 				</div>
-			)}
 
+				{$if(
+					use(steamState.login, (l) => l == 0 || l == 3),
+					<div class="methods">
+						<div class="tcontainer">
+							<h3>Username and Password</h3>
+							<TextField
+								bind:value={use(this.username)}
+								placeholder={"Username"}
+							/>
+							<TextField
+								bind:value={use(this.password)}
+								type={"password"}
+								placeholder={"Password"}
+							/>
+							<div style="flex: 1"></div>
+							<Button
+								type="primary"
+								icon="left"
+								disabled={use(gameState.ready, (r) => !r)}
+								on:click={loginpass}
+							>
+								<Icon icon={iconLogin} />
+								Log In
+							</Button>
+						</div>
+						<div class="tcontainer">
+							<h3>Steam Guard</h3>
+							<p>Requires the Steam app on your phone to be installed.</p>
+							<div style="flex: 1"></div>
+							<Button
+								type="primary"
+								icon="left"
+								disabled={use(gameState.ready, (r) => !r)}
+								on:click={loginqr}
+							>
+								<Icon icon={iconQrCodeScanner} />
+								Log In with QR Code
+							</Button>
+						</div>
+					</div>
+				)}
+			</div>
 			{$if(
 				use(steamState.login, (l) => l == 3),
 				<div style="color: var(--error)">Failed to log in! Try again</div>
 			)}
 
 			{$if(
-				use(steamState.login, (l) => l == 3 || l == 1 || l == 2),
-				<div class="logcontainer">
-					<LogView scrolling={true} />
-				</div>
-			)}
-
-			{$if(
 				use(steamState.login, (l) => l == 1),
 				<div class="qrcontainer">
-					<p>
-						Since this uses a proxy, the steam app might complain about your
-						location being wrong. Just select the location that you don't
-						usually log in from if it asks.
-					</p>
-					{$if(
-						use(steamState.qr),
-						<img alt="Steam QR" src={use(steamState.qr)} />
-					)}
+					<div>
+						{$if(
+							use(steamState.qr),
+							<img alt="Steam QR" src={use(steamState.qr)} />
+						)}
+					</div>
 
-					{$if(
-						use(steamState.qr),
-						<div>Scan this QR code with the Steam app on your phone.</div>
-					)}
+					{/* {$if(
+						use(steamState.qr), */}
+					<p>
+						Scan this QR code with the Steam app on your phone. If the app
+						complains about your location being wrong, just select the location
+						that you don't usually log in from.
+					</p>
+					{/* )} */}
+				</div>
+			)}
+			{$if(
+				use(steamState.login, (l) => l == 3 || l == 1 || l == 2),
+				<div class="logs">
+					<h4>Logs</h4>
+					<div class="logcontainer">
+						<LogView scrolling={true} />
+					</div>
 				</div>
 			)}
 		</div>
