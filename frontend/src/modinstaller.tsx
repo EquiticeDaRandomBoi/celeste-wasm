@@ -163,8 +163,8 @@ export const ModInstaller: Component<
     position: sticky;
     top: 0;
     z-index: 10000;
-    background: linear-gradient(to bottom, var(--bg-sub), color-mix(in srgb, var(--bg-sub) 80%, transparent));
-    backdrop-filter: blur(10px);
+    background: radial-gradient(ellipse at bottom, color-mix(in srgb, var(--bg-sub) 85%, transparent), var(--bg-sub));
+    backdrop-filter: blur(5px);
   }
 
   .modsearchbar {
