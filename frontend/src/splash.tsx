@@ -122,8 +122,12 @@ const Intro: Component<
 				probably not work on low-end devices.
 			</p>
 			<p>
-				You will need to own Celeste to use this port. The setup background is
-				from{" "}
+				You will need to own the FNA version of Celeste to use this port (you
+				have the FNA version if not on Windows; the FNA version is also
+				downloadable on steam).
+			</p>
+			<p>
+				The setup background is from{" "}
 				<Link href="https://www.fangamer.com/products/celeste-desk-mat-skies">
 					Fangamer
 				</Link>
@@ -356,8 +360,8 @@ const Copy: Component<
 	return (
 		<div class="step">
 			<p>
-				Select your Celeste install's directory. It will be copied to browser
-				storage and can be removed in the file manager.
+				Select your <b>FNA</b> Celeste install's directory. It will be copied to
+				browser storage and can be removed in the file manager.
 			</p>
 			{this.os == "win" ? (
 				<p>
