@@ -4,7 +4,10 @@
 
 <br>
 
-A mostly-complete port of Celeste (2018) to WebAssembly using dotnet 9's threaded WASM support and [FNA WASM libraries](https://github.com/r58playz/FNA-WASM-Build).
+A mostly-complete port of Celeste (2018) to WebAssembly, with full support for Everest mods. Powered by [FNA-WASM-Build](https://github.com/r58playz/FNA-WASM-Build) and [MonoMod.WASM](https://github.com/r58Playz/MonoMod).
+
+
+Interested in how this works? Check out the [writeup](https://velzie.rip/blog/celeste-wasm)
 
 ![Webleste demo image](assets/demo.png)
 <sup><i>Strawberry Jam</i> running in Webleste</sup>
