@@ -6,9 +6,6 @@
 
 A mostly-complete port of Celeste (2018) to WebAssembly, with full support for Everest mods. Powered by [FNA-WASM-Build](https://github.com/r58playz/FNA-WASM-Build) and [MonoMod.WASM](https://github.com/r58Playz/MonoMod).
 
-
-Interested in how this works? Check out the [writeup](https://velzie.rip/blog/celeste-wasm)
-
 ![Webleste demo image](assets/demo.png)
 <sup><i>Strawberry Jam</i> running in Webleste</sup>
 
@@ -25,11 +22,6 @@ Interested in how this works? Check out the [writeup](https://velzie.rip/blog/ce
 4. run `sudo dotnet workload restore` in the loader dir
 5. run `make serve` for a dev server and `make publish` for a release build
 
-## I want to port this to a newer version of celeste (once it exists)
-
-1. fix any issues with the hooks
-2. make a pr!
-
 ## I want to figure out how this works
 
 - The native dotnet WASM support is used to compile a loader program to WASM
@@ -39,3 +31,10 @@ Interested in how this works? Check out the [writeup](https://velzie.rip/blog/ce
 - A WASM port of MonoMod is used to provide detours/hooks to Everest and other runtime mods, it functions completely on the IL level and is mono specific
 - FMOD pthread builds are used for audio, with slight patching of the bindings so that using FMOD 2 works
 - The game canvas is transferred to dotnet's "deputy thread" and all rendering is done from there through FNA's OpenGL driver
+
+For a deeper dive into how we made this and [the terraria web port](https://github.com/MercuryWorkshop/terraria-wasm), check out the [writeup](https://velzie.rip/blog/celeste-wasm).
+
+## I want to port this to a newer version of celeste (once it exists)
+
+1. fix any issues with the hooks
+2. make a pr!
