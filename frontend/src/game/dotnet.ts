@@ -197,8 +197,8 @@ export async function preInit() {
 	console.debug("initializing dotnet");
 	const runtime = await dotnet
 		.withConfig({
-			pthreadPoolInitialSize: 24,
-			// pthreadPoolUnusedSize: 512,
+			pthreadPoolInitialSize: 32,
+			pthreadPoolUnusedSize: 512,
 		})
 		.withRuntimeOptions([
 			// jit functions quickly and jit more functions

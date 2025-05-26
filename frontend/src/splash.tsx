@@ -132,6 +132,10 @@ const Intro: Component<
 				<Link href="https://www.fangamer.com/products/celeste-desk-mat-skies">
 					Fangamer
 				</Link>
+				. The source is available on{" "}
+				<Link href="https://github.com/MercuryWorkshop/celeste-wasm">
+					GitHub
+				</Link>
 				.
 			</p>
 			{PICKERS_UNAVAILABLE ? (

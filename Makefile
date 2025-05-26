@@ -1,4 +1,4 @@
-STATICS_RELEASE=866eb1ea-276c-48ce-8413-f6a048fbf3e8
+STATICS_RELEASE=265e23ca-337c-4e8d-b383-0e1e87300468
 DOTNETFLAGS=--nodereuse:false -v n
 
 statics:
