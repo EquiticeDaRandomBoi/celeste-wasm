@@ -338,12 +338,12 @@ const Copy: Component<
 
 		let celesteExe;
 		try {
+			let orig = await directory.getDirectoryHandle("orig", { create: false });
+			celesteExe = await orig.getFileHandle("Celeste.exe", { create: false });
+		} catch {
 			celesteExe = await directory.getFileHandle("Celeste.exe", {
 				create: false,
 			});
-		} catch {
-			let orig = await directory.getDirectoryHandle("orig", { create: false });
-			celesteExe = await orig.getFileHandle("Celeste.exe", { create: false });
 		}
 		await copyFile(celesteExe, rootFolder);
 
