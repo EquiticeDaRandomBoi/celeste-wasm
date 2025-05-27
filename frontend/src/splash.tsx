@@ -33,7 +33,7 @@ import iconUnarchive from "@ktibow/iconset-material-symbols/unarchive";
 import iconFolderZip from "@ktibow/iconset-material-symbols/folder-zip";
 import iconManufacturing from "@ktibow/iconset-material-symbols/manufacturing";
 import iconSettings from "@ktibow/iconset-material-symbols/settings";
-import { Settings, WispServer } from "./settings";
+import { Settings } from "./settings";
 import { Dialog } from "./ui/Dialog";
 
 const validateDirectory = async (directory: FileSystemDirectoryHandle) => {
