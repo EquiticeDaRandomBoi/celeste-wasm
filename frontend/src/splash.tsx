@@ -475,6 +475,32 @@ const Copy: Component<
 			transition: border-color 0.2s ease;
 		}
 
+		.droparea.true {
+		  pointer-events: none;
+      cursor: no-drop;
+
+      * {
+        cursor: no-drop;
+      }
+
+      background:  color-mix(in srgb, var(--bg-sub) 45%, transparent);
+      color: var(--surface6);
+      border-color: var(--surface4);
+		}
+
+		.droparea.dragover {
+			border-color: var(--accent);
+			color: color-mix(in srgb, var(--fg3) 92%, var(--accent));
+			.dnd-bg-hover {
+			  transition: background-image 0.35s ease;
+			  background-image: radial-gradient(
+          circle at center,
+          color-mix(in srgb, var(--accent) 25%, transparent),
+          transparent
+        );
+      }
+		}
+
 		.dnd-bg-hover {
 			position: absolute;
 			top: 0;
@@ -498,19 +524,6 @@ const Copy: Component<
 
 		.dnd-icon {
 			font-size: 2.65rem;
-		}
-
-		.droparea.dragover {
-			border-color: var(--accent);
-			color: color-mix(in srgb, var(--fg3) 92%, var(--accent));
-			.dnd-bg-hover {
-			  transition: background-image 0.35s ease;
-			  background-image: radial-gradient(
-          circle at center,
-          color-mix(in srgb, var(--accent) 25%, transparent),
-          transparent
-        );
-      }
 		}
 	`;
 
@@ -580,21 +593,22 @@ const Copy: Component<
           Select Celeste directory
         </Button>
       )}
-			<div class="droparea"
-			on:drop={async (e: DragEvent) => {
-						((e.currentTarget || e.target) as HTMLElement|null)?.classList.remove("dragover");
-								e.preventDefault();
-								if (!e.dataTransfer) return;
-								const transfer = e.dataTransfer.items[0];
-								await opfsForBadBrowsers(transfer);
+      <div class={use`droparea ${this.copying}`}
+			      on:drop={async (e: DragEvent) => {
+							((e.currentTarget || e.target) as HTMLElement|null)?.classList.remove("dragover");
+							e.preventDefault();
+							if (!e.dataTransfer || !e.dataTransfer.items || this.copying) return;
+							const transfer = e.dataTransfer.items[0];
+							await opfsForBadBrowsers(transfer);
 						}}
-			on:dragover={(e: DragEvent) => {
-									e.preventDefault();
-					e.dataTransfer!.dropEffect = "copy";
-					((e.currentTarget || e.target) as HTMLElement).classList.add("dragover");
+			      on:dragover={(e: DragEvent) => {
+							e.preventDefault();
+     					e.dataTransfer!.dropEffect = "copy";
+              if (this.copying) return;
+     					((e.currentTarget || e.target) as HTMLElement).classList.add("dragover");
 						}}
 						on:dragleave={(e: DragEvent) => {
-								((e.currentTarget || e.target) as HTMLElement|null)?.classList.remove("dragover");
+							((e.currentTarget || e.target) as HTMLElement|null)?.classList.remove("dragover");
 						}}>
 								<div class="dnd-bg-hover"></div>
 								<div class="dnd-content">
