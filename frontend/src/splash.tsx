@@ -32,7 +32,9 @@ import iconArchive from "@ktibow/iconset-material-symbols/archive";
 import iconUnarchive from "@ktibow/iconset-material-symbols/unarchive";
 import iconFolderZip from "@ktibow/iconset-material-symbols/folder-zip";
 import iconManufacturing from "@ktibow/iconset-material-symbols/manufacturing";
-import { WispServer } from "./settings";
+import iconSettings from "@ktibow/iconset-material-symbols/settings";
+import { Settings, WispServer } from "./settings";
+import { Dialog } from "./ui/Dialog";
 
 const validateDirectory = async (directory: FileSystemDirectoryHandle) => {
 	let content;
@@ -790,6 +792,7 @@ export const Splash: Component<
 	},
 	{
 		next: "intro" | "copy" | "extract" | "download" | "patch";
+		settingsOpen: boolean;
 	}
 > = function () {
 	this.css = `
@@ -849,8 +852,15 @@ export const Splash: Component<
       flex-direction: column;
       gap: 0.5rem;
 		}
+
+		.main > .container > .component-btn {
+      width: 2.5em;
+      position: fixed;
+      right: 1.3rem;
+		}
 	`;
 	this.next = "intro";
+	this.settingsOpen = false;
 
 	return (
 		<div>
@@ -885,9 +895,14 @@ export const Splash: Component<
 							return <Patch on:done={() => this["on:next"](true)} />;
 						}
 					})}
-					<WispServer />
+					<Button type="primary" icon="full" disabled={false} on:click={() => (this.settingsOpen = true)}>
+            <Icon icon={iconSettings} />
+          </Button>
 				</div>
 			</div>
+      <Dialog name="Settings" bind:open={use(this.settingsOpen)}>
+				<Settings />
+			</Dialog>
 		</div>
 	);
 };
