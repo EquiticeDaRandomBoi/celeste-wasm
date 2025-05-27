@@ -3,10 +3,14 @@ import { Switch } from "./ui/Switch";
 import { Button, Icon, Link } from "./ui/Button";
 import {
 	copyFile,
+	copyFileForBadBrowsers,
 	copyFolder,
+	copyFolderForBadBrowsers,
 	countFolder,
+	countFolderForBadBrowsers,
 	extractTar,
 	hasContent,
+	FSAPI_UNAVAILABLE,
 	PICKERS_UNAVAILABLE,
 	rootFolder,
 	TAR_TYPES,
@@ -21,6 +25,7 @@ import { SteamLogin, steamState } from "./steam";
 import { LogView } from "./game";
 
 import iconFolderOpen from "@ktibow/iconset-material-symbols/folder-open-outline";
+import iconCloudUpload from "@ktibow/iconset-material-symbols/cloud-upload";
 import iconDownload from "@ktibow/iconset-material-symbols/download";
 import iconEncrypted from "@ktibow/iconset-material-symbols/encrypted";
 import iconArchive from "@ktibow/iconset-material-symbols/archive";
@@ -69,6 +74,49 @@ const validateDirectory = async (directory: FileSystemDirectoryHandle) => {
 
 	return "";
 };
+
+const validateDirectoryForBadBrowsers = async (entry: FileSystemEntry|null) => {
+  if (!entry || !entry.isDirectory) {
+    return "what?"
+  }
+  let directory = entry as FileSystemDirectoryEntry;
+  let reader = directory.createReader();
+  let entries: FileSystemEntry[] = [];
+  return new Promise<string>((resolve) => {
+    reader.readEntries((result: FileSystemEntry[]) => {
+      entries = result;
+      let content = entries.find((e) => e.name === "Content");
+      if (!content || !content.isDirectory) {
+        resolve("Failed to find Content directory in selected folder");
+        return;
+      }
+      let contentDir = content as FileSystemDirectoryEntry;
+      let contentReader = contentDir.createReader();
+      contentReader.readEntries((contentEntries: FileSystemEntry[]) => {
+        for (const child of [
+          "Dialog",
+          "Effects",
+          "FMOD",
+          "Graphics",
+          "Maps",
+          "Monocle",
+          "Overworld",
+          "Tutorials",
+        ]) {
+          if (
+            !contentEntries.some(
+              (e) => e.name === child && e.isDirectory
+            )
+          ) {
+            resolve(`Failed to find subdirectory Content/${child}`);
+            return;
+          }
+        }
+      });
+      resolve("");
+    });
+  });
+}
 
 const initialHasContent = await hasContent();
 let initialIsPatched = false;
@@ -138,7 +186,7 @@ const Intro: Component<
 				</Link>
 				.
 			</p>
-			{PICKERS_UNAVAILABLE ? (
+			{FSAPI_UNAVAILABLE ? (
 				<div class="error">
 					Your browser does not support the{" "}
 					<Link href="https://developer.mozilla.org/en-US/docs/Web/API/Window/showDirectoryPicker">
@@ -154,10 +202,10 @@ const Intro: Component<
 				on:click={() => next("copy")}
 				type="primary"
 				icon="left"
-				disabled={use(this.disabled, (x) => x || PICKERS_UNAVAILABLE)}
+				disabled={use(this.disabled, (x) => x || FSAPI_UNAVAILABLE)}
 			>
 				<Icon icon={iconFolderOpen} />
-				{PICKERS_UNAVAILABLE
+				{FSAPI_UNAVAILABLE
 					? "Copying local Celeste assets is unsupported"
 					: "Copy local Celeste assets"}
 			</Button>
@@ -165,10 +213,10 @@ const Intro: Component<
 				on:click={() => next("extract")}
 				type="primary"
 				icon="left"
-				disabled={use(this.disabled, (x) => x || PICKERS_UNAVAILABLE)}
+				disabled={use(this.disabled, (x) => x || FSAPI_UNAVAILABLE)}
 			>
 				<Icon icon={iconUnarchive} />
-				{PICKERS_UNAVAILABLE
+				{FSAPI_UNAVAILABLE
 					? `Extracting ${NAME} archive is unsupported`
 					: `Extract ${NAME} archive`}
 			</Button>
@@ -302,15 +350,7 @@ const Copy: Component<
 		percent: number;
 	}
 > = function () {
-	this.css = `
-		code {
-			overflow-wrap: break-word;
-		}
 
-		p {
-			margin-block: 0.3em;
-		}
-	`;
 
 	const opfs = async () => {
 		const directory = await showDirectoryPicker();
@@ -352,6 +392,56 @@ const Copy: Component<
 		this["on:done"]();
 	};
 
+
+  const opfsForBadBrowsers = async (transfer: DataTransferItem) => {
+    // mdn told me to check for this
+    let handle: FileSystemEntry | null;
+    if ('getAsEntry' in transfer && typeof (transfer as any).getAsEntry === 'function') {
+      handle = (transfer as any).getAsEntry();
+    } else {
+      handle = transfer.webkitGetAsEntry();
+    }
+
+    const res = await validateDirectoryForBadBrowsers(handle);
+    if (res) {
+      this.status = res;
+      return;
+    }
+
+    const directory = handle as FileSystemDirectoryEntry;
+    const reader = directory.createReader();
+    reader.readEntries(async (entries: FileSystemEntry[]) => {
+      const contentFolder = entries.find((e) => e.name === "Content") as FileSystemDirectoryEntry;
+      const max = await countFolderForBadBrowsers(contentFolder);
+  		let cnt = 0;
+  		this.copying = true;
+  		const before = performance.now();
+  		await copyFolderForBadBrowsers(contentFolder, rootFolder, (x) => {
+ 			cnt++;
+ 			this.percent = (cnt / max) * 100;
+ 			console.debug(`copied ${x}: ${((cnt / max) * 100).toFixed(2)}`);
+  		});
+  		const after = performance.now();
+  		console.debug(`copy took ${(after - before).toFixed(2)}ms`);
+
+      let celesteExe;
+      try {
+        let orig = entries.find((e) => e.name === "orig") as FileSystemDirectoryEntry;
+        let reader = orig.createReader();
+        reader.readEntries(async (entries: FileSystemEntry[]) => {
+          celesteExe = entries.find((e) => e.name === "Celeste.exe") as FileSystemFileEntry;
+        });
+      } catch {
+        celesteExe = entries.find((e) => e.name === "Celeste.exe") as FileSystemFileEntry;
+      }
+
+      await copyFileForBadBrowsers(celesteExe!, rootFolder);
+      await new Promise((r) => setTimeout(r, 250));
+      await rootFolder.getFileHandle(".ContentExists", { create: true });
+      this["on:done"]();
+    })
+  }
+
 	let ua = navigator.userAgent;
 	this.os = "";
 	if (ua.includes("Win")) {
@@ -361,6 +451,68 @@ const Copy: Component<
 	} else if (ua.includes("Linux")) {
 		this.os = "linux";
 	}
+
+
+	this.css = `
+		code {
+			overflow-wrap: break-word;
+		}
+
+		p {
+			margin-block: 0.3em;
+		}
+
+		.droparea {
+  		position: relative;
+  		border: 2px dashed var(--surface6);
+			color: var(--fg6);
+			font-size: 1.05rem;
+			font-weight: 500;
+			border-radius: 1rem;
+			padding: 2rem;
+			text-align: center;
+			background: color-mix(in srgb, var(--surface3) 45%, transparent);
+			transition: border-color 0.2s ease;
+		}
+
+		.dnd-bg-hover {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			border-radius: 1rem;
+			z-index: 9;
+			transition: background-image 0.35s ease;
+			background-image: radial-gradient(
+			  circle at center,
+        color-mix(in srgb, var(--surface3) 5%, transparent),
+        transparent
+      );
+		}
+
+		.dnd-content {
+			z-index: 10;
+			position: relative;
+		}
+
+		.dnd-icon {
+			font-size: 2.65rem;
+		}
+
+		.droparea.dragover {
+			border-color: var(--accent);
+			color: color-mix(in srgb, var(--fg3) 92%, var(--accent));
+			.dnd-bg-hover {
+			  transition: background-image 0.35s ease;
+			  background-image: radial-gradient(
+          circle at center,
+          color-mix(in srgb, var(--accent) 25%, transparent),
+          transparent
+        );
+      }
+		}
+	`;
 
 	return (
 		<div class="step">
@@ -417,15 +569,39 @@ const Copy: Component<
 				"contains system files", try copying it to another location first.
 			</div>
 			{$if(use(this.copying), <Progress percent={use(this.percent)} />)}
-			<Button
-				on:click={opfs}
-				type="primary"
-				icon="left"
-				disabled={use(this.copying)}
-			>
-				<Icon icon={iconFolderOpen} />
-				Select Celeste directory
-			</Button>
+      {PICKERS_UNAVAILABLE ? null : (
+        <Button
+          on:click={opfs}
+          type="primary"
+          icon="left"
+          disabled={use(this.copying)}
+        >
+          <Icon icon={iconFolderOpen} />
+          Select Celeste directory
+        </Button>
+      )}
+			<div class="droparea"
+			on:drop={async (e: DragEvent) => {
+						((e.currentTarget || e.target) as HTMLElement|null)?.classList.remove("dragover");
+								e.preventDefault();
+								if (!e.dataTransfer) return;
+								const transfer = e.dataTransfer.items[0];
+								await opfsForBadBrowsers(transfer);
+						}}
+			on:dragover={(e: DragEvent) => {
+									e.preventDefault();
+					e.dataTransfer!.dropEffect = "copy";
+					((e.currentTarget || e.target) as HTMLElement).classList.add("dragover");
+						}}
+						on:dragleave={(e: DragEvent) => {
+								((e.currentTarget || e.target) as HTMLElement|null)?.classList.remove("dragover");
+						}}>
+								<div class="dnd-bg-hover"></div>
+								<div class="dnd-content">
+										<Icon icon={iconCloudUpload} class="dnd-icon" />
+										<p>Or, drag and drop one here</p>
+								</div>
+						</div>
 			{$if(use(this.status), <div class="error">{use(this.status)}</div>)}
 		</div>
 	);
