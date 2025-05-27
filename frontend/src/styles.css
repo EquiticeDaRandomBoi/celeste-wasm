@@ -68,7 +68,7 @@ body.error {
 	--loader-bg: #451922;
 	--error: #f02424;
 	--success: #84f084;
-	--warning: #f0f084;
+	--warning: #ecd47a;
 	--info: #b2c2f8;
 }
 
@@ -122,7 +122,7 @@ body.error {
 	--loader-bg: #803e49;
 	--error: #e43e3e;
 	--success: #14b614;
-	--warning: #e0e060;
+	--warning: #b4a50c;
 	--info: #3563ad;
 }
 
