@@ -15,7 +15,7 @@ namespace Celeste
             {
                 if (title == "Porting")
                 {
-                    orig_ctor(padding, title, people.Concat(["r58Playz (WASM)", "velzie (WASM)"]).ToArray());
+                    orig_ctor(padding, title, people.Concat(["r58Playz (WASM)", "velzie (WASM)", "bomberfish (WASM)"]).ToArray());
                 }
                 else
                 {
