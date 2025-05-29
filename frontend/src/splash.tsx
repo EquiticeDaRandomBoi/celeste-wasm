@@ -758,7 +758,7 @@ export const Patch: Component<
 	return (
 		<div>
 			<p>
-				We're going to patch Celeste with MonoMod for neccesary fixes for WASM.
+				We're going to patch Celeste with MonoMod for neccesary WASM fixes.
 				You can also optionally install the Everest Mod Loader, but it will take
 				longer to install.
 			</p>
@@ -895,7 +895,7 @@ export const Splash: Component<
 							return <Patch on:done={() => this["on:next"](true)} />;
 						}
 					})}
-					<Button type="primary" icon="full" disabled={false} on:click={() => (this.settingsOpen = true)}>
+					<Button type="primary" icon="full" disabled={false} on:click={() => (this.settingsOpen = true)} title="Settings">
             <Icon icon={iconSettings} />
           </Button>
 				</div>

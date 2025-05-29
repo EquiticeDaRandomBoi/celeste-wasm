@@ -57,14 +57,14 @@ body.error {
 	--surface5: color-mix(in srgb, #3a3a3a 97.5%, var(--accent));
 	--surface6: color-mix(in srgb, #3f3f3f 97.5%, var(--accent));
 
-	--fg: color-mix(in srgb, #fafafa 97.5%, var(--accent));
+	--fg: #fff;
 	--fg2: color-mix(in srgb, #eaeaea 97.5%, var(--accent));
 	--fg3: color-mix(in srgb, #dedede 97.5%, var(--accent));
 	--fg4: color-mix(in srgb, #cacaca 97.5%, var(--accent));
 	--fg5: color-mix(in srgb, #bebebe 97.5%, var(--accent));
 	--fg6: color-mix(in srgb, #aaaaaa 97.5%, var(--accent));
 
-	--accent: #ff2432;
+	--accent: #e51523;
 	--loader-bg: #451922;
 	--error: #f02424;
 	--success: #84f084;
@@ -83,12 +83,12 @@ body.error {
 }
 
 .dark.green {
-	--accent: #1aa04a;
+	--accent: #15843c;
 	--loader-bg: #153a20;
 }
 
 .dark.blue {
-	--accent: #2480ff;
+	--accent: #006aff;
 	--loader-bg: #192745;
 }
 

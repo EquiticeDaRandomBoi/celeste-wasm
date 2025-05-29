@@ -122,6 +122,7 @@ export const Switch: Component<
 					disabled={use(this.disabled)}
 					bind:checked={use(this.on)}
 					on:change={this["on:change"] || (() => {})}
+					title={use(this.title) + (use(this.disabled) ? " (disabled)" : "")}
 				/>
 				<span class="switch-slider"></span>
 			</label>
