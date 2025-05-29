@@ -17,7 +17,7 @@ A mostly-complete port of Celeste (2018) to WebAssembly, with full support for E
 ## I want to build this
 
 1. Ensure node and pnpm exist and `pnpm i`
-2. Install .NET 9.0.4
+2. Install dotnet 9.0.4
 3. Install the mono-devel package on your distro
 4. Run `sudo dotnet workload restore` in `loader/`
 5. Run `make serve` for a dev server and `make publish` for a release build
@@ -32,7 +32,7 @@ A mostly-complete port of Celeste (2018) to WebAssembly, with full support for E
 - FMOD pthread builds are used for audio, with slight patching of the bindings so that using FMOD 2 works
 - The game canvas is transferred to dotnet's "deputy thread" and all rendering is done from there through FNA's OpenGL driver
 
-For a deeper dive into how we made this and [the terraria web port](https://github.com/MercuryWorkshop/terraria-wasm), check out the [writeup](https://velzie.rip/blog/celeste-wasm).
+For a deeper dive into how we made this and [the Terraria web port](https://github.com/MercuryWorkshop/terraria-wasm), check out the [writeup](https://velzie.rip/blog/celeste-wasm).
 
 ## I want to port this to a newer version of Celeste (once it exists)
 
