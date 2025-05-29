@@ -615,7 +615,11 @@ const Copy: Component<
 								<div class="dnd-bg-hover"></div>
 								<div class="dnd-content">
 										<Icon icon={iconCloudUpload} class="dnd-icon" />
+										{PICKERS_UNAVAILABLE ? (
+										<p>Drag and drop Celeste directory</p>
+										) : (
 										<p>Or, drag and drop one here</p>
+                    )}
 								</div>
 						</div>
 			{$if(use(this.status), <div class="error">{use(this.status)}</div>)}
