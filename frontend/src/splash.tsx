@@ -805,6 +805,8 @@ export const Splash: Component<
 		width: 100%;
 		height: 100%;
 
+		--animation: cubic-bezier(0.25, 0, 0.25, 1);
+
 		.splash, .blur, .main {
 			position: absolute;
 			width: 100%;
@@ -819,9 +821,15 @@ export const Splash: Component<
 		}
 
 		.blur {
-			backdrop-filter: blur(0.5vw);
-			background-color: color-mix(in srgb, var(--bg) 40%, transparent);
+			backdrop-filter: blur(1rem);
+			background-color: color-mix(in srgb, var(--bg) 35%, transparent);
 			z-index: 102;
+			transition: backdrop-filter .65s var(--animation) 0.35s, background-color .65s var(--animation) 0.35s;
+
+			@starting-style {
+	      backdrop-filter: blur(2.5rem);
+  			background-color: color-mix(in srgb, var(--bg) 80%, transparent);
+			}
 		}
 
 		.main {
@@ -834,6 +842,7 @@ export const Splash: Component<
 		.container {
 			backdrop-filter: blur(0.5vw);
 			background-color: color-mix(in srgb, var(--bg) 80%, transparent);
+      box-shadow: 0px 0px 20px color-mix(in srgb, var(--surface0) 40%, transparent);
 			width: min(40rem, 100%);
 			margin: 0 1rem;
 			padding: 1.3em;
@@ -844,6 +853,17 @@ export const Splash: Component<
 			display: flex;
 			flex-direction: column;
 			gap: 0.5rem;
+
+			opacity: 1;
+			transform: translateY(0vh) rotate3d(1, 0, 0, 0);
+			transition: opacity .65s var(--animation) 0.35s, transform .65s var(--animation) 0.35s;
+			transform-origin: 50% 0%;
+			perspective: 1250px;
+
+			@starting-style {
+			  opacity: 0;
+				transform: translateY(5vh) rotate3d(1, 0, 0, 15deg);
+			}
 		}
 
 		.logo {

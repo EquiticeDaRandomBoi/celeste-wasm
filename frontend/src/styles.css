@@ -191,7 +191,7 @@ body.error {
 		url("/fonts/display/Renogare.woff2") format("woff2");
 	font-weight: normal bold;
 	font-style: normal italic;
-	font-display: block;
+	font-display: swap;
 }
 
 @font-face {
@@ -203,7 +203,7 @@ body.error {
 		url("/fonts/body/AdwaitaSans-Regular.ttf") format("truetype");
 	font-weight: 100 900;
 	font-style: normal;
-	font-display: block;
+	font-display: swap;
 }
 
 @font-face {
@@ -215,7 +215,7 @@ body.error {
 		url("/fonts/body/AdwaitaSans-Italic.ttf") format("truetype");
 	font-weight: 100 900;
 	font-style: italic;
-	font-display: block;
+	font-display: swap;
 }
 
 @font-face {
@@ -227,7 +227,7 @@ body.error {
 		url("/fonts/mono/AdwaitaMono-Regular.ttf") format("truetype");
 	font-weight: normal;
 	font-style: normal;
-	font-display: block;
+	font-display: swap;
 }
 
 @font-face {
@@ -239,7 +239,7 @@ body.error {
 		url("/fonts/mono/AdwaitaMono-Italic.ttf") format("truetype");
 	font-weight: normal;
 	font-style: italic;
-	font-display: block;
+	font-display: swap;
 }
 
 @font-face {
@@ -251,7 +251,7 @@ body.error {
 		url("/fonts/mono/AdwaitaMono-Bold.ttf") format("truetype");
 	font-weight: bold;
 	font-style: normal;
-	font-display: block;
+	font-display: swap;
 }
 
 @font-face {
@@ -263,7 +263,7 @@ body.error {
 		url("/fonts/mono/AdwaitaMono-BoldItalic.ttf") format("truetype");
 	font-weight: bold;
 	font-style: italic;
-	font-display: block;
+	font-display: swap;
 }
 
 h1,
