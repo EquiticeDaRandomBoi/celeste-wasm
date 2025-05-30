@@ -38,6 +38,12 @@
 		<EmccEnvironment>web,worker</EmccEnvironment>
 
 		<WasmCachePath>$(MSBuildProjectDirectory)\..\emsdk\upstream\emscripten\cache\</WasmCachePath>
+
+		<__CelesteWasmEmscriptenSdkToolsPath>$(MSBuildProjectDirectory)\..\emsdk\upstream\</__CelesteWasmEmscriptenSdkToolsPath>
+		<__CelesteWasmEmscriptenUpstreamBinPath>$(MSBuildProjectDirectory)\..\emsdk\upstream\bin\</__CelesteWasmEmscriptenUpstreamBinPath>
+		<__CelesteWasmEmscriptenUpstreamEmscriptenPath>$(MSBuildProjectDirectory)\..\emsdk\upstream\emscripten\</__CelesteWasmEmscriptenUpstreamEmscriptenPath>
+		<__CelesteWasmEmscriptenNodeToolsPath>$(MSBuildProjectDirectory)\..\emsdk\node\22.16.0_64bit\bin\node</__CelesteWasmEmscriptenNodeToolsPath>
+		<__CelesteWasmWasmClang>$(MSBuildProjectDirectory)\..\emsdk\upstream\emscripten\emcc</__CelesteWasmWasmClang>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -110,11 +116,11 @@
 	<!-- do not touch unless you like debugging -->
 	<Target Name="ChangeClang" DependsOnTargets="_InitializeCommonProperties" BeforeTargets="_SetupEmscripten">
 		<PropertyGroup>
-			<EmscriptenSdkToolsPath>$(MSBuildProjectDirectory)\..\emsdk\upstream\</EmscriptenSdkToolsPath>
-			<EmscriptenUpstreamBinPath>$(MSBuildProjectDirectory)\..\emsdk\upstream\bin\</EmscriptenUpstreamBinPath>
-			<EmscriptenUpstreamEmscriptenPath>$(MSBuildProjectDirectory)\..\emsdk\upstream\emscripten\</EmscriptenUpstreamEmscriptenPath>
-			<EmscriptenNodeToolsPath>$(MSBuildProjectDirectory)\..\emsdk\node\22.16.0_64bit\bin\node</EmscriptenNodeToolsPath>
-			<WasmClang>$(MSBuildProjectDirectory)\..\emsdk\upstream\emscripten\emcc</WasmClang>
+			<EmscriptenSdkToolsPath>$(__CelesteWasmEmscriptenSdkToolsPath)</EmscriptenSdkToolsPath>
+			<EmscriptenUpstreamBinPath>$(__CelesteWasmEmscriptenUpstreamBinPath)</EmscriptenUpstreamBinPath>
+			<EmscriptenUpstreamEmscriptenPath>$(__CelesteWasmEmscriptenUpstreamEmscriptenPath)</EmscriptenUpstreamEmscriptenPath>
+			<EmscriptenNodeToolsPath>$(__CelesteWasmEmscriptenNodeToolsPath)</EmscriptenNodeToolsPath>
+			<WasmClang>$(__CelesteWasmWasmClang)</WasmClang>
 		</PropertyGroup>
 		<ItemGroup>
 			<EmscriptenPrependPATH Remove="/usr/share/dotnet/packs/*" />
@@ -127,11 +133,11 @@
 
 	<Target Name="ChangeClang2" DependsOnTargets="_GenerateManagedToNative" BeforeTargets="_WasmCompileNativeSourceFiles">
 		<PropertyGroup>
-			<EmscriptenSdkToolsPath>$(MSBuildProjectDirectory)\..\emsdk\upstream\</EmscriptenSdkToolsPath>
-			<EmscriptenUpstreamBinPath>$(MSBuildProjectDirectory)\..\emsdk\upstream\bin\</EmscriptenUpstreamBinPath>
-			<EmscriptenUpstreamEmscriptenPath>$(MSBuildProjectDirectory)\..\emsdk\upstream\emscripten\</EmscriptenUpstreamEmscriptenPath>
-			<EmscriptenNodeToolsPath>$(MSBuildProjectDirectory)\..\emsdk\node\20.18.0_64bit\bin\node</EmscriptenNodeToolsPath>
-			<WasmClang>$(MSBuildProjectDirectory)\..\emsdk\upstream\emscripten\emcc</WasmClang>
+			<EmscriptenSdkToolsPath>$(__CelesteWasmEmscriptenSdkToolsPath)</EmscriptenSdkToolsPath>
+			<EmscriptenUpstreamBinPath>$(__CelesteWasmEmscriptenUpstreamBinPath)</EmscriptenUpstreamBinPath>
+			<EmscriptenUpstreamEmscriptenPath>$(__CelesteWasmEmscriptenUpstreamEmscriptenPath)</EmscriptenUpstreamEmscriptenPath>
+			<EmscriptenNodeToolsPath>$(__CelesteWasmEmscriptenNodeToolsPath)</EmscriptenNodeToolsPath>
+			<WasmClang>$(__CelesteWasmWasmClang)</WasmClang>
 		</PropertyGroup>
 		<ItemGroup>
 			<EmscriptenPrependPATH Remove="/usr/share/dotnet/packs/*" />
