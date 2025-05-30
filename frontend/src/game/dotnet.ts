@@ -203,13 +203,17 @@ export async function preInit() {
 		.withRuntimeOptions([
 			// jit functions quickly and jit more functions
 			`--jiterpreter-minimum-trace-hit-count=${500}`,
+
 			// monitor jitted functions for less time
 			`--jiterpreter-trace-monitoring-period=${100}`,
+
 			// reject less funcs
 			`--jiterpreter-trace-monitoring-max-average-penalty=${150}`,
+
 			// increase jit function limits
 			`--jiterpreter-wasm-bytes-limit=${64 * 1024 * 1024}`,
 			`--jiterpreter-table-size=${32 * 1024}`,
+
 			// print jit stats
 			`--jiterpreter-stats-enabled`,
 		])
@@ -371,7 +375,7 @@ export async function initSteam(
 	return await exports.SteamJS.InitSteam(username, password, qr);
 }
 
-export async function downloadApp() {
+export async function DownloadApp() {
 	return await exports.SteamJS.DownloadApp();
 }
 

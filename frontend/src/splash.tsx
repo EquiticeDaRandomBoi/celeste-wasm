@@ -16,7 +16,7 @@ import {
 	TAR_TYPES,
 } from "./fs";
 import {
-	downloadApp,
+	DownloadApp,
 	gameState,
 	PatchCeleste,
 	pickDownloadsFolder,
@@ -655,7 +655,7 @@ export const Download: Component<
 
 	const download = async () => {
 		this.downloading = true;
-		let result = await downloadApp();
+		let result = await DownloadApp();
 		this.downloading = false;
 		if (result) {
 			await rootFolder.getFileHandle(".ContentExists", { create: true });

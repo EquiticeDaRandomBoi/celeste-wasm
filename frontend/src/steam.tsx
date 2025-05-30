@@ -75,78 +75,78 @@ export const SteamLogin: Component<
 		}
 
 		.methods {
-		  display: flex;
-		  gap: 1rem;
+			display: flex;
+			gap: 1rem;
 		}
 		.methods > div {
-		  flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			gap: 0.5rem;
 
-      padding: 1rem;
+			padding: 1rem;
 		}
 
 		.spacer {
-		      flex: 1;
-		      margin-top: 0.5em;
-		      margin-bottom: 0.5em;
-		      border-bottom: 1px solid var(--fg);
-    }
+			flex: 1;
+			margin-top: 0.5em;
+			margin-bottom: 0.5em;
+			border-bottom: 1px solid var(--fg);
+		}
 
-    p {
-      text-align: center;
-    }
+		p {
+			text-align: center;
+		}
 
 		h1, h3 {
-		  text-align: center;
-      padding: 0;
-      margin: 0;
+			text-align: center;
+			padding: 0;
+			margin: 0;
 		}
 
 		.logcontainer {
-		  font-size: initial;
-		  height: 5em;
-		  display: flex;
+			font-size: initial;
+			height: 5em;
+			display: flex;
 		}
 
 		.logs {
-		  width: 100%;
+			width: 100%;
 		}
 
 		.qrcontainer {
-		  display: flex;
-      justify-content: center;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
+			display: flex;
+			justify-content: center;
+			flex-direction: column;
+			align-items: center;
+			width: 100%;
 		}
 
 		.qrcontainer > div {
-		  background-color: var(--surface0);
-      animation: load 1s infinite alternate;
-      border-radius: 20px;
-      width: 40%;
-      aspect-ratio: 1;
+			background-color: var(--surface0);
+			animation: load 1s infinite alternate;
+			border-radius: 20px;
+			width: 40%;
+			aspect-ratio: 1;
 		}
 
 		@keyframes load {
-		  0% {
-        background-color: var(--bg);
-      }
-      100% {
-        background-color: var(--surface0);
-      }
+			0% {
+				background-color: var(--bg);
+			}
+			100% {
+				background-color: var(--surface0);
+			}
 		}
 
 		.qrcontainer img {
-		  width: 100%;
+			width: 100%;
 			border-radius: 20px;
 			opacity: 1;
 			transition: opacity 0.125s ease-in-out;
 
 			@starting-style {
-			  opacity: 0;
+				opacity: 0;
 			}
 		}
   `;

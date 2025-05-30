@@ -408,7 +408,7 @@ export const OpfsExplorer: Component<
 		display: flex;
 		flex-direction: column;
 		gap: 1em;
-  min-height: min(44rem, 90vh);
+		min-height: min(44rem, 90vh);
 
 		.path {
 			display: flex;
