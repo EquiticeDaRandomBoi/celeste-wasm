@@ -193,7 +193,7 @@ const Intro: Component<
 						File System Access API
 					</Link>
 					. You will be unable to extract a {NAME} archive to play or use the upload/download features
-					in the filesystem viewer.
+					in the filesystem viewer. Please switch to a chromium based browser.
 				</div>
 			) : null}
 			{FSAPI_UNAVAILABLE ? (
@@ -478,8 +478,8 @@ const Copy: Component<
 		}
 
 		.droparea {
-  		position: relative;
-  		border: 2px dashed var(--surface6);
+			position: relative;
+			border: 2px dashed var(--surface6);
 			color: var(--fg6);
 			font-size: 1.05rem;
 			font-weight: 500;
@@ -491,29 +491,29 @@ const Copy: Component<
 		}
 
 		.droparea.true {
-		  pointer-events: none;
-      cursor: no-drop;
+			pointer-events: none;
+			cursor: no-drop;
 
-      * {
-        cursor: no-drop;
-      }
+			* {
+				cursor: no-drop;
+			}
 
-      background:  color-mix(in srgb, var(--bg-sub) 45%, transparent);
-      color: var(--surface6);
-      border-color: var(--surface4);
+			background:  color-mix(in srgb, var(--bg-sub) 45%, transparent);
+			color: var(--surface6);
+			border-color: var(--surface4);
 		}
 
 		.droparea.dragover {
 			border-color: var(--accent);
 			color: color-mix(in srgb, var(--fg3) 92%, var(--accent));
 			.dnd-bg-hover {
-			  transition: background-image 0.35s ease;
-			  background-image: radial-gradient(
-          circle at center,
-          color-mix(in srgb, var(--accent) 25%, transparent),
-          transparent
-        );
-      }
+				transition: background-image 0.35s ease;
+				background-image: radial-gradient(
+					circle at center,
+					color-mix(in srgb, var(--accent) 25%, transparent),
+					transparent
+				);
+			}
 		}
 
 		.dnd-bg-hover {
@@ -526,10 +526,10 @@ const Copy: Component<
 			z-index: 9;
 			transition: background-image 0.35s ease;
 			background-image: radial-gradient(
-			  circle at center,
-        color-mix(in srgb, var(--surface3) 5%, transparent),
-        transparent
-      );
+				circle at center,
+				color-mix(in srgb, var(--surface3) 5%, transparent),
+				transparent
+			);
 		}
 
 		.dnd-content {
