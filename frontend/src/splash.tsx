@@ -77,48 +77,46 @@ const validateDirectory = async (directory: FileSystemDirectoryHandle) => {
 	return "";
 };
 
-const validateDirectoryForBadBrowsers = async (entry: FileSystemEntry|null) => {
-  if (!entry || !entry.isDirectory) {
-    return "what?"
-  }
-  let directory = entry as FileSystemDirectoryEntry;
-  let reader = directory.createReader();
-  let entries: FileSystemEntry[] = [];
-  return new Promise<string>((resolve) => {
-    reader.readEntries((result: FileSystemEntry[]) => {
-      entries = result;
-      let content = entries.find((e) => e.name === "Content");
-      if (!content || !content.isDirectory) {
-        resolve("Failed to find Content directory in selected folder");
-        return;
-      }
-      let contentDir = content as FileSystemDirectoryEntry;
-      let contentReader = contentDir.createReader();
-      contentReader.readEntries((contentEntries: FileSystemEntry[]) => {
-        for (const child of [
-          "Dialog",
-          "Effects",
-          "FMOD",
-          "Graphics",
-          "Maps",
-          "Monocle",
-          "Overworld",
-          "Tutorials",
-        ]) {
-          if (
-            !contentEntries.some(
-              (e) => e.name === child && e.isDirectory
-            )
-          ) {
-            resolve(`Failed to find subdirectory Content/${child}`);
-            return;
-          }
-        }
-      });
-      resolve("");
-    });
-  });
-}
+const validateDirectoryForBadBrowsers = async (
+	entry: FileSystemEntry | null
+) => {
+	if (!entry || !entry.isDirectory) {
+		return "what?";
+	}
+	let directory = entry as FileSystemDirectoryEntry;
+	let reader = directory.createReader();
+	let entries: FileSystemEntry[] = [];
+	return new Promise<string>((resolve) => {
+		reader.readEntries((result: FileSystemEntry[]) => {
+			entries = result;
+			let content = entries.find((e) => e.name === "Content");
+			if (!content || !content.isDirectory) {
+				resolve("Failed to find Content directory in selected folder");
+				return;
+			}
+			let contentDir = content as FileSystemDirectoryEntry;
+			let contentReader = contentDir.createReader();
+			contentReader.readEntries((contentEntries: FileSystemEntry[]) => {
+				for (const child of [
+					"Dialog",
+					"Effects",
+					"FMOD",
+					"Graphics",
+					"Maps",
+					"Monocle",
+					"Overworld",
+					"Tutorials",
+				]) {
+					if (!contentEntries.some((e) => e.name === child && e.isDirectory)) {
+						resolve(`Failed to find subdirectory Content/${child}`);
+						return;
+					}
+				}
+			});
+			resolve("");
+		});
+	});
+};
 
 const initialHasContent = await hasContent();
 let initialIsPatched = false;
@@ -352,8 +350,6 @@ const Copy: Component<
 		percent: number;
 	}
 > = function () {
-
-
 	const opfs = async () => {
 		const directory = await showDirectoryPicker();
 		const res = await validateDirectory(directory);
@@ -394,55 +390,65 @@ const Copy: Component<
 		this["on:done"]();
 	};
 
+	const opfsForBadBrowsers = async (transfer: DataTransferItem) => {
+		// mdn told me to check for this
+		let handle: FileSystemEntry | null;
+		if (
+			"getAsEntry" in transfer &&
+			typeof (transfer as any).getAsEntry === "function"
+		) {
+			handle = (transfer as any).getAsEntry();
+		} else {
+			handle = transfer.webkitGetAsEntry();
+		}
 
-  const opfsForBadBrowsers = async (transfer: DataTransferItem) => {
-    // mdn told me to check for this
-    let handle: FileSystemEntry | null;
-    if ('getAsEntry' in transfer && typeof (transfer as any).getAsEntry === 'function') {
-      handle = (transfer as any).getAsEntry();
-    } else {
-      handle = transfer.webkitGetAsEntry();
-    }
+		const res = await validateDirectoryForBadBrowsers(handle);
+		if (res) {
+			this.status = res;
+			return;
+		}
 
-    const res = await validateDirectoryForBadBrowsers(handle);
-    if (res) {
-      this.status = res;
-      return;
-    }
+		const directory = handle as FileSystemDirectoryEntry;
+		const reader = directory.createReader();
+		reader.readEntries(async (entries: FileSystemEntry[]) => {
+			const contentFolder = entries.find(
+				(e) => e.name === "Content"
+			) as FileSystemDirectoryEntry;
+			const max = await countFolderForBadBrowsers(contentFolder);
+			let cnt = 0;
+			this.copying = true;
+			const before = performance.now();
+			await copyFolderForBadBrowsers(contentFolder, rootFolder, (x) => {
+				cnt++;
+				this.percent = (cnt / max) * 100;
+				console.debug(`copied ${x}: ${((cnt / max) * 100).toFixed(2)}`);
+			});
+			const after = performance.now();
+			console.debug(`copy took ${(after - before).toFixed(2)}ms`);
 
-    const directory = handle as FileSystemDirectoryEntry;
-    const reader = directory.createReader();
-    reader.readEntries(async (entries: FileSystemEntry[]) => {
-      const contentFolder = entries.find((e) => e.name === "Content") as FileSystemDirectoryEntry;
-      const max = await countFolderForBadBrowsers(contentFolder);
-  		let cnt = 0;
-  		this.copying = true;
-  		const before = performance.now();
-  		await copyFolderForBadBrowsers(contentFolder, rootFolder, (x) => {
- 			cnt++;
- 			this.percent = (cnt / max) * 100;
- 			console.debug(`copied ${x}: ${((cnt / max) * 100).toFixed(2)}`);
-  		});
-  		const after = performance.now();
-  		console.debug(`copy took ${(after - before).toFixed(2)}ms`);
+			let celesteExe;
+			try {
+				let orig = entries.find(
+					(e) => e.name === "orig"
+				) as FileSystemDirectoryEntry;
+				let reader = orig.createReader();
+				reader.readEntries(async (entries: FileSystemEntry[]) => {
+					celesteExe = entries.find(
+						(e) => e.name === "Celeste.exe"
+					) as FileSystemFileEntry;
+				});
+			} catch {
+				celesteExe = entries.find(
+					(e) => e.name === "Celeste.exe"
+				) as FileSystemFileEntry;
+			}
 
-      let celesteExe;
-      try {
-        let orig = entries.find((e) => e.name === "orig") as FileSystemDirectoryEntry;
-        let reader = orig.createReader();
-        reader.readEntries(async (entries: FileSystemEntry[]) => {
-          celesteExe = entries.find((e) => e.name === "Celeste.exe") as FileSystemFileEntry;
-        });
-      } catch {
-        celesteExe = entries.find((e) => e.name === "Celeste.exe") as FileSystemFileEntry;
-      }
-
-      await copyFileForBadBrowsers(celesteExe!, rootFolder);
-      await new Promise((r) => setTimeout(r, 250));
-      await rootFolder.getFileHandle(".ContentExists", { create: true });
-      this["on:done"]();
-    })
-  }
+			await copyFileForBadBrowsers(celesteExe!, rootFolder);
+			await new Promise((r) => setTimeout(r, 250));
+			await rootFolder.getFileHandle(".ContentExists", { create: true });
+			this["on:done"]();
+		});
+	};
 
 	let ua = navigator.userAgent;
 	this.os = "";
@@ -453,7 +459,6 @@ const Copy: Component<
 	} else if (ua.includes("Linux")) {
 		this.os = "linux";
 	}
-
 
 	this.css = `
 		code {
@@ -584,44 +589,52 @@ const Copy: Component<
 				"contains system files", try copying it to another location first.
 			</div>
 			{$if(use(this.copying), <Progress percent={use(this.percent)} />)}
-      {PICKERS_UNAVAILABLE ? null : (
-        <Button
-          on:click={opfs}
-          type="primary"
-          icon="left"
-          disabled={use(this.copying)}
-        >
-          <Icon icon={iconFolderOpen} />
-          Select Celeste directory
-        </Button>
-      )}
-      <div class={use`droparea ${this.copying}`}
-			      on:drop={async (e: DragEvent) => {
-							((e.currentTarget || e.target) as HTMLElement|null)?.classList.remove("dragover");
-							e.preventDefault();
-							if (!e.dataTransfer || !e.dataTransfer.items || this.copying) return;
-							const transfer = e.dataTransfer.items[0];
-							await opfsForBadBrowsers(transfer);
-						}}
-			      on:dragover={(e: DragEvent) => {
-							e.preventDefault();
-     					e.dataTransfer!.dropEffect = "copy";
-              if (this.copying) return;
-     					((e.currentTarget || e.target) as HTMLElement).classList.add("dragover");
-						}}
-						on:dragleave={(e: DragEvent) => {
-							((e.currentTarget || e.target) as HTMLElement|null)?.classList.remove("dragover");
-						}}>
-								<div class="dnd-bg-hover"></div>
-								<div class="dnd-content">
-										<Icon icon={iconCloudUpload} class="dnd-icon" />
-										{PICKERS_UNAVAILABLE ? (
-										<p>Drag and drop Celeste directory</p>
-										) : (
-										<p>Or, drag and drop one here</p>
-                    )}
-								</div>
-						</div>
+			{PICKERS_UNAVAILABLE ? null : (
+				<Button
+					on:click={opfs}
+					type="primary"
+					icon="left"
+					disabled={use(this.copying)}
+				>
+					<Icon icon={iconFolderOpen} />
+					Select Celeste directory
+				</Button>
+			)}
+			<div
+				class={use`droparea ${this.copying}`}
+				on:drop={async (e: DragEvent) => {
+					(
+						(e.currentTarget || e.target) as HTMLElement | null
+					)?.classList.remove("dragover");
+					e.preventDefault();
+					if (!e.dataTransfer || !e.dataTransfer.items || this.copying) return;
+					const transfer = e.dataTransfer.items[0];
+					await opfsForBadBrowsers(transfer);
+				}}
+				on:dragover={(e: DragEvent) => {
+					e.preventDefault();
+					e.dataTransfer!.dropEffect = "copy";
+					if (this.copying) return;
+					((e.currentTarget || e.target) as HTMLElement).classList.add(
+						"dragover"
+					);
+				}}
+				on:dragleave={(e: DragEvent) => {
+					(
+						(e.currentTarget || e.target) as HTMLElement | null
+					)?.classList.remove("dragover");
+				}}
+			>
+				<div class="dnd-bg-hover"></div>
+				<div class="dnd-content">
+					<Icon icon={iconCloudUpload} class="dnd-icon" />
+					{PICKERS_UNAVAILABLE ? (
+						<p>Drag and drop Celeste directory</p>
+					) : (
+						<p>Or, drag and drop one here</p>
+					)}
+				</div>
+			</div>
 			{$if(use(this.status), <div class="error">{use(this.status)}</div>)}
 		</div>
 	);
@@ -762,8 +775,8 @@ export const Patch: Component<
 	return (
 		<div>
 			<p>
-				We're going to patch Celeste with MonoMod for neccesary WASM fixes.
-				You can also optionally install the Everest Mod Loader, but it will take
+				We're going to patch Celeste with MonoMod for neccesary WASM fixes. You
+				can also optionally install the Everest Mod Loader, but it will take
 				longer to install.
 			</p>
 			<Switch
@@ -919,12 +932,18 @@ export const Splash: Component<
 							return <Patch on:done={() => this["on:next"](true)} />;
 						}
 					})}
-					<Button type="primary" icon="full" disabled={false} on:click={() => (this.settingsOpen = true)} title="Settings">
-            <Icon icon={iconSettings} />
-          </Button>
+					<Button
+						type="primary"
+						icon="full"
+						disabled={false}
+						on:click={() => (this.settingsOpen = true)}
+						title="Settings"
+					>
+						<Icon icon={iconSettings} />
+					</Button>
 				</div>
 			</div>
-      <Dialog name="Settings" bind:open={use(this.settingsOpen)}>
+			<Dialog name="Settings" bind:open={use(this.settingsOpen)}>
 				<Settings />
 			</Dialog>
 		</div>

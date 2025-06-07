@@ -21,9 +21,12 @@ import iconUnarchive from "@ktibow/iconset-material-symbols/unarchive";
 import iconArrowBack from "@ktibow/iconset-material-symbols/arrow-back";
 
 export const FSAPI_UNAVAILABLE =
-  (!window.showDirectoryPicker || !window.showOpenFilePicker) && (!(DataTransferItem.prototype as any).getAsEntry && !DataTransferItem.prototype.webkitGetAsEntry);
+	(!window.showDirectoryPicker || !window.showOpenFilePicker) &&
+	!(DataTransferItem.prototype as any).getAsEntry &&
+	!DataTransferItem.prototype.webkitGetAsEntry;
 
-export const PICKERS_UNAVAILABLE = !window.showDirectoryPicker || !window.showOpenFilePicker;
+export const PICKERS_UNAVAILABLE =
+	!window.showDirectoryPicker || !window.showOpenFilePicker;
 
 export const rootFolder = await navigator.storage.getDirectory();
 
@@ -106,15 +109,15 @@ export async function copyFile(
 }
 
 export async function copyFileForBadBrowsers(
-  file: FileSystemFileEntry,
-  to: FileSystemDirectoryHandle
+	file: FileSystemFileEntry,
+	to: FileSystemDirectoryHandle
 ) {
-  const data = await new Promise<File>((resolve, reject) => {
-    file.file(resolve, reject);
-  });
-  const handle = await to.getFileHandle(file.name, { create: true });
-  const writable = await handle.createWritable();
-  await data.stream().pipeTo(writable);
+	const data = await new Promise<File>((resolve, reject) => {
+		file.file(resolve, reject);
+	});
+	const handle = await to.getFileHandle(file.name, { create: true });
+	const writable = await handle.createWritable();
+	await data.stream().pipeTo(writable);
 }
 
 export async function countFolder(
@@ -135,25 +138,25 @@ export async function countFolder(
 }
 
 export async function countFolderForBadBrowsers(
-  folder: FileSystemDirectoryEntry
+	folder: FileSystemDirectoryEntry
 ): Promise<number> {
-  let count = 0;
-  async function countOne(folder: FileSystemDirectoryEntry) {
-    const reader = folder.createReader();
-    const entries = await new Promise<FileSystemEntry[]>((resolve, reject) => {
-      reader.readEntries(resolve, reject);
-    });
+	let count = 0;
+	async function countOne(folder: FileSystemDirectoryEntry) {
+		const reader = folder.createReader();
+		const entries = await new Promise<FileSystemEntry[]>((resolve, reject) => {
+			reader.readEntries(resolve, reject);
+		});
 
-    for (const entry of entries) {
-      if (entry.isFile) {
-        count++;
-      } else {
-        await countOne(entry as FileSystemDirectoryEntry);
-      }
-    }
-  }
-  await countOne(folder);
-  return count;
+		for (const entry of entries) {
+			if (entry.isFile) {
+				count++;
+			} else {
+				await countOne(entry as FileSystemDirectoryEntry);
+			}
+		}
+	}
+	await countOne(folder);
+	return count;
 }
 
 export async function copyFolder(
@@ -180,35 +183,35 @@ export async function copyFolder(
 }
 
 export async function copyFolderForBadBrowsers(
-  folder: FileSystemDirectoryEntry,
-  to: FileSystemDirectoryHandle,
-  callback?: (name: string) => void
+	folder: FileSystemDirectoryEntry,
+	to: FileSystemDirectoryHandle,
+	callback?: (name: string) => void
 ) {
-  async function upload(
-    from: FileSystemDirectoryEntry,
-    to: FileSystemDirectoryHandle
-  ) {
-    const reader = from.createReader();
-    const entries = await new Promise<FileSystemEntry[]>((resolve, reject) => {
-      reader.readEntries(resolve, reject);
-    });
+	async function upload(
+		from: FileSystemDirectoryEntry,
+		to: FileSystemDirectoryHandle
+	) {
+		const reader = from.createReader();
+		const entries = await new Promise<FileSystemEntry[]>((resolve, reject) => {
+			reader.readEntries(resolve, reject);
+		});
 
-    for (const entry of entries) {
-      if (entry.isFile) {
-        const file = entry as FileSystemFileEntry;
-        const fileHandle = await to.getFileHandle(file.name, { create: true });
-        const writable = await fileHandle.createWritable();
-        file.file((f) => f.stream().pipeTo(writable));
-        if (callback) callback(file.name);
-      } else {
-        const dir = entry as FileSystemDirectoryEntry;
-        const newTo = await to.getDirectoryHandle(dir.name, { create: true });
-        await upload(dir, newTo);
-      }
-    }
-  }
-  const newFolder = await to.getDirectoryHandle(folder.name, { create: true });
-  await upload(folder, newFolder);
+		for (const entry of entries) {
+			if (entry.isFile) {
+				const file = entry as FileSystemFileEntry;
+				const fileHandle = await to.getFileHandle(file.name, { create: true });
+				const writable = await fileHandle.createWritable();
+				file.file((f) => f.stream().pipeTo(writable));
+				if (callback) callback(file.name);
+			} else {
+				const dir = entry as FileSystemDirectoryEntry;
+				const newTo = await to.getDirectoryHandle(dir.name, { create: true });
+				await upload(dir, newTo);
+			}
+		}
+	}
+	const newFolder = await to.getDirectoryHandle(folder.name, { create: true });
+	await upload(folder, newFolder);
 }
 
 export async function hasContent(): Promise<boolean> {
@@ -556,10 +559,7 @@ export const OpfsExplorer: Component<
 	};
 
 	const uploadDisabled = use(this.uploading, (x) => x || FSAPI_UNAVAILABLE);
-	const downloadDisabled = use(
-		this.downloading,
-		(x) => x || FSAPI_UNAVAILABLE
-	);
+	const downloadDisabled = use(this.downloading, (x) => x || FSAPI_UNAVAILABLE);
 
 	return (
 		<div>
