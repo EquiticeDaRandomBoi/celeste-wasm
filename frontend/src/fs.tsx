@@ -558,8 +558,8 @@ export const OpfsExplorer: Component<
 		this.uploading = false;
 	};
 
-	const uploadDisabled = use(this.uploading, (x) => x || FSAPI_UNAVAILABLE);
-	const downloadDisabled = use(this.downloading, (x) => x || FSAPI_UNAVAILABLE);
+	const uploadDisabled = use(this.uploading, (x) => x || PICKERS_UNAVAILABLE);
+	const downloadDisabled = use(this.downloading, (x) => x || PICKERS_UNAVAILABLE);
 
 	return (
 		<div>
