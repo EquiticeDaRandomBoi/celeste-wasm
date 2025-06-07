@@ -186,15 +186,23 @@ const Intro: Component<
 				</Link>
 				.
 			</p>
-			{FSAPI_UNAVAILABLE ? (
+			{PICKERS_UNAVAILABLE ? (
 				<div class="error">
 					Your browser does not support the{" "}
 					<Link href="https://developer.mozilla.org/en-US/docs/Web/API/Window/showDirectoryPicker">
 						File System Access API
 					</Link>
-					. You will be unable to copy game assets from your local install of
-					Celeste or extract a {NAME} archive to play or use the upload features
+					. You will be unable to extract a {NAME} archive to play or use the upload/download features
 					in the filesystem viewer.
+				</div>
+			) : null}
+			{FSAPI_UNAVAILABLE ? (
+				<div class="error">
+					Your browser does not support the{" "}
+					<Link href="https://developer.mozilla.org/en-US/docs/Web/API/DataTransferItem/webkitGetAsEntry">
+						File and Directory Entries API
+					</Link>
+					. You will be unable to copy game assets from your local install of Celeste.
 				</div>
 			) : null}
 
@@ -213,10 +221,10 @@ const Intro: Component<
 				on:click={() => next("extract")}
 				type="primary"
 				icon="left"
-				disabled={use(this.disabled, (x) => x || FSAPI_UNAVAILABLE)}
+				disabled={use(this.disabled, (x) => x || PICKERS_UNAVAILABLE)}
 			>
 				<Icon icon={iconUnarchive} />
-				{FSAPI_UNAVAILABLE
+				{PICKERS_UNAVAILABLE
 					? `Extracting ${NAME} archive is unsupported`
 					: `Extract ${NAME} archive`}
 			</Button>
