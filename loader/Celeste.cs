@@ -69,6 +69,8 @@ public static partial class CelesteLoader
 
             celeste = Assembly.LoadFrom("/libsdl/CustomCeleste.dll");
 
+			MonoMod.Core.Platforms.WasmDetourFactory.EnableTailCallDetours = true;
+
             AssemblyLoadContext.Default.ResolvingUnmanagedDll += (assembly, name) =>
             {
                 if (name == "SDL2") name = "SDL3";
