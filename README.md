@@ -25,8 +25,8 @@ A mostly-complete port of Celeste (2018) to WebAssembly, with full support for E
 ## I want to figure out how this works
 
 - The native dotnet WASM support is used to compile a loader program to WASM
-  - `celeste/Program.cs` loads a patched Celeste assembly and exports a function that polls its main loop
-  - `celeste/Patcher.cs` runs MonoMod on celeste assemblies provided by the user to patch it for WASM
+  - `loader/Celeste.cs` loads a patched Celeste assembly and exports a function that polls its main loop
+  - `loader/Patcher.cs` runs MonoMod on celeste assemblies provided by the user to patch it for WASM
   - `patcher/` has the source for the `MonoMod.Patcher` mod used for WASM patches
 - A WASM port of MonoMod is used to provide detours/hooks to Everest and other runtime mods, it functions completely on the IL level and is mono specific
 - FMOD pthread builds are used for audio, with slight patching of the bindings so that using FMOD 2 works
