@@ -46,13 +46,13 @@ export const bypassDebug = proxyConsole("debug", "var(--fg4)");
 function hookfmod() {
 	let contexts: AudioContext[] = [];
 
-	let ctx = AudioContext;
-	(AudioContext as any) = function () {
-		let context = new ctx();
-
-		contexts.push(context);
-		return context;
-	};
+	(AudioContext as any) = new Proxy(AudioContext, {
+		construct(target, argArray) {
+			let ctx = new target(...argArray);
+			contexts.push(ctx);
+			return ctx;
+		},
+	});
 
 	window.addEventListener("visibilitychange", async () => {
 		if (document.visibilityState === "visible") {
