@@ -51,7 +51,7 @@ export const Logo: Component<{}, {}> = function () {
 	`;
 	return (
 		<a href="https://github.com/MercuryWorkshop/celeste-wasm" target="_blank">
-			<img alt="Celeste icon" src="/app.webp" />
+			<img alt="Celeste icon" src="./app.webp" />
 			<span>{NAME}</span>
 			<div class="extras">
 				<span class="ver">v1.4.0.0</span>

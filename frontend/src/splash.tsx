@@ -909,7 +909,7 @@ export const Splash: Component<
 
 	return (
 		<div>
-			<img alt="Splash image" class="splash" src="/splash.webp" />
+			<img alt="Splash image" class="splash" src="./splash.webp" />
 			<div class="blur" />
 			<div class="main">
 				<div class="container">

@@ -6,6 +6,7 @@ import os from "node:os";
 export default defineConfig({
 	plugins: [dreamlandPlugin()],
 	root: "./frontend",
+	base: "./",
 	server: {
 		headers: {
 			"Cross-Origin-Embedder-Policy": "require-corp",

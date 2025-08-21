@@ -89,7 +89,7 @@ let dotnet: DotnetHostBuilder;
 let exports: any;
 
 export async function getDlls(): Promise<(readonly [string, string])[]> {
-	const resources: any = await fetch("/_framework/blazor.boot.json").then((r) =>
+	const resources: any = await fetch("../_framework/blazor.boot.json").then((r) =>
 		r.json()
 	);
 
@@ -191,7 +191,7 @@ export const loadedLibcurlPromise = new Promise((r) => (libcurlresolver = r));
 export async function preInit() {
 	if (gameState.ready) return;
 
-	wasm = await eval(`import("/_framework/dotnet.js")`);
+	wasm = await eval(`import("../_framework/dotnet.js")`);
 	dotnet = wasm.dotnet;
 
 	console.debug("initializing dotnet");
