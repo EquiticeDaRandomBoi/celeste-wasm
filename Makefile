@@ -32,6 +32,7 @@ emsdk:
 	./emsdk/emsdk activate 3.1.56
 	python3 ./sanitizeemsdk.py "$(shell realpath ./emsdk/)"
 	patch -p1 --directory emsdk/upstream/emscripten/ < emsdk.patch
+	patch -p1 --directory emsdk/upstream/emscripten/ < emsdk.2.patch
 	rm -rvf emsdk/upstream/emscripten/cache/*
 
 dotnetclean:
