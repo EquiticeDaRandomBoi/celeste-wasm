@@ -84,13 +84,14 @@ useChange([gameState.playing, gameState.initting], () => {
 	} catch (err) {}
 });
 
+let nativefetch = window.fetch;
 let wasm;
 let dotnet: DotnetHostBuilder;
 let exports: any;
 
 export async function getDlls(): Promise<(readonly [string, string])[]> {
-	const resources: any = await fetch("../_framework/blazor.boot.json").then((r) =>
-		r.json()
+	const resources: any = await nativefetch("_framework/blazor.boot.json").then(
+		(r) => r.json()
 	);
 
 	return Object.entries(resources.resources.fingerprinting)
@@ -240,7 +241,6 @@ export async function preInit() {
 		},
 	});
 
-	let nativefetch = window.fetch;
 	let dl = document.createElement("a");
 	dl.style.display = "none";
 	document.body.appendChild(dl);

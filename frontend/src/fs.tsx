@@ -559,7 +559,10 @@ export const OpfsExplorer: Component<
 	};
 
 	const uploadDisabled = use(this.uploading, (x) => x || PICKERS_UNAVAILABLE);
-	const downloadDisabled = use(this.downloading, (x) => x || PICKERS_UNAVAILABLE);
+	const downloadDisabled = use(
+		this.downloading,
+		(x) => x || PICKERS_UNAVAILABLE
+	);
 
 	return (
 		<div>
