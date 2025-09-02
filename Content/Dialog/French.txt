@@ -1,0 +1,5241 @@
+﻿# Language
+	LANGUAGE=french,Français
+	ICON=Icons/french.png
+	ORDER=20
+	FONT=Renogare,64
+	BEGIN=true
+
+# Auto-Saving
+	AUTOSAVING_TITLE_NS=
+		Ce jeu fonctionne avec sauvegarde automatique
+	AUTOSAVING_DESC_NS=
+		Ne pas éteindre la console
+		quand cette icône est affichée
+	AUTOSAVING_TITLE_PS4=
+		Ce jeu fonctionne avec sauvegarde automatique
+	AUTOSAVING_DESC_PS4=
+		Ne pas éteindre la console
+		quand cette icône est affichée
+	AUTOSAVING_TITLE_XB1=
+		Ce jeu fonctionne avec sauvegarde automatique
+	AUTOSAVING_DESC_XB1=
+		Ne pas éteindre la console
+		quand cette icône est affichée
+	AUTOSAVING_TITLE_PC=
+		Ce jeu fonctionne avec sauvegarde automatique
+	AUTOSAVING_DESC_PC=
+		Ne pas éteindre l’ordinateur
+		quand cette icône est affichée
+
+# Main Menu
+	MENU_DEBUG=		~DEBUG~
+	MENU_BEGIN=		GRIMPER
+	MENU_PICO8=		PICO-8
+	MENU_OPTIONS=	Options
+	MENU_CREDITS=	Crédits
+	MENU_EXIT=		Quitter
+
+# Options
+	OPTIONS_TITLE=			OPTIONS
+	OPTIONS_CONTROLS=		COMMANDES
+	OPTIONS_RUMBLE_PC=		Vibration
+	OPTIONS_RUMBLE_PS4=		Vibration
+	OPTIONS_RUMBLE_XB1=		Vibration
+	OPTIONS_RUMBLE_NS=		Vibration
+	OPTIONS_RUMBLE_ON=		100%
+	OPTIONS_RUMBLE_HALF=	50%
+	OPTIONS_RUMBLE_OFF=		NON
+	OPTIONS_GRAB_MODE=		Mode Attraper
+	OPTIONS_CROUCH_DASH_MODE=Mode Sprint accroupi
+	OPTIONS_BUTTON_PRESS=	Appuyer
+	OPTIONS_BUTTON_HOLD=	Maintenir
+	OPTIONS_BUTTON_INVERT=	Inverser
+	OPTIONS_BUTTON_TOGGLE=	Activer/Désactiver
+	OPTIONS_KEYCONFIG=		Configuration du clavier
+	OPTIONS_BTNCONFIG=		Configuration de manette
+
+	OPTIONS_VIDEO=			VIDÉO
+	OPTIONS_FULLSCREEN=		Plein écran
+	OPTIONS_WINDOW=			Échelle de fenêtre
+	OPTIONS_VSYNC=			Synchronisation verticale
+	OPTIONS_VIEWPORT_NS=	Régler la taille de l’écran
+	OPTIONS_VIEWPORT_PS4=	Régler la taille de l’écran
+	OPTIONS_VIEWPORT_XB1=	Régler la taille de l’écran
+	OPTIONS_VIEWPORT_PC=	Régler la taille de l’écran
+	OPTIONS_DISABLE_FLASH=	Mode Photosensible
+	OPTIONS_DISABLE_SHAKE=	Effets de tremblement d'écran
+
+	OPTIONS_AUDIO=			AUDIO
+	OPTIONS_MUSIC=			Musique
+	OPTIONS_SOUNDS=			Sons
+
+	OPTIONS_GAMEPLAY=		GAMEPLAY
+	OPTIONS_SPEEDRUN=		Compteur de speedrun
+	OPTIONS_SPEEDRUN_CHAPTER=Chapitre
+	OPTIONS_SPEEDRUN_FILE=	File
+	OPTIONS_DASHES=			Compteur de sprints
+	OPTIONS_LANGUAGE=		Langue
+	OPTIONS_ON=				OUI
+	OPTIONS_OFF=			NON
+
+# KEYBOARD CONFIG
+	KEY_CONFIG_TITLE=		Configuration du clavier
+	KEY_CONFIG_MOVEMENT=	MOUVEMENT
+	KEY_CONFIG_LEFT=		Gauche
+	KEY_CONFIG_RIGHT=		Droite
+	KEY_CONFIG_UP=			Haut
+	KEY_CONFIG_DOWN=		Bas
+	KEY_CONFIG_GAMEPLAY=	ACTIONS
+	KEY_CONFIG_JUMP=		Sauter
+	KEY_CONFIG_DASH=		Sprinter
+	KEY_CONFIG_GRAB=		Attraper
+	KEY_CONFIG_TALK=		Parler
+	KEY_CONFIG_MENUS=		MENU
+	KEY_CONFIG_CONFIRM=		Confirmer
+	KEY_CONFIG_CANCEL=		Annuler
+	KEY_CONFIG_PAUSE=		Pause
+	KEY_CONFIG_JOURNAL=		Journal
+	KEY_CONFIG_QUICKRESTART=Redémarrage Rapide
+	KEY_CONFIG_RESET=		Réglages par défaut
+	KEY_CONFIG_CHANGING=	APPUYER SUR LA NOUVELLE TOUCHE POUR
+	KEY_CONFIG_MOVE_ONLY=	MOUVEMENT UNIQUEMENT
+	KEY_CONFIG_DASH_ONLY=	SPRINT UNIQUEMENT
+
+
+# CONTROLLER CONFIG
+	BTN_CONFIG_TITLE=		Configuration de manette
+	BTN_CONFIG_INFO=		APPUYER SUR | POUR AJOUTER UNE TOUCHE, | POUR SUPPRIMER DES TOUCHES
+	BTN_CONFIG_CHANGING=	APPUYER SUR LA TOUCHE À AJOUTER
+	BTN_CONFIG_NOCONTROLLER=Veuillez brancher une manette
+
+# ADDITIONAL OPTIONS FOR V1.4.0.0
+	KEY_CONFIG_DEMO=		Sprint accroupi
+	KEY_CONFIG_ADVANCED=	AVANCÉES
+	KEY_CONFIG_MENU_NOTICE= CHAQUE ACTION DOIT ÊTRE ASSIGNÉE À 1 BOUTON
+
+# PICO-8
+	PICO8_UNLOCKED=			Maintenant disponible dans le menu principal
+	PICO8_PAUSE_TITLE=		EN PAUSE
+	PICO8_PAUSE_CONTINUE=	Reprendre
+	PICO8_PAUSE_RESTART=	Réinitialiser PICO-8
+	PICO8_PAUSE_QUIT=		Quitter PICO-8
+
+# FILE MENU
+	FILE_DEFAULT=		Madeline
+	FILE_CORRUPTED=		Endommagé :(
+	FILE_FAILEDTOLOAD=	Échec du chargement
+	FILE_NEWGAME=		Nouvelle partie !
+	FILE_CONTINUE=		Continuer
+	FILE_DELETE=		Supprimer
+	FILE_BEGIN=			Commencer
+	FILE_ASSIST_OFF=	Mode assisté : NON
+	FILE_ASSIST_ON=		Mode assisté : OUI
+	FILE_VARIANT_OFF=	Variant Mode : OFF
+	FILE_VARIANT_ON=	Variant Mode : ON
+	FILE_RENAME=		Renommer
+	FILE_DELETE_REALLY=	Confirmer ?
+	FILE_DELETE_NO=		Annuler
+	FILE_DELETE_YES=	Supprimer
+	FILE_DELETE_FAILED=	Échec de suppression !
+
+# Assist Mode
+	ASSIST_MODE_0=
+		Le {# 44adf7}mode Assisté{#} permet de modifier{n}
+		les règles du jeu en fonction des besoins.
+
+	ASSIST_MODE_1=
+		Il inclut des options qui permettent de ralentir la vitesse du jeu,{n}
+		de bénéficier d'invincibilité ou d'endurance infinie,{n}
+		ou de passer des chapitres entiers.
+
+	ASSIST_MODE_2=
+		Celeste a été conçu pour être une expérience difficile et gratifiante.{n}
+		Si le niveau de difficulté par défaut est trop élevé pour toi, nous espérons que{n}
+		tu pourras quand même profiter de l'expérience grâce au {# 44adf7}mode Assisté{#}.
+
+	ASSIST_ASK=		Veux-tu jouer avec le {# 44adf7}mode assisté{#} ?
+	ASSIST_YES=		Oui
+	ASSIST_NO=		Non
+	ASSIST_SKIP=	Assistance{n}Passer
+
+# File Naming
+	NAME_LETTERS=
+		ABCDEFGHI abcdefghi
+		JKLMNOPQR jklmnopqr
+		STUVWXYZ  stuvwxyz
+		1234567890+=:~!@$%
+		^&*_-#"'()<>/\.,|`
+
+	NAME_SPACE=			espace
+	NAME_BACKSPACE=		retour arrière
+	NAME_ACCEPT=		ACCEPTER
+	NAME_BACK=			ANNULER
+
+# Xbox One Stuff
+	XB1_MENU_SWITCH_PROFILE=	Changer de profil
+	XB1_SIGN_OUT_MESSAGE=		Un changement de connexion s’est produit. Veuillez vous connecter à nouveau ou retourner à l’écran titre.
+	XB1_SIGN_IN=				Connexion
+	XB1_RECONNECT_CONTROLLER=	Veuillez rebrancher votre manette pour continuer.
+
+# Intro Vignette
+	INTRO_VIGNETTE_RESUME=	Continuer
+	INTRO_VIGNETTE_SKIP=	Passer
+	INTRO_VIGNETTE_QUIT=	Quitter
+
+# Overworld
+	OVERWORLD_START=			Démarrer
+	OVERWORLD_NORMAL=			GRIMPER
+	OVERWORLD_INTERLUDE=		COMMENCER
+	OVERWORLD_REMIX=			FACE B
+	OVERWORLD_REMIX2=			FACE C
+	OVERWORLD_REMIX_UNLOCKED=	FACE B débloquée !
+	OVERWORLD_REMIX_UNLOCKED2=	FACE C débloquée !
+
+# Chapter Titles
+	AREA_CHAPTER=	Chapitre {x}
+	AREA_0=			Prologue
+	AREA_1=			La cité abandonnée
+	AREA_2=			Le site ancien
+	AREA_3=			La station Celeste
+	AREA_4=			L’arête d’or
+	AREA_5=			Le temple miroir
+	AREA_6=			Réflexion
+	AREA_7=			Le sommet
+	AREA_8=			Épilogue
+	AREA_9=			Le cœur
+
+# Checkpoints
+	CHECKPOINT_1_0=		Croisement
+	CHECKPOINT_1_1=		Gouffre
+
+	CHECKPOINT_2_0=		Intervention
+	CHECKPOINT_2_1=		Réveillée
+
+	CHECKPOINT_3_0=		Gros désordre
+	CHECKPOINT_3_1=		Cage d’ascenseur
+	CHECKPOINT_3_2=		Suite présidentielle
+
+	CHECKPOINT_4_0=		Temple
+	CHECKPOINT_4_1=		Vieux sentier
+	CHECKPOINT_4_2=		Course de falaise
+
+	CHECKPOINT_5_0=		Profondeurs
+	CHECKPOINT_5_1=		À vau-l’eau
+	CHECKPOINT_5_2=		Recherche
+	CHECKPOINT_5_3=		Sauvetage
+
+	CHECKPOINT_6_0=		Lac
+	CHECKPOINT_6_1=		Grottes
+	CHECKPOINT_6_2=		Réflexion
+	CHECKPOINT_6_3=		Au plus bas
+	CHECKPOINT_6_4=		Résolution
+
+	CHECKPOINT_7_0=		500 M
+	CHECKPOINT_7_1=		1 000 M
+	CHECKPOINT_7_2=		1 500 M
+	CHECKPOINT_7_3=		2 000 M
+	CHECKPOINT_7_4=		2 500 M
+	CHECKPOINT_7_5=		3 000 M
+
+	CHECKPOINT_8_0=		Dans le cœur
+	CHECKPOINT_8_1=		Chaud et froid
+	CHECKPOINT_8_2=		Cœur de la montagne
+
+# B-Side Checkpoints
+	CHECKPOINT_1H_0=	Machine
+	CHECKPOINT_1H_1=	Bric-à-brac
+
+	CHECKPOINT_2H_0=	Verrous
+	CHECKPOINT_2H_1=	Autel de rêve
+
+	CHECKPOINT_3H_0=	Quartiers du personnel
+	CHECKPOINT_3H_1=	Bibliothèque
+	CHECKPOINT_3H_2=	Toit
+
+	CHECKPOINT_4H_0=	Marchepieds
+	CHECKPOINT_4H_1=	Canyon venteux
+	CHECKPOINT_4H_2=	Œil du cyclone
+
+	CHECKPOINT_5H_0=	Chambre centrale
+	CHECKPOINT_5H_1=	À travers le miroir
+	CHECKPOINT_5H_2=	Mix Master
+
+	CHECKPOINT_6H_0=	Réflexion
+	CHECKPOINT_6H_1=	Au plus bas
+	CHECKPOINT_6H_2=	Sursis
+
+	CHECKPOINT_7H_0=	500 M
+	CHECKPOINT_7H_1=	1 000 M
+	CHECKPOINT_7H_2=	1 500 M
+	CHECKPOINT_7H_3=	2 000 M
+	CHECKPOINT_7H_4=	2 500 M
+	CHECKPOINT_7H_5=	3 000 M
+
+	CHECKPOINT_8H_0=	Dans le cœur
+	CHECKPOINT_8H_1=	Brûler ou geler
+	CHECKPOINT_8H_2=	Battements de cœur
+
+# Postcards
+	POSTCARD_AREA_1=
+		Sélectionne {#ff1144}Sauvegarder et quitter{#} dans le menu Pause à tout instant pour faire une pause. Tu pourras reprendre la partie dans le même écran et tu ne perdras aucune progression !
+
+	POSTCARD_AREA_2=
+		Les {#ff1144}fraises{#} impressionneront tes amis, mais c’est tout. Ne les ramasse que si tu y tiens vraiment !
+
+	POSTCARD_AREA_3=
+		Sois fier de ton {#ff1144}Compteur de morts{#} !{n}Plus tu meurs, plus tu apprends.{n}N’abandonne pas !
+
+	POSTCARD_AREA_4=
+		{# F94A4A}Conseil de grimpe !{#}{n}Faible ou un peu juste en énergie ?{n}{n}Sauter des murs{n}ne consomme aucune endurance !
+
+	POSTCARD_AREA_5=
+		{# F94A4A}Le savais-tu ?{#}{n}La plupart des accidents de montagne {n}sont dus à la fatigue.{n}{n}Pense à faire des pauses régulières !
+
+	POSTCARD_AREA_6=
+		{# F94A4A} Le savais-tu ?{#}{n}{n}Il est impossible d’aller {n}plus vite que son reflet.
+
+	POSTCARD_CSIDES=
+		Pourquoi pas un petit défi ?{n}{n}Les {# F94A4A}faces C{#} sont maintenant débloquées et{n}les {# dbb63f}fraises d'or{#} sont apparues{n}au début de chaque chapitre !{n}{n}Bonne chance, {+MADELINE} !
+
+# Journal
+	JOURNAL_OF=
+	JOURNAL_PROGRESS=				PROGRESSION
+	JOURNAL_SPEEDRUNS=				RECORDS : SPEEDRUNS
+	JOURNAL_DASHES=					RECORDS : MINIMUM DE SPRINTS
+	JOURNAL_DEATHS=					RECORDS : MINIMUM DE MORTS
+	JOURNAL_POEM=					CŒURS DE CRISTAL
+	JOURNAL_MODE_NORMAL=			FINI
+	JOURNAL_MODE_NORMAL_FULLCLEAR=	COMPLÈTEMENT FINI
+	JOURNAL_MODE_BSIDE=				FACE B
+	JOURNAL_MODE_CSIDE=				FACE C
+	JOURNAL_TOTALS=					TOTAUX
+	JOURNAL_GRANDTOTAL=				GRAND TOTAL
+
+# Saving / Loading Failed
+	SAVEFAILED_TITLE=	ÉCHEC DE SAUVEGARDE
+	SAVEFAILED_RETRY=	Réessayer
+	SAVEFAILED_IGNORE=	Continuer sans sauvegarder
+	LOADFAILED_TITLE=	ÉCHEC DE CHARGEMENT
+	LOADFAILED_GOBACK=	Retour
+	LOADFAILED_IGNORE=	Continuer sans sauvegarder
+
+# Tutorial
+	TUTORIAL_CLIMB=		GRIMPER
+	TUTORIAL_HOLD=		MAINTENIR
+	TUTORIAL_DASH=		SPRINTER
+	TUTORIAL_DREAMJUMP=	SAUTER
+	TUTORIAL_CARRY=		TRANSPORTER
+
+# Area Complete
+	AREACOMPLETE_NORMAL=				Chapitre fini
+	AREACOMPLETE_NORMAL_FULLCLEAR=		Chapitre complètement fini
+	AREACOMPLETE_BSIDE=					Face B terminée
+	AREACOMPLETE_CSIDE=					Face C terminée
+	MOUNTAIN_COMPLETE_NORMAL=			Fini
+	MOUNTAIN_COMPLETE_NORMAL_FULLCLEAR=	Complètement fini
+	MOUNTAIN_COMPLETE_BSIDE=			Face B terminée
+	MOUNTAIN_COMPLETE_CSIDE=			Face C terminée
+
+# Game Paused
+	MENU_PAUSE_TITLE=			EN PAUSE
+	MENU_PAUSE_RESUME=			Reprendre
+	MENU_PAUSE_SKIP_CUTSCENE=	Passer la cinématique
+	MENU_PAUSE_RETRY=			Réessayer
+	MENU_PAUSE_ASSIST=			Options d’assistance
+	MENU_PAUSE_VARIANT=			Variants
+	MENU_PAUSE_OPTIONS=			Options
+	MENU_PAUSE_RESTARTAREA=		Redémarrer le chapitre
+	MENU_PAUSE_SAVEQUIT=		Sauvegarder et quitter
+	MENU_PAUSE_RETURN=			Retour à la carte
+	MENU_PAUSE_RESTARTDEMO=		Redémarrer la démo
+
+# Assist UI
+	MENU_ASSIST_TITLE=				MODE ASSISTÉ
+	MENU_ASSIST_SUBTITLE=			Assists
+	MENU_ASSIST_GAMESPEED=			Vitesse de jeu
+	MENU_ASSIST_INVINCIBLE=			Invincibilité
+	MENU_ASSIST_AIR_DASHES=				Sprints en l'air
+	MENU_ASSIST_AIR_DASHES_NORMAL=		Par défaut
+	MENU_ASSIST_AIR_DASHES_TWO=			2
+	MENU_ASSIST_AIR_DASHES_INFINITE=	Infini
+	MENU_ASSIST_INFINITE_STAMINA=	Endurance illimitée
+
+# Misc UI
+	UI_CUTSCENE_SKIP=	Passer
+	UI_REMIX_UNLOCKED=	Face B débloquée
+	UI_CANCEL=			Retour
+	UI_CONFIRM=			Confirmer
+	UI_QUICK_RESTART_TITLE=Redémarrage Rapide:
+	UI_QUICK_RESTART_HOLD=Maintenir
+	UI_QUICK_RESTART_PRESS=Appuyer sur
+
+# B SIDES
+	REMIX_BY=			Musique de
+	REMIX_ALBUM=		Faces B de Celeste
+
+	AREA_1_REMIX=		(Sever the Skyline Mix)
+	AREA_2_REMIX=		(Black Moonrise Mix)
+	AREA_3_REMIX=		(Good Karma Mix)
+	AREA_4_REMIX=		(Golden Feather Mix)
+	AREA_5_REMIX=		(Mirror Magic Mix)
+	AREA_6_REMIX=		(Center of the Earth Mix)
+	AREA_7_REMIX=		(No More Running Mix)
+	AREA_9_REMIX=		(Say Goodbye Mix)
+
+# Credits
+	CREDITS_THANKYOU=	Merci d’avoir joué :)
+
+# Names
+	THEO=				{# FF9523}Theo{#}
+	THEO_UNDER_STARS=	{# FFFF4C}TheoUnderStars{#}
+	MIXMASTER_THEO=		{# FF9523}Theo Mix Master{#}
+	MOM=				{# 339CC7}Maman{#}
+	MROSHIRO=			{# 7BD838}M\. Oshiro{#}
+	OSHIRO=				{# 7BD838}Oshiro{#}
+	ELCREEPO=			{# 7BD838}Le Cinglé{#}
+	MADELINE=			{# F94A4A}{savedata Name}{#}
+	MS_MADELINE=		{# F94A4A}Mlle {savedata Name}{#}
+	RESORT=				{# b864be}Station Celeste{#}
+	THOUGHT=			{# 696a6a}{~}(
+	ENDTHOUGHT=			){/~}{#}
+	MOUNTAIN=			{# 96EFFF}montagne{#}
+	CELESTE_MOUNTAIN=	{# 96EFFF}mont Celeste{#}
+	PART_OF_ME=			{# d678db}{~}partie de moi{/~}{#}
+	PART_OF_YOU=		{# d678db}{~}partie de toi{/~}{#}
+	ST_BAD=				{# d678db}{~}
+	END_BAD=			{/~}{#}
+
+# Theo sister name
+# if the player name is the same as this one, theo's sister name becomes the ALT_NAME
+	THEO_SISTER_NAME=		Alex
+	THEO_SISTER_ALT_NAME=	Maddy
+	ALEX=					{# F94A4A}{savedata TheoSisterName}{#}
+
+# ================================== IN-GAME DIALOG BEGINS HERE! ==================================
+
+# *** Prologue ***
+
+	CH0_INTRO=
+		Ça y est, {+MADELINE}.
+		Respire bien.
+		Pourquoi es-tu si nerveuse ?
+
+	CH0_GRANNY=
+		{anchor top}
+
+		[MADELINE left normal]
+		Excusez-moi, Madame ?
+
+		{trigger 0 Madeline walks forward}
+
+		[MADELINE left normal]
+		Le panneau de devant est cassé...{n}Est-ce le sentier de la {+mountain} ?
+
+		[GRANNY right normal]
+		Tu y es presque.{n}C’est juste de l’autre côté du pont.
+
+		{trigger 1 Madeline walks to the right of the house, turns left}
+		
+		[MADELINE right sad]
+		Au fait, vous devriez faire venir quelqu’un pour votre allée. La corniche s’est écroulée et j’ai failli mourir.
+
+		{trigger 2 Granny laughs}
+
+		[GRANNY left laugh]
+		Si tu as failli mourir dans mon {>> 0.3}« allée »{>>}{0.2},{n}la {+mountain} risque d’être trop difficile pour toi.
+
+		{trigger 3 Laugh Continues}
+
+		[MADELINE right upset]
+		{0.5}...{0.2}
+
+		[MADELINE right angry]
+		Si une vieille bique comme {~}vous{/~} arrive à{n}survivre ici, je crois que je m’en tirerai très bien.
+
+		{trigger 4 Stop laughing}
+
+		[GRANNY left normal]
+		Comme tu voudras.
+
+		{silent_trigger 5 Ominous zoom-in}
+
+		[GRANNY left normal]
+		Mais tu dois savoir que le {n}{+CELESTE_MOUNTAIN} est un lieu étrange.
+		
+		[GRANNY left creepA]
+		Tu pourrais y voir des choses.
+
+		[GRANNY left creepB]
+		Des choses que tu n’es pas prête à voir.
+
+		{trigger 6 pan to Maddy}
+
+		[MADELINE right upset]
+		Vous devriez demander de l’aide, Madame.
+
+		{trigger 3 resume laughing}
+
+	CH0_END=
+		Tu peux le faire.
+
+# *** Chapter 01 ***
+
+	CH1_THEO_A=
+		[THEO left normal]
+		Salut à toi, la voyageuse !
+
+		[MADELINE right distracted]
+		Ah... salut.
+
+		{trigger 0 Madeline approaches}
+		
+		[THEO left normal]
+		Quelle nuit horrible pour une rando !
+
+		[MADELINE right distracted]
+		C’est possible.
+
+		[THEO left normal]
+		Cet endroit est complètement dingue. 
+
+		[THEO left excited]
+		J’arrive à peine à croire qu’il existe vraiment !
+
+		[MADELINE right sad]
+		Ce n’est pas une sortie facile, n’est-ce pas ?
+
+		[MADELINE right distracted]
+		Mais je crois que c’est ce que je recherche...
+		
+		[THEO left normal]
+		Waouh, tu n’as pas l’air de rigoler.
+		Je suis vraiment content de rencontrer un autre{n}être humain dans un endroit si désolé.
+
+		[THEO left excited]
+		Au fait, je m’appelle {+ theo}, je suis un aventurier d’un {>> 0.3}{~}pays lointain !{/~}{>>}
+		
+		[MADELINE right sad]
+		...{0.2}
+
+		[THEO left thinking]
+		Tu n’es pas très bavarde, n’est-ce pas ?
+
+		[THEO left normal]
+		Du genre loup solitaire et mystérieuse, j’ai compris.{n}Je n’ai qu’à imaginer ton sombre passé.
+
+	CH1_THEO_B=
+		[MADELINE right sad]
+		Ah, désolée. Je m’appelle {+MADELINE}.
+		J’ai tellement de choses en tête.
+
+		[THEO left normal]
+		Alors, {+MADELINE}, je dirais que{n}tu es venue au bon endroit !
+		
+		[THEO left thinking]
+		Je suis complètement gelé, mais je n’imagine pas{n}un meilleur endroit pour réfléchir tranquillement.
+		
+		[MADELINE right sad]
+		Oui, tu dois avoir raison.
+
+		[MADELINE right normal]
+		De quel « {>> 0.5}{~}pays lointain{/~}{>>} » tu viens ?
+		
+		[THEO left excited]
+		Eh bien, chère compatriote curieuse, je viens{n}du royaume {0.3}{~}mystique et{0.4} exotique{/~}{0.4} de...
+		
+		[THEO left normal]
+		{0.4} Seattle.
+
+		[MADELINE right normal]
+		Ça doit être un endroit spécial.
+
+	CH1_THEO_C=
+		[THEO left excited]
+		Cet endroit est dingue !
+
+		[THEO left normal]
+		Pourquoi abandonner une ville entière ?
+		
+		[MADELINE right normal]
+		J’ai lu qu’une méga-corporation avait commencé{n}à la construire et que plus personne ne voulait y vivre.
+
+		[MADELINE right distracted]
+		Je me demande pourquoi...
+		
+		[THEO left excited]
+		Je parie que c’est le gouvernement qui couvre quelque chose.
+
+		[MADELINE right distracted]
+		Quel gâchis, construire tout ça pour rien...
+
+		[THEO left normal]
+		Au moins, on va profiter des restes.
+
+	CH1_THEO_D=
+		[MADELINE right normal]
+		Tu es ici pour explorer cette ville ?
+		
+		[THEO left normal]
+		Oui, j’aime les endroits abandonnés.
+		
+		[THEO left thinking]
+		Et j’aime m’imaginer{n}en photographe en herbe.
+		
+		[MADELINE right normal]
+		Ah, vraiment ? Cool !
+		Tu as un blog ou quelque chose ?
+		
+		[THEO left thinking]
+		Un blog ?
+		{+MADELINE}.
+		Tout le monde utilise {# FFFF4C}InstaPix{#} aujourd’hui.
+		
+		[THEO left excited]
+		Je suis {+THEO_UNDER_STARS}, tu peux me trouver !
+
+	CH1_THEO_E=
+		[THEO left normal]
+		Ce terrain est vraiment difficile,{n}tu vas revenir vite ?
+		
+		[MADELINE right normal]
+		Non. Je vais jusqu’au sommet.
+		
+		[THEO left excited]
+		Je peux lire la détermination dans ton regard !
+
+		[THEO left normal]
+		C’est stimulant.
+
+		[MADELINE right distracted]
+		Si tu le dis.
+
+		[MADELINE right normal]
+		Je parie que tu pourrais atteindre le sommet aussi.
+
+		[THEO left normal]
+		Peut-être. 
+		
+		[THEO left thinking]
+		En fait, je n’ai pas vraiment envie d’aller au sommet.
+
+		[THEO left normal]
+		{!}Oh !{/!} Mais il paraît qu’il y a de {~}vraies{/~}{n}vieilles ruines au-delà de la ville.
+		
+		[THEO left excited]
+		Elles dateraient des années 1800. 
+
+		[THEO left normal]
+		Je sais que c’est risqué, mais je dois les voir par moi-même.
+
+	CH1_THEO_F=
+		[THEO left normal]
+		Qu’est-ce qu’on dit juste avant de faire{n}quelque chose d’irresponsable ?
+
+		[MADELINE right sad]
+		Euh... « il faut oublier toute prudence » ?
+
+		[THEO left wtf]
+		Non, c’est pas ça.
+
+		[THEO left excited]
+		Ah, si...
+
+		{trigger 0 Theo pumps his fist in the air}
+		
+		[THEO left yolo]
+		{big}{~}ON{>> 0.5}NE{>> 0.2}VIT QU’UNE FOIS !{>>}{/~}{/big}
+
+	MEMORIAL=
+		-- MONT CELESTE --
+		Ce monument est dédié à ceux
+		qui ont péri dans l’ascension
+
+	CH1_END=
+		[MADELINE left distracted]
+		Pouah ! Je suis épuisée.
+
+		{trigger 0 MADELINE sits down to rest. A bird swoops in, lands on her head, and goes to sleep}
+		
+		[MADELINE left deadpan]
+		{>> 0.4}Ça devait être une erreur.
+
+# *** Chapter 02 ***
+
+	CH2_BADELINE_INTRO=
+		{anchor top}
+		
+		[BADELINE left normal]
+		{+MADELINE}, ma chère, ralentis.
+
+		{trigger 0 Madeline turns around}
+		
+		[MADELINE right distracted]
+		Qui a parlé ?
+		
+		[BADELINE left normal]
+		Oh, je ne suis qu’une observatrice inquiète.
+
+		{trigger 1 Badeline is revealed}
+		
+		[MADELINE right sad]
+		Tu es... moi ?
+
+		[BADELINE left normal]
+		Je suis une {+PART_OF_YOU}.
+
+		[MADELINE right sad]
+		Pourquoi une {+PART_OF_ME} a-t-elle l’air si {0.3}{*}sinistre ?{/*}
+
+		[BADELINE left worried]
+		...
+
+		[BADELINE left angry]
+		C’est mon apparence, d’accord ?
+		Tu dois t’y faire.
+
+		[MADELINE right distracted]
+		Désolée, je ne voulais pas-
+
+		[BADELINE left angry]
+		N’y pense plus.
+		Si tu savais quel soulagement{n}c’est de sortir {~}enfin{/~} de ta tête.
+
+		[BADELINE left upset]
+		Mais écoute, je suis inquiète à notre sujet.
+
+		[BADELINE left normal]
+		Il nous faut un loisir, mais là...
+		
+		[MADELINE right sad]
+		Je sais que ça paraît fou, mais{n}je dois gravir cette {+mountain}.
+
+		{trigger 2 Badeline starts laughing}
+		
+		[BADELINE left scoff]
+		Ma chère, tu es tout{n}sauf une {~}alpiniste{/~}.
+
+		[MADELINE right distracted]
+		Qu’est-ce qui te fait dire ça ?
+
+		{trigger 3 Badeline stops laughing}
+		
+		[BADELINE left upset]
+		Je sais que ce n’est pas ton fort,{n}mais sois raisonnable pour une fois.
+		Tu n’imagines pas dans quoi tu te lances.
+		Tu n’y arriveras pas.
+		
+		[MADELINE right upset]
+		C’est exactement pour ça que je dois le faire.
+		Es-tu la faible {+PART_OF_ME}, ou la partie paresseuse ?
+
+		[BADELINE left upset]
+		Je suis la partie pragmatique.
+		
+		[BADELINE left scoff]
+		Et je {~}tente{/~} de rester diplomate.
+		
+		[BADELINE left serious]
+		{s 4}Rentrons à la maison {.6}[BADELINE left serious_alt]ensemble.
+
+	CH2_DREAM_PHONECALL=
+		[MADELINE_PHONE left distracted]
+		Allo ?
+		
+		[EX_PHONE right normal]
+		{+MADELINE}?
+		... Tu appelles d’une cabine ?
+
+		[MADELINE_PHONE left distracted]
+		Oui.
+
+		[MADELINE_PHONE left sad]
+		Non, attends... c’est toi qui appelles.
+
+		[EX_PHONE right normal]
+		Qu’est-ce que tu racontes ?
+		
+		[MADELINE_PHONE left distracted]
+		Peu importe. J’ai des ennuis.
+		Je suis pourchassée par... quelqu’un.
+
+		[MADELINE_PHONE left sad]
+		Je ne comprends pas bien ce qui se passe,{n}mais je me sais en danger. Je le sens.
+		
+		[EX_PHONE right normal]
+		{+MADELINE}, tu ne m’appelles que quand tu{n}paniques au milieu de la nuit.
+		Inutile d’inventer des histoires{n}ridicules pour attirer mon attention.
+		
+		[MADELINE_PHONE left angry]
+		Je n’invente rien !
+		Tu ne changeras jamais !
+		
+		[EX_PHONE right normal]
+		{~}Chut !{/~} {0.5}Ça va, calme-toi.
+		Je m’excuse, chérie.
+		Je t’écoute.
+		
+		[MADELINE_PHONE left sad]
+		Je grimpe le {+celeste_mountain}.
+		J’ai trouvé un étrange miroir, il s’est brisé,{n}mais une partie de moi s’en est échappée, et...
+
+		[MADELINE_PHONE left upset]
+		...
+		... Je fais un rêve, n’est-ce pas ?
+		
+		[EX_PHONE right normal]
+		{+MADELINE}. Bien sûr, tu fais un rêve.
+		Je ne t’ai pas parlé depuis des mois.
+		Pourquoi commencerais-je maintenant ?
+		
+		[MADELINE_PHONE left angry]
+		Pouah ! Pourquoi gravir cette stupide {+mountain} ?
+
+		{trigger 0 Badeline appears}
+		
+		[BADELINE right scoff]
+		Je me pose la même question.
+		
+		[BADELINE right upset]
+		Il est temps d’abandonner et de rentrer à la maison.
+
+	# if the MADELINE has never met Theo before
+	CH2_THEO_INTRO_NEVER_MET=
+		[THEO left normal]
+		Salut à toi, camarade voyageuse !
+		
+		[MADELINE right distracted]
+		Ah... salut.
+
+		{trigger 0 Madeline approaches}
+
+		[THEO left normal]
+		Toi aussi, tu viens pour étudier les vieilles ruines ?
+		
+		[MADELINE right sad]
+		Euh... non, je viens pour monter au sommet.
+		
+		[THEO left excited]
+		Waouh, c’est de la folie !
+		
+		[THEO left normal]
+		Au fait, je m’appelle {+ theo}, je suis un aventurier d’un {>> 0.3}{~}pays lointain !{/~}{>>}
+		
+		[MADELINE right sad]
+		...{0.2}
+		
+		[THEO left thinking]
+		Tu n’es pas très bavarde, n’est-ce pas ?
+		
+		[THEO left normal]
+		Du genre loup solitaire et mystérieuse, j’ai compris.{n}Je n’ai qu’à imaginer ton sombre passé.
+
+	# if the MADELINE has met Theo, but never introduced herself
+	CH2_THEO_INTRO_NEVER_INTRODUCED=
+		[MADELINE right sad]
+		Salut, {+ theo}, désolée pour tout à l’heure.{n}Je m’appelle {+MADELINE}.
+		J’ai tellement de choses en tête.
+		
+		[THEO left normal]
+		C’est l’endroit idéal pour ça.
+		Ces ruines invitent à l’introspection.
+		J’ai l’impression de me{n}regarder dans un miroir, pour ainsi dire.
+		
+		[MADELINE right distracted]
+		Oui... je comprends.
+
+		[MADELINE right normal]
+		De quel « {>> 0.5}{~}pays lointain{/~}{>>} » tu viens ?
+		
+		[THEO left excited]
+		Eh bien, chère compatriote curieuse, je viens{n}du royaume {0.3}{~}mystique et{0.4} énigmatique{/~}{0.4} de...
+		
+		[THEO left normal]
+		{0.4} Seattle.
+
+		[MADELINE right normal]
+		Ça doit être un endroit spécial.
+
+	# added to the start of the CH2_THEO_A if the MADELINE has met and introduced themselves to Theo
+	# (if NEVER_MET and NEVER_INTRODUCED are skipped)
+	CH2_THEO_A_EXT=
+		[THEO left excited]
+		Salut, {+MADELINE} !{n}Tu as réussi !
+
+		{trigger 3 Madeline Approaches}
+
+		{+ CH2_THEO_A}
+
+	# normal conversation once introductions are out of the way
+	CH2_THEO_A=
+		[THEO left normal]
+		Monter là-haut fut difficile,{n}mais ça valait vraiment le coup.
+		
+		[THEO left excited]
+		Regarde un peu ces ruines !
+		J’ai pris plein de belles photos, tu veux voir ?
+		
+		[MADELINE right sad]
+		Oh... [MADELINE right normal]bien sûr.
+
+		{trigger 0 Maddy walks to Theo}
+
+		[MADELINE right normal]
+		{+ theo}, elles sont super !
+		
+		[THEO left thinking]
+		Je finirai peut-être par atteindre un millier d’abonnés avec ça.
+
+		{trigger 1 Theo puts away phone}
+		
+		[THEO left normal]
+		Oh ! Il faut qu’on fête officiellement cet évènement...
+		
+		[THEO left excited]
+		Prends un selfie avec moi !
+		
+		[MADELINE right distracted]
+		Euh... Je ne sais pas si c’est une bonne idée pour l’instant...
+		
+		[THEO left normal]
+		Allez, sois cool. Regarde !
+
+		{trigger 2 Theo takes a selfie with Maddy by surprise}
+		
+		[MADELINE right upset]
+		...
+
+	CH2_THEO_B=
+		[THEO left normal]
+		Je suis désolé.
+		Ne t’inquiète pas, je ne posterai pas celle-là.
+
+		[MADELINE right distracted]
+		...
+		
+		[MADELINE right sad]
+		Non, ça va. Tu peux la poster.
+		Mais je ne suis{.2} pas... photogénique.
+		
+		[THEO left normal]
+		{+MADELINE}, ne sois pas si dure avec toi-même !
+		Personne n’est photogénique sans filtre.
+
+		{trigger 0 Add filter to selfie}
+		
+		[THEO left thinking]
+		Décontracté, mais sophistiqué.
+
+	CH2_THEO_C=
+		[MADELINE right normal]
+		Qu’est-ce qui t’a donné envie{n}de faire de la photographie ?
+
+		[THEO left normal]
+		Mon grand-père adorait ça.
+
+		[THEO left thinking]
+		Apparemment, il était assez connu{n}dans l’univers de la photographie.
+
+		[THEO left wtf]
+		Je ne sais pas si j’atteindrai ce niveau un jour.
+
+		[THEO left normal]
+		Mais ça me rapproche de lui.
+
+	CH2_THEO_D=
+		[THEO left excited]
+		Alors tu es déterminée à gravir toute la {+mountain} ?
+		
+		[MADELINE right normal]
+		Oui, je m’en suis fait la promesse.
+
+		[MADELINE right sad]
+		J’en ai marre de trahir les promesses{n}que je me fais à moi-même.
+		
+		[THEO left excited]
+		Se fixer des objectifs ! J’ai pigé.
+		
+		[THEO left normal]
+		Je ne pense pas aller jusqu’au sommet comme toi,{n}mais je n’ai pas envie de rentrer pour l’instant.
+
+	CH2_THEO_E=
+		[THEO left wtf]
+		Il y a du réseau là-haut ?
+		
+		[MADELINE right normal]
+		Je n’ai pas de smartphone.
+		
+		[THEO left wtf]
+		{+MADELINE}. Tu me laisses sans voix.
+
+	CH2_END_PHONECALL=
+		[MOM_PHONE right normal]
+		Allo ?
+		
+		[MADELINE_PHONE left distracted]
+		Salut, {+ mom}.
+		
+		[MOM_PHONE right normal]
+		{+MADELINE}, quelle surprise !
+		Comment se passe ton voyage ?
+		
+		[MADELINE_PHONE left distracted]
+		Ça va, je suis juste un peu... submergée.
+		
+		[MOM_PHONE right concerned]
+		Oh non, tu fais encore une crise de panique ?
+		Pense à bien respirer, ma chérie, je suis là.
+		Que se passe-t-il ?
+
+	CH2_JOURNAL=
+		Un vieux livre poussiéreux est ouvert sur la table.
+		Sur une page défraichie il y a un poème.
+
+	CH2_POEM=
+		Une apparition{n}
+		Pas de ce monde{n}
+		Mais créée par lui{n}
+		Cachée hors cadre{n}{n}
+		Consciente, mon cœur est une forteresse{n}
+		En rêve, je suis vulnérable
+
+# *** Chapter 03 ***
+
+	CH3_OSHIRO_FRONT_DESK=
+		[OSHIRO right normal]
+		Bienvenue ! Puis-je vous aider ?
+
+		[MADELINE left surprised]
+		Êtes-vous... un fantôme ?
+		
+		[OSHIRO right worried]
+		Un fantôme ? Vous plaisantez.
+		
+		[OSHIRO right normal]
+		Je suis le gardien de cet excellent établissement.
+
+		[OSHIRO right worried]
+		Bienvenue à{.3}{n}{~}{big}l’hôtel Station Celeste !{>> .2},{/big}{/~}{n}connu dans le monde entier.{>>}
+
+		[OSHIRO right normal]
+		{+ mroshiro}, à votre service.
+		
+		[OSHIRO right sidehappy]
+		{+thought}Deux clients en un jour !{n}Les affaires reprennent enfin !{+endthought}
+		
+		[OSHIRO right normal]
+		Combien de temps resterez-vous avec nous ?
+		
+		[MADELINE left normal]
+		Oh... je ne fais que passer.{n}Je gravis la {+mountain}.
+		Vous avez une sortie de secours ?
+		
+		[OSHIRO right worried]
+		... une sortie de secours ?
+		
+		[OSHIRO right sideworried]
+		{+thought}Elle ne fait que passer ? Ça ne va pas être bon.{+endthought}
+		
+		[MADELINE left distracted]
+		Vous savez que je vous entends, n’est-ce pas ?
+		
+		[OSHIRO right nervous]
+		...
+		
+		[OSHIRO right normal]
+		En tout cas, notre porte de service de derrière{n}est réservée au personnel de l’hôtel.
+
+		[OSHIRO right worried]
+		Mais notre suite présidentielle du dernier étage{n}offre une vue imprenable sur le pic.
+
+		[OSHIRO right normal]
+		Vous y serez très confortablement installée.
+		
+		[MADELINE left distracted]
+		De là, je pourrai peut-être accéder{n}au toit et descendre par derrière ?
+		
+		[OSHIRO right sidehappy]
+		{+thought}La suite présidentielle, merveilleuse idée {+ oshiro} !{+endthought}
+		
+		[OSHIRO right normal]
+		Je dois vous enregistrer, quel est votre nom ?
+		
+		[MADELINE left normal]
+		Je m’appelle {+MADELINE}. 
+		
+		[MADELINE left sad]
+		Mais je répète, je n’ai pas du tout l’intention de rester.
+
+		{trigger 0 Camera zooms back out}
+		
+		[OSHIRO right normal]
+		C’est par ici, {+MS_MADELINE}.
+
+	CH3_GUESTBOOK=
+		C’est un livre d’or très ancien et poussiéreux.
+		Des pages sont abîmées et il en manque beaucoup.
+		Cependant, les commentaires sont élogieux...
+		« Nous n’oublierons jamais notre séjour. »
+		« Je n’ai jamais été aussi en paix. Merci. »
+	
+	CH3_OSHIRO_HALLWAY_A=
+		[OSHIRO right normal]
+		Veuillez me suivre de près, {+MS_MADELINE}.
+		L’ascenseur est au bout du couloir.
+		
+		[MADELINE left distracted]
+		L’hôtel est plutôt en sale état...
+
+		[MADELINE left sad]
+		Il est vraiment ouvert aux clients ?
+		
+		[OSHIRO right nervous]
+		Bien sûr qu’il est ouvert !
+
+		[OSHIRO right worried]
+		L’hôtel Station Celeste ne fermerait jamais{n}pendant la pleine saison touristique !
+
+		[OSHIRO right sideworried]
+		{+thought}En sale état ? Que veut-elle dire par là ?{+endthought}
+
+		[OSHIRO right normal]
+		Oh ! Laissez-moi porter votre valise.
+		
+		[MADELINE left sad]
+		Mon sac ?
+
+		[MADELINE left normal]
+		Non merci, je vais le garder.
+		
+		[OSHIRO right normal]
+		Hem... très bien.
+		
+		[OSHIRO right sidesuspicious]
+		{+thought}Quelle drôle de cliente.{+endthought}
+
+	CH3_OSHIRO_HALLWAY_B=
+		[OSHIRO right normal]
+		{+MS_MADELINE}, je vous prie de{n}continuer de me suivre de près.
+
+		[OSHIRO right worried]
+		Je tiens un établissement de classe internationale.{n}Je n’ai pas de temps à perdre avec les clients qui lambinent.
+		
+		[MADELINE left sad]
+		Ne m’attendez pas, je cherche juste{n}un moyen de franchir cet endroit.
+		
+		[OSHIRO right sideworried]
+		{+thought}{+oshiro}, espèce d’idiot, le client est toujours roi !{+endthought}
+		{+thought}Les affaires reprennent enfin{n}et tu perds tes nerfs !?{+endthought}
+		
+		[OSHIRO right nervous]
+		Oh... bien sûr, {+MS_MADELINE} !
+		Mes sincères excuses, je n’aurais pas dû dire ça.
+
+		[OSHIRO right normal]
+		Je vous en prie, explorez donc à votre gré.
+
+	CH3_MEMO_OPENING=
+		Un vieux papier ressort du désordre...
+
+	CH3_MEMO=
+		{big}À l’attention du personnel de l’hôtel :{/big}{n}{n}
+		Il est malheureusement de ma responsabilité de vous informer que l’hôtel Station Celeste fermera jusqu’à nouvel ordre à la fin de cette saison, à cause de circonstances indépendantes de notre volonté.{n}{n}
+		Avoir travaillé à vos côtés fut un honneur. Nous avons œuvré sans relâche pour garantir à nos clients l’expérience d’une hospitalité la plus mémorable possible.{n}{n}
+		J’écris ces lignes le cœur gros. Cet hôtel est devenu mon foyer, son personnel et ses clients ma famille. Vous allez tous me manquer énormément.{n}{n}
+		-M\. Oshiro
+
+	CH3_OSHIRO_CLUTTER0=
+		[OSHIRO left worried]
+		Argh ! Ce désordre est devenu incontrôlable !
+
+		{trigger 1 Oshiro paces to the left}
+
+		[OSHIRO left worried flip]
+		Quand est-ce arrivé !?
+
+		{trigger 2 Oshiro paces back to the right}
+
+		[OSHIRO left worried]
+		Je ne sais même pas par où commencer...
+		
+		[MADELINE right sad]
+		{+mroshiro}, vous gérez cet endroit tout seul ?
+		
+		[OSHIRO left nervous]
+		Vous avez raison, {+MS_MADELINE},{n}je ne nettoierai jamais tout ça tout seul.
+
+		{trigger 0 Oshiro Collapses}
+		
+		[OSHIRO left drama]
+		C’est impossible.
+
+		[MADELINE right distracted]
+		Ce n’est pas ce que je voulais dire...
+
+		[MADELINE right sad]
+		Respirez bien, {+MROSHIRO}. Respirez.
+		Ce n’est qu’un petit ménage de printemps.
+		
+		[MADELINE right distracted]
+		Enfin, pas si petit...
+		
+		[MADELINE right normal]
+		Mais je peux vous aider !
+		
+		[OSHIRO left normal]
+		Vous êtes trop aimable.
+		
+		[OSHIRO left drama]
+		Mais je ne veux pas vous embêter avec ça.
+		C’est une cause perdue.
+
+	CH3_OSHIRO_CLUTTER0_B=
+		[MADELINE right normal]
+		Depuis combien de temps gérez-vous cet hôtel ?
+
+		[OSHIRO left normal]
+		Oh, ça fait longtemps maintenant.
+
+		[OSHIRO left sideworried]
+		{+thought}Mais les affaires... ne marchent pas fort.{+endthought}
+
+		[MADELINE right sad]
+		Vous devez vraiment aimer votre travail.
+
+		[OSHIRO left normal]
+		Oh oui, {+MS_MADELINE}.
+
+		{trigger 0 Oshiro gets back up}
+
+		[OSHIRO left normal]
+		Dans l’hôtellerie, notre passion est{n}d’exceller dans l’art subtil de l’hospitalité.
+
+		[OSHIRO left worried]
+		Un vrai grand hôtel ne meurt{.2} {~}jamais{/~} dans les{n}précieux souvenirs de ses clients satisfaits.
+
+		[MADELINE right normal]
+		C’est l’esprit !
+		Alors commençons à faire le ménage.
+
+	CH3_OSHIRO_CLUTTER1=
+		[OSHIRO right normal]
+		Je n’ai pas encore commencé que je{n}me sens déjà l’esprit plus léger !
+		C’est le pouvoir de la pensée positive !
+		
+		[MADELINE left distracted]
+		Hem, en fait...
+		
+		[MADELINE left normal]
+		J’ai déjà fait un peu de ménage pour vous.
+		
+		[OSHIRO right normal]
+		Oh oui, merci, {+MS_MADELINE}.
+		Mais je vous en prie, reposez-vous et laissez le personnel s’en occuper !
+		
+		[OSHIRO right sidesuspicious]
+		{+thought}{+oshiro}, espèce d’idiot. Tu es en train de la perdre.{+endthought}
+
+		[OSHIRO right sideworried]
+		{+thought}Les clients ne sont pas là pour perdre leur temps avec le ménage !{+endthought}
+		
+		[MADELINE left distracted]
+		Vous allez bien ?
+		
+		[OSHIRO right nervous]
+		Oui, bien sûr.
+
+		[OSHIRO right worried]
+		Vous ne serez jamais plus reçue dans{n}un meilleur hôtel, vous allez voir !
+		
+		[OSHIRO right sideworried]
+		{+thought}Comment ai-je pu me laisser{n}déborder par tous ces problèmes ?{+endthought}
+
+	CH3_OSHIRO_CLUTTER1_B=
+
+		[MADELINE left sad]
+		{+mroshiro}, il est normal que le{n}désordre vous inquiète.
+
+		[MADELINE left normal]
+		Je ne peux toujours pas passer la nuit ici, mais je peux vous aider avant de partir.
+
+		[OSHIRO right sideworried]
+		{+thought}Elle a pitié de toi, {+oshiro}. Tu es minable.{+endthought}
+
+		[MADELINE left upset]
+		...
+
+	CH3_OSHIRO_CLUTTER2=
+		[MADELINE left normal]
+		C’est beaucoup plus joli ici !
+		
+		[MADELINE left distracted]
+		Pouvez-vous m’indiquer la sortie maintenant ?
+
+		[OSHIRO right worried]
+		Mais {+MS_MADELINE}, vous avez à peine{n}
+		eu le temps d’apprécier la myriade de luxes{n}
+		que notre hôtel peut vous offrir !
+		
+		[OSHIRO right normal]
+		Nous aurons le temps de parler{n}
+		quand j’aurai fini le ménage.
+
+		[OSHIRO right worried]
+		Je suis très occupé !
+
+		[OSHIRO right sidesuspicious]
+		{+thought}C’est vrai... les jeunes n’ont plus{n}aucun respect de nos jours.{+endthought}
+		
+		[MADELINE left upset]
+		... Comme vous voulez, pff !
+
+	CH3_OSHIRO_CLUTTER2_B=
+		[MADELINE left angry]
+		Vous avez besoin d’aide{.3} ou pas ?
+
+		[OSHIRO right sideworried]
+		{+thought}C’est fini, {+oshiro}. Elle te déteste.{+endthought}
+
+		[MADELINE left upset]
+		Je{.3} ne... 
+
+		[MADELINE left distracted]
+		Je suis désolée. 
+
+		[MADELINE left sad]
+		Votre hôtel est... il est beau.{n}Vraiment de classe mondiale.
+		J’aimerais bien pouvoir rester.
+
+		[OSHIRO right serious]
+		Inutile de vouloir me faire plaisir, {+MS_MADELINE}.
+		J’ai compris.
+
+	CH3_OSHIRO_CLUTTER_ENDING=
+		{anchor bottom}
+		[OSHIRO left normal]
+		Vous voilà !
+		Vous avez vraiment un don pour disparaître.
+		
+		[MADELINE right distracted]
+		C’était dur, mais je me suis occupée de tout pour vous.
+		
+		[OSHIRO left normal]
+		L’hôtel Station Celeste vous présente ses{n}
+		remerciements pour votre aide, {+MS_MADELINE}.
+		Il va sans dire que notre personnel{n}allait s’occuper de ce désordre.
+		
+		[MADELINE right upset]
+		Oh, certainement. Oui.
+		
+		[OSHIRO left sideworried]
+		{+thought}Quelle humiliation !{+endthought}
+		
+		[OSHIRO left worried]
+		Vous devez être impatiente de{n}découvrir votre chambre !
+
+		[OSHIRO left normal]
+		Il faut prendre l’ascenseur et vous{n}la trouverez au bout du couloir.
+		
+		[MADELINE right upset]
+		Et puis flûte, allons-y. 
+		Montrez-moi la suite présidentielle.
+		Ça a l’air très bien.
+		
+		[OSHIRO left sideworried]
+		{+thought}C’est ta dernière chance, {+oshiro}.{n}Ne la perds pas maintenant.{+endthought}
+
+	CH3_THEO_NEVER_MET=
+		[MADELINE left sad]
+		Oh, salut ! Tu es... {0.2}cliente ici ?
+
+		{trigger 0 Theo stops trying to pry off the vent cover}
+		
+		[THEO right worried]
+		Waouh ! Je suis {~}{!}trop{/!}{/~} content{n}de rencontrer quelqu’un là.
+		Cet endroit me donne vraiment la chair de poule.
+		
+		[MADELINE left sad]
+		Il a y définitivement quelque chose de bizarre ici.
+
+		[MADELINE left normal]
+		Au fait, je m’appelle {+MADELINE}.
+		
+		[THEO right normal]
+		Oh, moi c’est {+theo}.
+		
+		[THEO right thinking]
+		Je raffole des mystères inquiétants,{n}mais là ça devient trop réel.
+
+		{+CH3_THEO_ESCAPING}
+
+	CH3_THEO_NEVER_INTRODUCED=
+		[MADELINE left normal]
+		{+theo} ! Toi aussi tu es « client » ici ?
+
+		{trigger 0 Theo stops trying to pry off the vent cover}
+		
+		[THEO right worried]
+		Waouh ! Je suis {~}{!}trop{/!}{/~} content{n}de rencontrer quelqu’un là.
+		Je raffole des mystères inquiétants,{n}mais là ça devient trop réel.
+		
+		[MADELINE left sad]
+		Il a y définitivement quelque chose de bizarre ici.
+
+		[MADELINE left normal]
+		Au fait, je m’appelle {+MADELINE}.
+		Excuse-moi si j’ai été un peu sauvage tout à l’heure,{n}mais je pense à plein de trucs.
+
+		{+CH3_THEO_ESCAPING}
+
+	CH3_THEO_INTRO=
+		[MADELINE left normal]
+		{+theo} ! Toi aussi tu es « client » ici ? 
+
+		{trigger 0 Theo stops trying to pry off the vent cover}
+		
+		[THEO right worried]
+		{+MADELINE} ! Je suis {~}{!}trop{/!}{/~} content de te voir là.
+		Je raffole des mystères inquiétants,{n}mais là ça devient trop réel.
+
+		{+CH3_THEO_ESCAPING}
+
+	CH3_THEO_ESCAPING=
+		[MADELINE left sad]
+		As-tu parlé à {+mroshiro} ?
+
+		[MADELINE left distracted]
+		Je crois qu’il aurait vraiment besoin d’aide.
+
+		{trigger 0 Theo stops trying to pry off the vent cover}
+		
+		[THEO right wtf]
+		Tu {~}crois ?{/~} 
+		C’est un vieux cinglé.
+		Je parie qu’il est en train de{n}préparer un coin où cacher nos corps.
+
+		{trigger 1 Theo goes back to prying off the vent cover}
+		
+		[THEO right worried]
+		Je vais ramper dans ce conduit,{n}il souffle de l’air froid qui vient de l’extérieur.
+		Viens !
+		
+		[MADELINE left sad]
+		{+mroshiro} est perturbé, mais...{n}je ne crois pas qu’il nous veuille du mal.
+		
+		[MADELINE left normal]
+		Il doit juste ranger ce désordre.
+		Je veux l’aider.
+		
+		[THEO right worried flip]
+		{+MADELINE}, c’est très gentil, mais c’est dangereux.
+		
+		{trigger 2 Theo removes vent cover and it flies off. Theo falls down as it comes off, and gets back up}
+
+		[THEO right worried]
+		Il faut qu’on sorte d’ici et qu’on appelle{n}un spécialiste en {0.2}{*}vieux cinglés{/*}.
+		On n’est pas préparés à ça.
+		
+		[MADELINE left distracted]
+		Je crois pouvoir communiquer avec lui.
+
+		[MADELINE left normal]
+		Vas-y et je te rejoindrai plus tard.
+		
+		[THEO right wtf]
+		Bon sang, tu es encore plus têtue que ma sœur.
+		Je ne croyais pas ça possible.
+
+		{trigger 3 Theo walks to Maddy}
+		
+		[THEO right serious]
+		Fais attention à toi.
+
+		[MADELINE left normal]
+		Merci {+theo}. Je te retrouverai dehors.
+
+	CH3_THEO_VENTS=
+		{anchor bottom}
+		[THEO right normal upsidedown]
+		Bon sang, c’est un vrai dédale ici.
+		Comment ça va avec {+elcreepo} ?
+		
+		[MADELINE left sad]
+		Je l’ai aidé à nettoyer, mais{n}il a fait son pauvre type avec moi.
+		
+		[MADELINE left upset]
+		Et il croit toujours qu’il va me convaincre de rester.
+		
+		[THEO right wtf upsidedown]
+		{+MADELINE}, sérieusement.
+		Mon radar à mauvaises idées est{n}{~}en alerte rouge{/~} sur ce coup-là. 
+		Tu devrais sortir vite fait.
+		
+		[MADELINE left sad]
+		Si je disparais maintenant,{n}{+mroshiro} risque de s’effondrer.
+		
+		[MADELINE left distracted]
+		Alors que je pourrais faire quelque chose{n}de bien.{.3} Pour une fois.
+		
+		[THEO right worried upsidedown]
+		Oublie ton {~}karma{/~}, l’amie.
+
+		[THEO right wtf upsidedown]
+		Je crois que ce mec va s’effondrer quoi qu’il arrive.
+
+		[THEO right worried upsidedown]
+		Tu dois penser à ta sécurité.
+		
+		[MADELINE left upset]
+		{+theo}, ça va aller.
+		
+		[THEO right thinking upsidedown]
+		Ouais, ouais, je savais que tu ne m’écouterais pas.
+
+		[THEO right wtf upsidedown]
+		On se retrouve dehors, la prisonnière.
+
+	CH3_OSHIRO_BREAKDOWN=
+		{anchor top}
+		[OSHIRO left sideworried]
+		{+thought}Et voilà, {+oshiro}, c’est ta dernière chance.{+endthought}
+
+		{trigger 0 Oshiro paces}
+		
+		[OSHIRO right sidesuspicious]
+		{+thought}Tu as déjà tout gâché. Laisser une{n}cliente faire le ménage à ta place ?{+endthought}
+		{+thought}Elle ne restera jamais.{+endthought}
+
+		{trigger 1 Oshiro paces}
+		
+		[OSHIRO left sideworried]
+		{+thought}Si, elle est toujours là. Il reste une chance !{+endthought}
+
+		{trigger 0 Oshiro paces}
+		
+		[OSHIRO right sidehappy]
+		{+thought}La suite présidentielle est la clé.{n}Ça va sûrement l’impressionner !{+endthought}
+
+		{trigger 2 Oshiro falls to ground, spawns dust creatures}
+		
+		[OSHIRO left sideworried]
+		{+thought}Reprends-toi, {+oshiro} !{+endthought}
+
+		{trigger 3 Enter Madeline}
+		
+		[OSHIRO left nervous]
+		Vous voilà, {+MS_MADELINE} !
+		Suivez-moi vite ! On y est presque.
+
+	CH3_DIARY=
+		{anchor bottom}
+		C’est le journal de {+MROSHIRO}.
+		On dirait que le texte du dernier jour remonte à plusieurs dizaines d’années...
+		« À compter d’aujourd’hui, l’hôtel est officiellement fermé. Charlotte a organisé une randonnée d’adieu sur la montagne pour le personnel. Peu parmi nous sont déjà allés au sommet. »
+		« Ça semblait être une bonne façon d’en finir, mais quand l’heure est venue, je n’ai pas pu quitter les lieux sans y faire un dernier tour. Je leur ai dit de continuer sans moi. »
+		« Je les rattraperai dès que possible, après{n}avoir bien vérifié que tout est en ordre... »
+		« Je n’arrive pas à croire que j’en ai fini avec cet hôtel.{n}Que vais-je bien pouvoir faire maintenant ? »
+		« Je resterai peut-être une dernière nuit, afin de{n}pouvoir faire de vrais adieux à l’hôtel... »
+
+	CH3_OSHIRO_SUITE=
+		{anchor bottom}
+		[OSHIRO left normal]
+		Et voici, notre suite présidentielle{n}plusieurs fois primée !
+
+		[OSHIRO left worried]
+		C’est vraiment la définition même du luxe rustique.
+
+		[OSHIRO left normal]
+		Je vous laisse vous plonger dans toute sa majesté.
+		Je comprends que ça puisse{n}faire beaucoup d’un seul coup.
+
+		{trigger 3 Madeline walks around the room and looks around}
+		
+		[OSHIRO right nervous]
+		Alors ? Qu’en pensez-vous ?
+		
+		[MADELINE left sad]
+		C’est... euh, c’est beau.
+		Les meubles doivent coûter cher...
+
+		[MADELINE left distracted]
+		C’est très... spacieux.
+
+		[MADELINE left sad]
+		Les couleurs sont élégantes.
+
+		[MADELINE left normal]
+		On voit que vous y consacrez beaucoup de travail.
+
+		[OSHIRO right worried]
+		{*}{!}Je savais que vous seriez impressionnée !{/!}{/*}
+
+		[MADELINE left sad]
+		Ouais.
+
+		[MADELINE left distracted]
+		...
+		Alors, je peux accéder au toit à partir d’ici ?
+		
+		[OSHIRO right sideworried]
+		{+thought}Espèce d’imbécile, tu es en train de la perdre !{+endthought}
+		
+		[OSHIRO right nervous]
+		Oh, euh... j’allais oublier de vous dire... 
+		Les clients précieux comme vous peuvent bénéficier de nos meilleures chambres à moitié prix !
+		
+		[MADELINE left sad]
+		Je... ne veux pas rester.
+
+		{trigger 0 Badeline appears in the mirror}
+		
+		[OSHIRO right serious]
+		S’il vous plaît, {+MS_MADELINE}.
+		Restez, je vous en prie.
+		
+		[MADELINE left upset]
+		{+mroshiro}, j’ai déjà perdu beaucoup trop de temps...
+
+		{trigger 1 Badeline escapes the mirror}
+		
+		[BADELINE right normal]
+		{+MADELINE}, ma chère, oublie ce loser.
+		
+		[OSHIRO left serious]
+		Loser ? {silent_trigger 6}
+		
+		[BADELINE right upset]
+		Vous êtes en plein déni, vieil homme. 
+		Cet hôtel est un {*}{!}taudis{/!}{/*}{0.3}.
+
+		[BADELINE right yell]
+		Personne ne voudrait {*}{!}jamais{/!}{/*} rester ici.
+		
+		[BADELINE right scoff]
+		Il fallait que quelqu’un le dise.
+
+		{trigger 4 Madeline steps closer to Oshiro}
+		
+		[MADELINE left sad]
+		Elle ne pense pas ce qu’elle dit.
+		
+		[OSHIRO right serious]
+		Je... 
+
+		[OSHIRO right lostcontrol]
+		Je suis très occupé.
+		Veuillez partir, {+MS_MADELINE}. {silent_trigger 5 Madeline jumps back}
+		
+		[BADELINE right upset]
+		Allez {~}{+MS_MADELINE}{/~}, tu l’as entendu.
+
+		{trigger 2 Badeline blasts a hole in the ceiling}
+		
+		[BADELINE left normal]
+		Où en serais-tu sans moi ?
+
+	CH3_OSHIRO_SUITE_SAD0=
+		{anchor bottom}
+		[OSHIRO right sideworried]
+		{+thought}Pourquoi a-t-elle dit que mon bel hôtel était un taudis ?{+endthought}
+
+	CH3_OSHIRO_SUITE_SAD1=
+		{anchor bottom}
+		[OSHIRO right sidesuspicious]
+		{+thought}Comment ose-t-elle t’insulter ainsi ?{+endthought}
+
+	CH3_OSHIRO_SUITE_SAD2=
+		{anchor bottom}
+		[OSHIRO right sideworried]
+		{+thought}Et si elle disait vrai ?{+endthought}
+
+	CH3_OSHIRO_SUITE_SAD3=
+		{anchor bottom}
+		[OSHIRO right sidesuspicious]
+		{+thought}Bien sûr qu’elle dit vrai. Tu ne pourrais{n}même pas nettoyer sans son aide.{+endthought}
+
+	CH3_OSHIRO_SUITE_SAD4=
+		{anchor bottom}
+		[OSHIRO right lostcontrol]
+		{+thought}J’ai essayé. Je fais de mon mieux.{+endthought}
+
+	CH3_OSHIRO_SUITE_SAD5=
+		{anchor bottom}
+		[OSHIRO right serious]
+		{+thought}{+MS_MADELINE} voulait juste aider !{+endthought}
+
+	CH3_OSHIRO_SUITE_SAD6=
+		{anchor bottom}
+		[OSHIRO right sideworried]
+		{+thought}Mais pourquoi a-t-elle été si cruelle ?{+endthought}
+
+	CH3_OSHIRO_START_CHASE=
+		[BADELINE left normal]
+		J’ai cru qu’on ne se débarrasserait jamais de lui.
+		Tu me revaudras ça. 
+
+		[BADELINE left scoff]
+		Ajoute-le à la liste.
+		
+		[MADELINE right upset]
+		Laisse-moi tranquille.
+
+		{trigger 0 Maddy walks away}
+		
+		[BADELINE left upset]
+		Je te croyais pourtant {~}tellement{/~}{n}déterminée à poursuivre ta sortie.
+
+		[BADELINE left scoff]
+		Et là, tout d’un coup, tu te transformes en thérapeute pour cinglé ?
+
+		{trigger 1 Maddy turns around}
+		
+		[MADELINE right angry]
+		Pourquoi tu ne t’en vas pas ?
+
+		{trigger 2 Oshiro enters}
+		
+		[OSHIRO left serious]
+		{+MS_MADELINE}, avant que vous ne partiez...
+		Je dois vous poser une question...
+		
+		[OSHIRO left serious]
+		Pourquoi avoir été si aimable avec moi pour me quitter maintenant ?
+		Qu’ai-je fait de mal ?
+		
+		[BADELINE right scoff]
+		Oh, arrêtez un peu. Vous ne comprenez toujours pas ?
+
+		[BADELINE right upset]
+		Elle n’aide les gens que pour satisfaire son ego démesuré.
+		
+		[BADELINE right yell]
+		Elle ne s’est {*}jamais{/*} souciée de vous.
+		
+		[MADELINE right angry]
+		Tais-toi ! 
+		
+		[MADELINE right sad]
+		Je voulais juste aider.
+		
+		[BADELINE right scoff]
+		Vous êtes pitoyables tous les deux.
+
+		{trigger 3 Badeline disappears, Oshiro gets angry}
+
+		[OSHIRO left lostcontrol]
+		Pitoyable !?
+		Vous n’êtes venue ici que pour m’humilier...
+		J’en ai fini de ramper devant vous !
+
+	CH3_OSHIRO_CHASE_END=
+		{anchor top}
+		[MADELINE right surprised]
+		{+mroshiro}, arrêtez !
+
+		{trigger 0 Oshiro slams the roof below their feet and it begins shaking}
+		
+		[MADELINE right surprised]
+		Je voulais juste aider !
+
+	CH3_ENDING=
+		[OSHIRO left serious]
+		...
+		J’ai décidé de fermer l’hôtel pour réparations.
+		Il y a des fuites dans la plomberie du deuxième étage...
+		... dans la bibliothèque, c’est un vrai chaos...
+		... sans parler du trou dans le{n}plafond de la suite présidentielle.
+
+		{trigger 0 Turn and pause, turn back}
+
+		[OSHIRO left serious]
+		Je vous en prie, laissez-moi seul.
+
+# *** Chapter 04 ***
+
+	CH4_GRANNY_1=
+		[MADELINE left upset]
+		Oh super, encore vous.
+
+		{trigger 3 zoom in}
+		
+		[GRANNY right normal]
+		Tiens donc, je ne m’attendais pas à te trouver ici !
+		Je suis contente que tu sois encore en un seul morceau.
+		Je vois que tu as réussi à franchir l’hôtel,{n}as-tu rencontré {+mroshiro} ?
+
+		{trigger 4 maddy turns around}
+		
+		[MADELINE left upset flip]
+		Ah ça, on peut dire que je l’ai rencontré !
+		Il m’a chassée de là-bas.
+		Alors que j’avais fait plein de ménage pour lui.
+
+		{trigger 0 Start Laughing}
+		
+		[GRANNY right laugh]
+		Ah, ah, ah ! On dirait que tu t’es amusée ce matin.
+
+		{trigger 1 Stop Laughing}
+		
+		[GRANNY right normal]
+		{+oshiro} est une âme perdue, ma chère.
+		Cet endroit est plus qu’un simple hôtel pour lui.
+		Tu devrais l’oublier.
+
+		{trigger 5 maddy approaches}
+		
+		[MADELINE left angry]
+		Vous savez ce que je crois ?
+		Je crois que cette {+mountain}{n}vous a rendus fous tous les deux.
+
+		{trigger 2 Wait a beat}
+		
+		[GRANNY right normal]
+		Tu sais, tu n’es pas la première personne à dire ça.
+
+		{trigger 0 Start Laughing}
+		
+		[GRANNY right laugh]
+		Tu as peut-être raison.
+		Comment savoir si je suis folle ?
+
+		{trigger 1 Stop Laughing}
+		
+		[GRANNY right normal]
+		Selon moi, la {+mountain} ne peut faire{n}ressortir que ce qui existe déjà en toi.
+
+		{trigger 0 Start Laughing}
+		
+		[GRANNY right laugh]
+		Mais il faut déjà être un peu fêlé{n}rien que pour venir vivre ici, pas vrai ?
+
+		{trigger 2 Wait a beat}
+		
+		[MADELINE left upset]
+		Mais de quoi est-ce que vous parlez ?
+
+		{trigger 1 Stop Laughing}
+		
+		[GRANNY right mock]
+		Oh, je radote comme la vieille bique que je suis.
+		
+		[GRANNY right normal]
+		Es-tu prête à abandonner ? Je connais{n}un raccourci qui te ramènera à ta voiture.
+
+		{trigger 6 Maddy walks past granny}
+		
+		[MADELINE right upset flip]
+		N’y comptez pas, Madame.
+		J’irai jusqu’au sommet.
+		
+		[GRANNY left normal flip]
+		Il est parfois difficile de faire la différence{n}entre obstination et détermination, n’est-ce pas ?
+		Tu me fais penser à moi quand j’étais jeune.
+
+		{trigger 0 Start Laughing}
+
+		[GRANNY left laugh flip]
+		Bonne chance, et fais attention au vent !
+
+	CH4_GRANNY_2=
+		[MADELINE left upset]
+		Vous ne recevez pas beaucoup de visites par ici, n’est-ce pas ?
+
+		[GRANNY right normal]
+		Non, on ne voit pas grand monde.
+		Mais la solitude ne me dérange pas.
+
+		[MADELINE left distracted]
+		Il m’arrive aussi de penser que je devrais vivre seule.
+
+		[MADELINE left sad]
+		J’ai vraiment tenté de communiquer avec {+mroshiro}.{n}Je voulais l’aider.
+
+		[GRANNY right normal]
+		{+OSHIRO} devrait quitter cet hôtel.
+		Mais ça n’arrivera pas tant que tu seras ici.
+		Et que tu aies quelque chose à prouver n’arrange rien.
+
+		[MADELINE left distracted]
+		...
+
+	CH4_GRANNY_3=
+		[MADELINE left sad]
+		Vous ne vous sentez pas seule dans cette petite cabane ?
+
+		[GRANNY right normal]
+		J’ai des amis, ma chère.
+
+		[GRANNY right mock]
+		Je suis peut-être folle, mais je ne suis pas ermite.
+
+		[MADELINE left distracted]
+		Désolée.
+		Ce n’est pas ce que je voulais dire.
+
+		[GRANNY right normal]
+		Quand j’étais jeune, je n’imaginais pas{n}rester si longtemps dans un même endroit.
+		Mais j’ai découvert cette {+MOUNTAIN}.
+		J’ai tout de suite su que j’avais trouvé mon chez moi.
+
+		[MADELINE left sad]
+		Qu’a-t-elle de si spécial ?
+
+		[GRANNY right normal]
+		La {+MOUNTAIN} montre qui tu es vraiment.
+		Que tu sois prête pour ça ou pas.
+		Elle me permet de rester honnête.
+
+	CH4_GONDOLA=
+		{anchor top}
+		[UNKNOWN]
+		{+MADELINE} ! Attends-moi !
+
+		{trigger 0 Enter Theo from above, he falls and lands on the ground face-down}
+		
+		[THEO left nailedit]
+		{%}{*}Dans le mille !{/*}{/%}
+
+		{trigger 1 Check on Theo}
+		
+		[MADELINE right sad]
+		{+theo} ! Tu vas bien ?
+		
+		[THEO left nailedit]
+		Arf ! Ouais. 
+		Une minute...
+
+		{trigger 2 Theo gets up}
+		
+		[THEO left excited]
+		Une nacelle ! J’ai toujours rêvé d’en faire.
+		
+		[MADELINE right sad]
+		Elle n’a pas l’air toute jeune, mais{n}elle fonctionne peut-être encore.
+		
+		[MADELINE right distracted]
+		Je ne vois pas d’autre moyen de franchir ce gouffre.
+		
+		[THEO left excited]
+		Allons-y !
+
+		{trigger 3 Look at Lever}
+		
+		[THEO right normal]
+		Ce levier a l’air important.
+
+		{trigger 4 Pull Lever}
+		
+		[THEO right normal]
+		Ça marche à tous les coups.
+
+		[THEO right thinking]
+		J’ai sûrement été pilote de nacelle dans une autre vie.
+
+		[MADELINE left distracted]
+		Tu crois que c’est sûr ?
+
+		[THEO right normal]
+		Je suis sûr que tout ira bien.
+
+		{trigger 5 Wait a bit}
+
+		[THEO right normal]
+		Comment ça s’est passé avec {+oshiro} ?
+
+		[MADELINE left sad]
+		Tu avais raison.
+
+		[MADELINE left distracted]
+		Je n’aurais pas dû tenter de l’aider.
+
+		[THEO right thinking]
+		J’aime pas rappeler que je te l’avais dit, mais...
+
+		[MADELINE left upset]
+		Ouais, ouais...
+		J’aurais dû t’écouter.
+
+		[THEO right normal]
+		Tu n’es pas blessée, c’est le plus important.
+		
+		{trigger 5 Wait a bit}
+		
+		[MADELINE left sad]
+		L’air est tellement rare à cette altitude.
+
+		[MADELINE left distracted]
+		J’arrive à peine à respirer.
+
+		{trigger 6 Wait for gondola to reach center}
+		
+		[THEO right excited flip]
+		Bon, si on ne fait pas un selfie dans{n}ce truc, on va le regretter.
+
+		[MADELINE left distracted flip]
+		Je ne vois même pas le sol à travers cette brume...
+		On est à quelle altitude ?
+
+		[THEO right thinking flip]
+		Moins de panique, plus de pose.
+
+		{trigger 7 Seflie, then gondola stalls out and badeline appears}
+		{anchor bottom}
+		
+		[MADELINE left surprised]
+		Qu’est-ce que c’était ?
+		
+		[THEO right wtf flip]
+		Euh... on dirait qu’on s’est arrêté.
+
+		{trigger 8 Madeline moves left}
+		
+		[MADELINE left sad]
+		Très mauvaise nouvelle...
+
+		[THEO right wtf]
+		Peut-être que si je...
+
+		{trigger 9 lever snaps off}
+		
+		[THEO right worried]
+		Bon, ça ne se passe pas bien.
+
+		{trigger 10 tentacles appear}
+		
+		[MADELINE left panic]
+		Non, ça ne se passe pas bien du tout.
+
+		{trigger 11 tentacles grow}
+		
+		[THEO right worried]
+		{+MADELINE}, ça va ?
+
+		[MADELINE left panic]
+		Ouais... C’est juste que...
+
+		{trigger 12 Maddy can't breathe}
+
+		[MADELINE left panic]
+		Non, ça ne va pas.
+		Je n’arrive pas à respirer.
+		
+		[THEO right serious]
+		Tu fais une crise de panique.
+
+		[MADELINE left angry]
+		Comment as-tu pu penser que monter dans{n}cet engin stupide était une bonne idée ?
+
+		[THEO right thinking]
+		Allez, ne t’en prends pas à moi.
+
+		[THEO right serious]
+		Fais-moi confiance.
+		Mon grand-père m’a appris un truc pour ça.
+		Ferme les yeux.
+
+		{trigger 13 Play breathing minigame}
+		
+		[THEO right normal]
+		Tu vois ? Ça marche à tous les coups.
+
+		{trigger 14 Gondola continues to the end station}
+
+		{anchor top}
+		
+		[THEO left normal]
+		Tu te sens mieux ?
+		
+		[MADELINE right distracted flip]
+		Je crois. Merci de m’avoir aidée à me calmer.
+
+		{trigger 15 Wait a bit}
+		
+		[MADELINE right sad flip]
+		Comment as-tu su qu’on allait repartir ?
+		
+		[THEO left normal]
+		Oh, je pensais vraiment qu’on était cuits.
+
+		{trigger 16 Theo takes out phone}
+		
+		[THEO left excited]
+		Oh mon Dieu...
+		{silent_trigger 17 Maddy faces theo}
+		Mais regarde ce selfie !
+
+	CH4_GONDOLA_FEATHER_1=
+		On voit une plume qui flotte devant toi.
+
+	CH4_GONDOLA_FEATHER_2=
+		Tu vois ?
+
+	CH4_GONDOLA_FEATHER_3=
+		OK.
+	
+	CH4_GONDOLA_FEATHER_4=	
+		Ta respiration fait flotter cette plume.
+
+	CH4_GONDOLA_FEATHER_5=
+		Continue de respirer calmement, inspire, expire.
+
+# *** Chapter 05 ***
+
+	CH5_ENTRANCE=
+		[THEO right excited flip]
+		Oh ! Regarde un peu cet endroit !
+		Tu as envie d’aventure ?
+
+		{trigger 0 Maddy turns right}
+
+		[MADELINE left sad]
+		Euh... Je ne sais pas trop. 
+		On dirait qu’il fait bien noir là-dedans.
+
+		[MADELINE left distracted]
+		C’est plus un cauchemar qu’une aventure.
+
+		{trigger 1 Theo turns left}
+		
+		[THEO right normal]
+		Je vais jeter un œil et prendre quelques photos.
+
+		{trigger 1 Theo turns right}
+
+		[THEO right excited flip]
+		Cet endroit doit être ancien !
+
+		[MADELINE left sad]
+		{+THEO}, attends.
+		
+		[THEO right excited flip]
+		Mes abonnés {# FFFF4C}InstaPix{#} vont se régaler.
+
+		{trigger 2 Theo leaves}
+		
+		[MADELINE left distracted]
+		Ça va forcément mal finir.
+
+	CH5_PHONE=
+		[MADELINE left sad]
+		Oh, oh...
+
+		{trigger 0 Maddy walks to phone, ducks to pick it up}
+
+		[MADELINE left distracted]
+		C’est le téléphone de {+THEO}...
+
+		{trigger 1 Maddy stands back up}
+
+		[MADELINE left determinedclosed]
+		Pas de panique, {+MADELINE}.
+		Il est peut-être simplement tombé de sa poche.
+		Je lui rendrai quand je le trouverai.
+
+	CH5_THEO_MIRROR=
+		[MADELINE left normal]
+		{+theo} ! Te voilà !
+		
+		[THEO_MIRROR right excited]
+		{+MADELINE} ! Salut !
+		
+		[THEO_MIRROR right wtf]
+		... Euh, que fais-tu à l’intérieur d’un miroir ?
+		
+		[MADELINE left sad]
+		Je dirais plutôt que c’est toi qui es dans le miroir.
+		Que s’est-il passé ?
+		
+		[THEO_MIRROR right wtf]
+		Eh bien, je faisais un selfie du miroir, tranquille...
+		Tu vois, du genre {~}{# aaaaaa}« C’est le gars {+THEO}{# aaaaaa} dans un{n}vieux temple, rien de méchant ».{#}{/~}
+
+		[THEO_MIRROR right thinking]
+		{# ffff9b}\#bienheureux{#}
+		
+		[THEO_MIRROR right serious]
+		Et quand je me suis réveillé, j’étais étendu au sol.
+		
+		[MADELINE left sad]
+		Ça ressemble à quoi là où tu es ?
+		Comment puis-je te trouver ?
+		
+		[THEO_MIRROR right serious]
+		C’est, euh... c’est très sombre et bizarre. Il y a...
+		
+		[THEO_MIRROR right wtf]
+		Attends, il y a un truc qui vient.
+		Je me sens très tenté de fuir.
+		
+		[THEO_MIRROR right serious]
+		Sois prudent, d’accord ?
+
+	CH5_SHADOW_MADDY_0=
+		[MADELINE left angry]
+		{*}Eh !{/*} Où est-ce qu’on est ?
+		{!}Qu’est-ce que tu as fait à {+theo} ?{/!}
+		
+		[BADELINE right scoff]
+		Tu {~}me{/~} crois responsable ?
+		C’est mignon.
+		
+		[BADELINE right upset]
+		Ma chère, je t’avais pourtant bien prévenue.
+		
+	CH5_SHADOW_MADDY_1=
+		[MADELINE left angry]
+		N’essaie pas de me mettre ça sur le dos.
+
+		[BADELINE right scoff]
+		Tu ne comprends toujours pas ?
+
+		[BADELINE right upset]
+		C’est la {+mountain} qui m’a donné ce corps.
+
+		[BADELINE right scoff]
+		Mais je ne suis pas la seule {*}chose effrayante{/*} qui vit{n}dans ta pauvre tête en vrac.
+
+		[BADELINE right normal]
+		Tu n’aimes pas ce que tu vois ?
+
+		[BADELINE right scoff]
+		{~}Quelle surprise.{/~}
+		
+		[MADELINE left angry]
+		Tais-toi !
+
+		[BADELINE right angry]
+		J’ai {~}essayé{/~} de t’arrêter.
+
+		[BADELINE right yell]
+		Regarde dans le miroir, tout ça est à toi.
+
+		[BADELINE right angry]
+		Ce temple ne fait qu’amplifier{n}le pouvoir de la {+mountain}.
+
+		[BADELINE right upset]
+		C’est toi qui contrôles ici, pas moi.
+
+	CH5_SHADOW_MADDY_2=
+		[MADELINE left sad]
+		Je ne te crois pas.
+
+		[MADELINE left distracted]
+		Si tu es une {+PART_OF_ME}, pourquoi vouloir me faire du mal ?
+
+		[BADELINE right angry]
+		Pauvre {+MADELINE}, {~}toujours la victime.{/~}
+
+		[BADELINE right yell]
+		Je te protège comme un bébé{n}et c’est pour ça que tu me hais.
+
+		[BADELINE right angry]
+		Tu pars à vau-l’eau et tu le sais. 
+
+		[MADELINE left angry]
+		Si tu te soucies tant de me protéger, pourquoi ne{n}pas m’avoir simplement {*}expliqué{/*} ce qui se passe ?
+		
+		[BADELINE right angry]
+		Et tu m’aurais écoutée ?
+		Tu ne m’écoutes jamais.
+
+	CH5_SHADOW_MADDY_3=
+		[MADELINE left panic]
+		S’il te plaît, aide-moi à sortir d’ici.
+
+		[BADELINE right scoff]
+		{~}Maintenant{/~} tu veux que je te sauve ?
+
+		[MADELINE left panic]
+		Pourquoi agis-tu ainsi ?
+		Sois plutôt à mes côtés.
+		S’il te plaît.
+
+		[BADELINE right angry]
+		Cesse de me faire passer pour un monstre.
+		Tu veux {~}vraiment{/~} savoir pourquoi je ne t’aiderai pas ?
+
+		[BADELINE right yell]
+		Parce que tu {*}mérites{/*} ce qui t’arrive.
+
+		[MADELINE left panic]
+		...
+
+		[BADELINE right angry]
+		Tu crois toujours pouvoir {~}gravir cette {+MOUNTAIN} ?{/~}
+
+		[MADELINE left angry]
+		{*}LA FERME !{/*}
+
+		{trigger 0 Badeline Leaves}
+
+		[MADELINE left angry]
+		{*}Je n’ai pas besoin de ton aide.{/*}
+		Je me débrouillerai toute seule.
+
+	CH5_REFLECTION=
+		[MADELINE right sad]
+		Si tout est dans ma tête, pourquoi est-ce si hostile ?
+		
+		[MADELINE right distracted]
+		Ces {*}choses{/*} me pourchassent.
+		Je suis une intruse dans mon propre monde.
+
+		{trigger 0 Madeline falls to knees}
+		
+		[MADELINE right panic]
+		{+theo} est enfermé quelque part ici à cause de moi.
+		Si je cède totalement, le temple{n}le laissera peut-être partir...
+
+		{trigger 1 Madeline stops panicking}
+
+		[MADELINE_MIRROR left determinedclosed flip]
+		...
+		Respire.
+		
+		[MADELINE_MIRROR left determined flip]
+		Tout ceci vient de ce qu’il y a en moi.
+		Réveille-toi, {+MADELINE}.
+
+		{trigger 2 Madeline gets up}
+
+		[MADELINE_MIRROR left determinedclosed flip]
+		Pense à la plume.
+		Tu peux sauver {+theo}.
+
+	CH5_SEE_THEO=
+		[MADELINE left normal]
+		{+theo} ! Dieu merci, je t’ai trouvé.
+		
+		[THEO right excited]
+		{+MADELINE} ! Waouh, je suis content de te voir.
+
+		{trigger 0 zoom in}
+
+		[MADELINE left sad]
+		Tout va bien ?
+		
+		[THEO right serious]
+		Ouais, tout va bien. 	
+
+		[THEO right thinking]
+		J’ai juste été prisonnier dans ce...{n}truc en cristal pendant une éternité.
+
+		[THEO right wtf]
+		As-tu l’impression que cet endroit te connaît{n}mieux que tu ne te connais toi-même ?
+		
+		[MADELINE left distracted]
+		Ouais...
+		Je suis tellement gênée que tu{n}aies vu cette facette de moi.
+
+		[MADELINE left upset]
+		J’ai essayé de t’arrêter.
+		J’espère que ce selfie en valait le coup.
+
+		[THEO right yolo]
+		Les selfies valent toujours le coup, l’amie.
+
+		[MADELINE left distracted]
+		Je ne devrais pas m’énerver, ce n’est pas ta faute.
+
+		[MADELINE left sad]
+		Je suis contente que tu n’aies rien,{n}mais tu es enfermé ici par ma faute.
+
+		{trigger 1 Madeline turns around}
+
+		[MADELINE left distracted flip]
+		Et maintenant, ce temple te{n}montre comme je suis vraiment.
+		Je suis horrible...
+
+		{trigger 2 wait a bit}
+
+		[THEO right thinking]
+		Eh, on est ensemble sur ce coup-là.
+
+		[THEO right wtf]
+		Ne fais pas comme si tu étais responsable de tout.
+
+		{trigger 3 Madeline turns back, zoom out, room gets brighter}
+
+		[MADELINE left sad]
+		Qu’est-ce que tu veux dire ?
+
+		[THEO right wtf]
+		Tu ne m’as pas enfermé dans ce cristal.
+		C’est vrai, ces monstres viennent de toi,{n}mais le temple se forme autour de moi aussi.
+
+		[THEO right worried]
+		Je peux le {*}sentir{/*}.
+		Ces {~}yeux{/~} m’observent...
+
+		[THEO right wtf]
+		Et ce cristal vient de moi, je le sais.
+
+		[THEO right serious]
+		J’aime pas réclamer, mais j’ai{n}vraiment besoin de ton aide là.
+
+		{trigger 0 zoom back in}
+
+		[MADELINE left sad]
+		...
+		
+		[MADELINE left distracted]
+		OK.
+
+		[MADELINE left normal]
+		Je suis là pour t’aider.
+		Je vais te pousser hors de cette chose,{n}et on s’échappera ensemble.
+
+		[MADELINE left sad]
+		Dès que j’aurai trouvé un moyen de te rejoindre...
+		
+		[THEO right serious]
+		{+MADELINE}, tu es mon seul espoir maintenant.
+		J’ai confiance en toi, vraiment.
+
+		[MADELINE left distracted]
+		J’espère que ce n’est pas une erreur.
+
+	CH5_SEE_THEO_B=
+		[MADELINE left distracted]
+		Si le temple me montre qui je suis vraiment...
+
+		[MADELINE left sad]
+		... alors je mérite tout ça, non ?
+
+		[THEO right wtf]
+		{+ALEX}, arrête d’être si dure avec toi-même.
+
+		[MADELINE left sad]
+		...
+		Quoi {+ALEX} ?
+
+		[THEO right thinking]
+		Pardon, je voulais dire {+MADELINE}.
+
+		[THEO right wtf]
+		Mais ce que j’ai dit reste vrai.
+		Personne ne mérite ça, et toi encore moins.
+
+		[MADELINE left sad]
+		Ouais... tu as raison.
+
+		[MADELINE left determinedclosed]
+		Ok, je peux y arriver.
+
+	CH5_FOUND_THEO=
+		[MADELINE left normal]
+		{+theo} ! Je t’ai enfin trouvé.
+		
+		[THEO right excited]
+		Je savais que tu réussirais !
+
+		[MADELINE left sad]
+		Ça n’a pas été simple...
+
+		[MADELINE left distracted]
+		Ces monstres viennent-ils vraiment de moi ?
+		
+		[THEO right thinking]
+		{+MADELINE}, c’est une question légitime.
+		Je serai ravi de discuter de la façon dont{n}les monstres sont liés à ton for intérieur...
+
+		[THEO right wtf]
+		Mais pour le moment, {~}mon{/~} propre for intérieur{n}est plus que fatigué d’être prisonnier de ce cristal.
+		
+		[MADELINE left sad]
+		Oh, c’est vrai.
+
+		[MADELINE left normal]
+		Ne t’inquiète pas, je vais te faire sortir !
+
+		{trigger 0 Attempt to break the crystal, but it just falls to the ground}
+		
+		[THEO right thinking]
+		Bien, c’est un bon début, mais...
+		
+		[THEO right wtf]
+		Ce cristal est comme une expression de mon{n}énergie psychique négative... ou un truc du genre.
+
+		[MADELINE left sad]
+		D’accord, mais comment on le casse ?
+
+		[THEO right serious]
+		Si je savais {~}pourquoi{/~} je me suis enfermé dans {n}cette chose, je pourrais peut-être m’échapper.
+
+		[THEO right wtf]
+		Mais je n’en sais rien.
+
+		[THEO right thinking]
+		Et je ne crois pas pouvoir commencer à le comprendre tant qu’on reste bloqués dans cette dimension cauchemardesque.
+		
+		[THEO right serious]
+		Je déteste dire ça, mais tu vas peut-être devoir-
+		
+		[MADELINE left angry]
+		{+theo}, n’y pense même pas !
+		Il n’est {*}pas{/*} question que je t’abandonne !
+		
+		[THEO right worried]
+		{~}Bien sûr que non{/~}, t’as pas intérêt à m’abandonner ici !
+
+		[THEO right thinking]
+		J’allais dire que tu allais{n}peut-être devoir me transporter.
+		
+		[MADELINE left sad]
+		Oh...
+		
+		[MADELINE left normal]
+		Oui, je peux faire ça.
+
+	CH5_THEO_SAVING_LIFT=
+		[THEO left thinking]
+		Mais bien sûr, tu peux me soulever.
+
+	CH5_THEO_SAVING_A=
+		[THEO left excited]
+		{~}Bon{/~}, tu peux le faire !
+
+	CH5_THEO_SAVING_NICE=
+		[THEO left thinking]
+		Bien joué ! Tu n’as laissé aucune chance à cette porte.
+
+	CH5_THEO_SAVING_B=
+		[THEO left worried]
+		Oh, oh... J’espère que tu sais comment t’occuper de ces trucs-là.
+
+	CH5_THEO_SAVING_C=
+		[THEO left worried]
+		Encore !? Allez...
+
+	CH5_THEO_SAVING_SWITCH=
+		[THEO left thinking]
+		{+theo} est encore le sauveur.
+
+	CH5_THEO_SAVING_DUNK=
+		[THEO left nailedit]
+		J’aide.
+
+	CH5_THEO_SAVING_REALLY=
+		[THEO left thinking]
+		Tu es plutôt en train de frimer.
+
+	CH5_THEO_SAVING_D=
+		[THEO left excited]
+		Il faut qu’on soit proche, je le sens.
+
+	CH5_THEO_SAVING_E=
+		[THEO left worried]
+		Encore un peu plus proche, tu peux le faire {+MADELINE}.
+
+	CH5_BSIDE_THEO_A=
+		[THEO left excited]
+		C’est le remix du temple, avec{n}votre ami {+MIXMASTER_THEO} !
+
+	CH5_BSIDE_THEO_B=
+		[THEO left wtf]
+		Ce n’est pas le canon, n’est-ce pas ?
+
+	CH5_BSIDE_THEO_C=
+		[THEO left wtf]
+		Euh... celui-là est clairement impossible.
+
+# *** Chapter 06 ***
+
+	CH6_THEO_INTRO=
+		[MADELINE right normal]
+		{+theo}, tu es réveillé !
+
+		[THEO left thinking]
+		C’est vrai ? J’en doute...
+
+		[THEO left wtf]
+		J’ai fait un cauchemar {~}de fou{/~}.
+		
+		[MADELINE right distracted]
+		Oui, à propos de...
+
+		[THEO left wtf]
+		Attends...
+
+		[THEO left thinking]
+		Ah, oui ! Ça me revient maintenant.
+
+		[THEO left wtf]
+		En fait, ça c’est vraiment passé.
+
+		[THEO left serious]
+		Merci de nous avoir tirés de là.
+
+		[MADELINE right distracted]
+		Je suis contente qu’on ait été ensemble.
+
+		[MADELINE right sad]
+		Je ne sais pas si j’y serais arrivée seule.
+
+	CH6_THEO_ASK_OUTFOR=
+		[THEO left thinking]
+		Je suis resté dehors combien de temps ?
+	CH6_THEO_SAY_OUTFOR=
+		[THEO left thinking]
+		Je suis resté dehors combien de temps ?
+
+		[MADELINE right sad]
+		Sans doute quelques heures...
+
+		[THEO left serious]
+		La vache ! C’était sauvage.
+
+		[MADELINE right upset]
+		On peut le dire.
+
+		[MADELINE right sad]
+		Tu vas bien ?
+
+		[THEO left thinking]
+		Tu veux dire en dehors de la crise existentielle ?
+
+		[THEO left wtf]
+		Ouais, je vais bien.
+
+	CH6_THEO_ASK_EXPLAIN=
+		[THEO left wtf]
+		Qu’est-ce qu’il se passe vraiment ici ?
+	CH6_THEO_SAY_EXPLAIN=
+		[THEO left wtf]
+		Il est clair que cette {+MOUNTAIN} n’est pas normale.
+		Qu’est-ce qu’il se passe vraiment ici ?
+
+		[MADELINE right sad]
+		J’aurais dû t’en parler plus tôt.
+
+		[MADELINE right distracted]
+		Dans les vieilles ruines, une...{n}{+PART_OF_ME} s’est échappée d’un miroir.
+		Une partie dont je ne suis pas très fière.
+
+		[MADELINE right upset]
+		Je jure que j’en ai rêvé.
+
+		[THEO left serious]
+		Tu crois que la {+MOUNTAIN} l’a rendue réelle ?
+
+		[MADELINE right distracted]
+		Oui.
+		Elle ne cesse de me hanter.
+
+		[MADELINE right sad]
+		Elle s’en est prise à {+MROSHIRO}.
+
+		[MADELINE right distracted]
+		Je crois que c’est à cause d’elle que la nacelle s’est arrêtée.
+
+		[MADELINE right sad]
+		Et puis elle était là, dans le temple.
+
+		[THEO left worried]
+		...
+		Pourquoi n’as-tu rien dit ?
+		Je ne serais pas entré dans ce temple{n}si j’avais su de quoi était capable cette {+MOUNTAIN}...
+
+		[MADELINE right upset]		
+		J’ai essayé de t’arrêter.	
+		
+		[THEO left wtf]
+		Tu aurais pu prévenir que ton{n}{+ST_BAD}sosie démoniaque {+END_BAD} était en liberté.
+			
+		[MADELINE right upset]
+		Allez, {+THEO}.
+		Tu sais que c’est complètement dingue.
+
+		[MADELINE right distracted]
+		Même moi, je n’y ai pas cru.
+
+		[THEO left wtf]
+		OK, OK.
+		Je comprends.
+
+		[THEO left thinking]
+		Mais, la prochaine fois {0.3}préviens-moi.
+		Je te jure que je te croirai.
+
+		[MADELINE right distracted]
+		OK.
+
+	CH6_THEO_ASK_THANKYOU=
+		[MADELINE right distracted]
+		Merci d’avoir cru en moi, là-bas.
+	CH6_THEO_SAY_THANKYOU=
+		[MADELINE right distracted]
+		Merci, {+THEO}.
+		... Je veux dire, d’avoir cru en moi, là-bas.
+
+		[THEO left wtf]
+		Croire en toi était la partie la plus simple.
+
+		[THEO left thinking]
+		J’aurais bien aimé t’aider.
+
+		[THEO left wtf]
+		Je n’ai pas servi à grand-chose, coincé dans ce truc.
+
+		[MADELINE right sad]
+		En fait, tu as beaucoup aidé.
+
+		[MADELINE right distracted]
+		Honnêtement, je n’y serais pas arrivée sans toi.
+
+	CH6_THEO_ASK_TRUST=
+		[MADELINE right distracted] 
+		Pourquoi me fais-tu confiance si facilement ?
+	CH6_THEO_SAY_TRUST=
+		[MADELINE right distracted] 
+		Pourquoi me fais-tu confiance si facilement ?
+
+		[MADELINE right sad]
+		Sérieusement, tu me connais à peine.
+
+		[THEO left normal]
+		Honnêtement ?
+		Tu me rappelles ma sœur.
+
+		[MADELINE right normal]
+		C’est adorable. 
+		Elle est comment ?
+
+		[THEO left excited]
+		Oh, tu l’aimerais beaucoup !
+
+		[THEO left wtf]
+		En fait, au début, tu aurais{n}sans doute du mal avec elle...
+
+		[THEO left thinking]
+		Mais tu finirais par l’aimer.
+
+		[THEO left excited]
+		C’est une {~}vraie{/~} rock star.
+
+		[MADELINE right normal]
+		Elle est musicienne ?
+		C’est trop cool !
+
+		[THEO left thinking]
+		Bon, elle n’est pas {~}vraiment{/~} une vraie rock star.
+
+		[THEO left normal]
+		{+ALEX} est juste... géniale en tout.
+		Elle étudie le droit civil pour devenir avocate.
+
+		[MADELINE right normal]
+		Waouh !
+
+		[MADELINE right distracted]
+		Et pourquoi je te fais penser à elle ?
+
+		[THEO left wtf]
+		Toutes les deux, vous vivez{n}très intensément dans votre tête.
+
+		[MADELINE right distracted]
+		Oh...
+
+		[THEO left thinking]
+		{+ALEX} a une boussole interne incroyable.
+
+		[THEO left normal]
+		Il est clair qu’elle ira là où elle veut aller.
+		Je vois ça chez toi aussi.
+
+		[THEO left wtf]
+		J’aimerais pouvoir en dire autant pour moi.
+		
+	CH6_THEO_ASK_WHY=
+		[MADELINE right distracted]
+		Ta sœur a l’air géniale. Je te fais vraiment penser à elle ?
+	CH6_THEO_SAY_WHY=
+		[MADELINE right distracted]
+		Ta sœur a l’air géniale. Je{n}te fais vraiment penser à elle ?
+
+		[THEO left thinking]
+		Tu plaisantes ?
+
+		[THEO left excited]
+		C’est bien toi qui es absolument{n}{~}déterminée{/~} à gravir cette {+MOUNTAIN}.
+
+		[THEO left thinking]
+		Et tu {~}{>> .3}ne sais même pas pourquoi.{>>}{/~}
+
+		[THEO left excited]
+		C’est typiquement du {+ALEX}.
+
+		[MADELINE right distracted]
+		...
+
+		[THEO left thinking]
+		Je te taquine.
+
+		[THEO left normal]
+		Et puis, pourquoi {~}veux-tu{/~} gravir cette {+MOUNTAIN} ?
+
+		[MADELINE right distracted]
+		Tu as raison, je ne sais même pas pourquoi.
+
+		[MADELINE right sad]
+		Je devais juste{0.4} sortir de ma propre {*}tête.{/*}
+		Je suis coincée dans un cycle.
+
+		[THEO left normal]
+		Tu prêches un converti là.
+		J’ai fait plein de boulots abrutissants.
+
+		[MADELINE right sad]
+		En fait, niveau boulot, ça va. C’est juste...
+
+		[MADELINE right distracted]
+		...
+
+		[MADELINE right upset]
+		Je deviens folle.
+		Je n’arrête pas de penser à des{n}idioties sans importance.
+
+		[MADELINE right sad]
+		Mon cerveau se bloque sur ces stupides {.4}{>> .3}{*}choses{/*}{>>}{.4}{n}qui se sont passées il y a si longtemps.
+
+		[MADELINE right angry]
+		Ça ne devrait pas {*}m’atteindre.{/*} 
+		{*}Ça n’a plus aucune importance.{/*}
+
+		{trigger 0 Wait a bit}
+
+		[MADELINE right distracted]
+		...
+		J’arrive à sauver les apparences, mais{n}en vérité je suis complètement paumée.
+
+		[THEO left worried]
+		Je suis désolé, ça a l’air difficile.
+		Je peux t’aider ?
+
+		[MADELINE right sad]
+		Tu es déjà en train de m’aider.
+		Ça fait du bien de pouvoir le dire.
+
+		[THEO left wtf]
+		Tu n’en parles jamais à personne ?
+
+		[MADELINE right distracted]
+		Non... pas vraiment.
+
+		[MADELINE right sad]
+		Ma mère sait que je déprime,{n}et que je fais des crises de panique.
+
+		[MADELINE right distracted]
+		C’est tout.
+
+		[THEO left thinking]
+		Pas étonnant que tu te sentes piégée.
+		
+		[THEO left wtf]
+		Comment tu te débrouilles avec... tout ça ?
+
+		[MADELINE right upset]
+		Je bois, principalement.
+		Et je m’énerve après des gens sur Internet.
+
+	CH6_THEO_ASK_DEPRESSION=
+		[THEO left serious]
+		Tu ne voudrais pas m’expliquer à quoi ressemble la dépression ?
+	CH6_THEO_SAY_DEPRESSION=
+		[THEO left serious]
+		Tu ne voudrais pas m’expliquer à{n}quoi ressemble la dépression ?
+
+		[MADELINE right distracted]
+		...
+
+		[MADELINE right upset]
+		C’est nul.
+
+		[THEO left wtf]
+		Ouais, mais ça ressemble {~}à quoi ?{/~}
+
+		[THEO left serious]
+		{+ALEX} en souffre aussi.{n}J’aimerais vraiment comprendre.
+
+		[THEO left normal]
+		On peut aussi parler d’autre chose si tu veux.
+
+		[MADELINE right distracted]
+		...
+		C’est comme...
+
+		[MADELINE right sad]
+		Je suis au fond d’un océan.
+		Où que je tourne mon regard, je ne vois rien.
+
+		[MADELINE right distracted]
+		C’est de la claustrophobie, et{n}pourtant je me sens exposée.
+		...
+
+		{trigger 0 Wait a bit}
+
+		[MADELINE right sad]
+		Je me souviens m’être sentie normale.
+		Mais maintenant, ça me paraît hors{n}d’atteinte, peu importe ce que je tente.
+		
+		[MADELINE right distracted]
+		En fait, j’ai sans doute toujours été en vrac.
+		Mais pour que ça sorte, il a fallu un truc douloureux.
+
+		[MADELINE right upset]
+		Il y doit y avoir un truc qui cloche chez moi.
+
+		[THEO left serious]
+		Quoi qu’il se soit passé, je suis{n}sûr que tu n’y es pour rien.
+
+		{trigger 0 Wait a bit}
+
+		[MADELINE right sad]
+		J’imagine que j’ai cru pouvoir...
+
+		[MADELINE right distracted]
+		Je ne sais pas.
+		Je suis en train de flotter dans cet abysse,{n}et je nage au hasard.
+
+		[MADELINE right sad]
+		En espérant trouver {*}quelque chose.{/*}
+
+		[MADELINE right distracted]
+		C’est pour ça que je suis ici.
+		...
+		Mais je ne peux pas échapper à moi-même.
+
+		[MADELINE right upset]
+		Je suis littéralement en train de{n}me {*}combattre{/*} de tous côtés.
+
+		[MADELINE right distracted]
+		C’est peut-être totalement vain.
+
+		{trigger 0 Wait a bit}
+
+		[THEO left serious]
+		{+MADELINE}, tu m’as {~}juste{/~} sauvé la vie.
+
+		[THEO left wtf]
+		Ce n’est pas totalement vain.
+
+		[MADELINE right distracted]
+		Ouais...
+
+		{trigger 0 Wait a bit}
+
+		[THEO left wtf]
+		Écoute, tu es quelqu’un de bien.
+
+		[THEO left thinking]
+		Tu es un petit peu vive, mais tu es {~}quelqu’un de bien.{/~}
+
+		[THEO left wtf]
+		Je crois que tu essaies juste de te sortir{n}de la routine dans laquelle tu es engluée.
+
+		[THEO left excited]
+		Et c’est une raison tout à fait{n}valable pour gravir la {+MOUNTAIN} !
+
+		[MADELINE right distracted]
+		Peut-être.
+
+		[MADELINE right sad]
+		Ça... ça m’aide.
+
+		{trigger 0 Wait a bit}
+
+		[THEO left normal]
+		Cette {+PART_OF_YOU} qui te hante,{n}elle est peut-être liée à ce territoire.
+
+		[MADELINE right upset]
+		Alors, tu crois que je suis coincée pour toujours ?
+
+		[THEO left normal]
+		Eh bien, elle aussi, elle est coincée avec toi.
+
+		[MADELINE right upset]
+		Ça n’aide {*}pas{/*} beaucoup.
+
+	CH6_THEO_ASK_DEFENSE=
+		[THEO left wtf]
+		Tu veux donc détruire cette {+PART_OF_YOU} ?
+	CH6_THEO_SAY_DEFENSE=
+		[THEO left wtf]
+		Tu veux donc détruire cette {+PART_OF_YOU} ?
+		Ça ne te fera pas souffrir aussi ?
+
+		[MADELINE right sad]
+		Si je ne le fais pas, elle ne me laissera jamais en paix.
+
+		[MADELINE right upset]
+		Elle dit qu’elle me protège,{n}mais il est évident que c’est faux.
+
+		[THEO left normal]
+		Peut-être qu’elle croit le faire.
+		Elle pourrait être un genre de...{n}système de défense tordu.
+		
+		[MADELINE right upset]
+		Honnêtement, ça intéresse qui ?
+		Elle a tellement de pouvoir sur moi.
+		Je la déteste.
+
+		[THEO left wtf]
+		Tu pourrais peut-être apprendre à la contrôler.
+
+		[MADELINE right distracted]
+		La plume aide beaucoup.
+
+		[MADELINE right sad]
+		Merci de m’avoir appris ça.
+
+		[THEO left thinking]
+		C’est juste une des nombreuses pépites de sagesse de mon grand-père.
+
+	CH6_THEO_ASK_VACATION=
+		[THEO left thinking]
+		Et si on prenait des vacances plutôt ?
+	CH6_THEO_SAY_VACATION=
+		[THEO left thinking]
+		Et si on prenait des vacances plutôt ?
+
+		[MADELINE right sad]
+		Qu’est-ce que tu veux dire ?
+
+		[THEO left normal]
+		Allons, tu avais besoin de changement{n}et tu as décidé de {>> .2}gravir une {+MOUNTAIN}{>>}...
+
+		[THEO left thinking]
+		Pourquoi ne pas plutôt faire quelque chose qui te détendrait ?
+
+		[THEO left wtf]
+		Aller à Hawaï, ou bien {0.3}prendre un bain.
+
+		[MADELINE right sad]
+		...
+		Je crois que j’ai besoin de réaliser quelque chose.
+
+		[THEO left wtf]
+		On dirait que tu as déjà assez de choses à faire.
+
+		[MADELINE right distracted]
+		J’imagine que c’est un peu extrême.
+		Mais je suis comme ça.
+		J’ai besoin de me lancer des défis.
+
+		[MADELINE right sad]
+		Et je ne peux pas faire les choses à moitié.
+		C’est tout ou rien.
+
+	CH6_THEO_ASK_FAMILY=
+		[MADELINE right normal]
+		Qu’est-ce qui t’a attiré à la {+MOUNTAIN} ?
+	CH6_THEO_SAY_FAMILY=
+		[MADELINE right normal]
+		Et toi ?
+		Qu’est-ce qui t’a attiré à la {+MOUNTAIN} ?
+
+		[THEO left normal]
+		Moi, je suis juste en vadrouille.
+		
+		[THEO left thinking]
+		Comme toujours.
+
+		[THEO left normal]
+		J’ai commencé ce nouveau boulot, à Seattle.
+		J’ai cru que j’avais {~}enfin{/~} trouvé ma vocation {n}dans ma vie...
+
+		[THEO left wtf]
+		Mais j’ai détesté ça.
+
+		[THEO left thinking]
+		Alors, au bout d’une semaine, j’ai démissionné et pris un car pour le Canada.
+
+		[THEO left wtf]
+		J’ai juste senti que j’avais besoin de...{n}me perdre au milieu de nulle part.
+		...
+		En m’écoutant dire ça, je réalise{n}à quel point c’est étrange.
+
+		[MADELINE right sad]
+		On dirait que tu es très stressé.
+
+		[THEO left thinking]
+		Pas vraiment.
+		Tout le monde est très patient avec moi.
+
+		[THEO left serious]
+		Mais je crois que c’est moi qui{n}me mets beaucoup de pression {~}tout seul.{/~}
+
+		[THEO left wtf]
+		Tout le monde croit que je me compare à {+ALEX},{n}mais je te {~}promets{/~} que ce n’est pas le problème.
+		J’ai juste peur de ne jamais trouver ma direction.
+		
+		[MADELINE right distracted]
+		Tu as dit que tu voulais te perdre...
+
+		[MADELINE right normal]		
+		C’est peut-être une chose que{n}tu devrais accepter pour l’instant.
+
+		[THEO left serious]
+		Peut-être.
+
+	CH6_THEO_ASK_GRANDPA=
+		[MADELINE right normal]
+		Tu es proche de ton grand-père ?
+	CH6_THEO_SAY_GRANDPA=
+		[MADELINE right normal]
+		Tu es proche de ton grand-père ?
+
+		[THEO left serious]
+		Ouais... J’étais proche.
+
+		[MADELINE right distracted]
+		Oh... Je suis désolée.
+
+		[THEO left serious]
+		C’est pas grave. C’est la vie.
+
+		[MADELINE right distracted]
+		...
+
+		[THEO left wtf]
+		Tout ce que je peux faire, c’est rester positif.
+
+		[THEO left serious]
+		Et vivre une vie qui ait du sens,{n}parce que c’est ce qu’il aurait voulu.
+
+		{trigger 0 Wait a bit}
+
+		[MADELINE right sad]
+		Je suis vraiment désolée, {+THEO}.
+
+		[THEO left serious]
+		Merci.
+
+	CH6_THEO_ASK_TIPS=
+		[MADELINE right normal]
+		Qu’as-tu appris d’autre de ton grand-père ?
+	CH6_THEO_SAY_TIPS=
+		[MADELINE right normal]
+		Qu’as-tu appris d’autre de ton grand-père ?
+
+		[THEO left excited]
+		Tellement de choses !
+
+		[THEO left normal]
+		En fait, c’est lui qui m’a{n}parlé du {+CELESTE_MOUNTAIN}.
+		Il disait que cet endroit avait changé sa vie.
+
+		[THEO left thinking]
+		Après avoir quitté mon travail à Seattle,{n}j’ai compris à quel point j’en étais proche.
+		C’est comme s’il me disait de venir ici.
+
+		[THEO left wtf]
+		Grand-père disait que cette {+MOUNTAIN}{n}était {~}« spéciale ».{/~}
+
+		[MADELINE right sad]
+		Tu crois qu’il est passé dans le temple comme nous ?
+
+		[MADELINE right normal]
+		Tu crois qu’il avait compris{n}le pouvoir de la {+MOUNTAIN} ?
+		
+		[THEO left thinking]
+		Il ne m’a jamais parlé de ce qui s’était passé ici.
+
+		[MADELINE right distracted]
+		Je doute que ton grand-père{n}ait été aussi perturbé que moi...
+
+		[MADELINE right sad]
+		Son expérience a sans doute été moins... violente.
+
+		[THEO left wtf]
+		Il a découvert la {+MOUNTAIN} avant ma naissance.
+		Je ne sais pas comment il était avant ça.
+
+		[THEO left serious]
+		Je me demande ce qu’il a appris sur lui ici...
+
+	CH6_THEO_ASK_TEMPLE=
+		[THEO left wtf]
+		Qui a construit le temple d’après toi ?
+	CH6_THEO_SAY_TEMPLE=
+		[THEO left wtf]
+		Qui a construit le temple d’après toi ?
+
+		[MADELINE right sad]
+		Il a l’air ancien...
+		Il doit dater d’avant tout le reste sur la {+MOUNTAIN}.{n}L’hôtel, les ruines, la ville...
+
+		[THEO left serious]
+		Il y a beaucoup d’histoire ici.
+
+		[MADELINE right distracted]
+		Ouais. 
+		Cette {+MOUNTAIN} a signifié beaucoup{n}de choses pour plein de gens.
+
+		[MADELINE right normal]
+		Je commence à comprendre pourquoi{n}cette vieille folle vit ici.
+
+		[THEO left excited]
+		Tu l’as croisée aussi ?
+
+		[THEO left thinking]
+		Qu’est-ce qu’elle veut ?
+
+		[MADELINE right upset]
+		Je crois qu’elle est juste méchante.
+
+		[MADELINE right distracted]
+		... mais elle a l’air assez heureuse de vivre ici.
+
+	CH6_THEO_ASK_SELFIE=
+		[MADELINE right normal]
+		Je veux me souvenir de cette nuit...
+	CH6_THEO_SAY_SELFIE=
+		[MADELINE right normal]
+		Tu sais quoi ?
+		Je veux me souvenir de cette nuit...
+		Prenons un selfie !
+
+		[THEO left normal]
+		Je croyais que tu n’allais jamais demander.
+
+		{trigger 1 selfie sequence}
+
+		[MADELINE right normal]
+		Tu sais, malgré tout, je me{n}sens assez bien en ce moment.
+
+		[THEO left wtf]
+		Attends une seconde...
+
+		[THEO left excited]
+		Tu vas atteindre le sommet demain !
+
+		[MADELINE right upset]
+		Il ne faut pas que ça te porte la poisse.
+
+		[MADELINE right distracted]
+		... Ouais, je suis toute excitée.
+
+		[MADELINE right normal]
+		Je suis prête à tourner la page.
+
+		[THEO left normal]
+		Je vais t’encourager.
+		On devrait dormir un peu.
+
+		[MADELINE right normal]
+		OK, bonne nuit, {+THEO}.
+
+		[MADELINE right distracted]
+		Merci d’être... aussi cool.
+
+		[THEO left thinking]
+		Que veux-tu que je dise ? C’est naturel chez moi.
+
+	CH6_THEO_ASK_SLEEP=
+		[MADELINE right distracted]
+		Je devrais dormir un peu.
+	CH6_THEO_SAY_SLEEP=
+		[MADELINE right distracted]
+		Je devrais dormir un peu.
+
+		[THEO left thinking]
+		Oh, tu es sûre que tu ne préférerais{n}pas continuer de parler ?
+
+		[THEO left normal]
+		Je suis fatigué aussi, mais on{n}a tellement de choses à se dire.
+
+	CH6_THEO_ASK_SLEEP_CONFIRM=
+		[MADELINE right sad]
+		Ouais, désolée, mais je suis vraiment fatiguée.
+	CH6_THEO_SAY_SLEEP_CONFIRM=
+		[MADELINE right sad]
+		Ouais, désolée, mais je suis vraiment fatiguée.
+
+		{+CH6_THEO_SAY_SELFIE}
+
+	CH6_THEO_ASK_SLEEP_CANCEL=
+		[MADELINE right normal]
+		Tu as raison, je pourrai dormir plus tard.
+	CH6_THEO_SAY_SLEEP_CANCEL=
+		[MADELINE right sad]
+		Tu as raison, je pourrai dormir plus tard.
+
+	CH6_DREAMING=
+		[MADELINE left normal]
+		Les aurores boréales sont tellement belles.
+
+		[BADELINE right worried]
+		Oui... c’est vrai...
+		...
+
+		[BADELINE right worriedAlt]
+		Où sommes-nous ?
+
+		[MADELINE left sad]
+		Il faut qu’on parle.
+
+		[BADELINE right worried]
+		... OK.
+
+		[MADELINE left distracted]
+		Je comprends enfin qui tu es.
+
+		[MADELINE left sad]
+		Tu n’es pas mon vrai reflet.
+
+		[BADELINE right worriedAlt]
+		... Ah non ?
+
+		[MADELINE left sad]
+		Tu es tout ce que je dois laisser derrière moi.
+		Tu es cruelle, parano, manipulatrice...
+
+		[BADELINE right worriedAlt]
+		Pourquoi dis-tu ça ?
+
+		[MADELINE left normal]
+		Non, ça va !
+		Je comprends maintenant.
+		Je n’ai plus besoin de toi.
+
+		[BADELINE right worried]
+		Alors tu... tu m’abandonnes ?
+
+		[MADELINE left sad]
+		Je te rends ta liberté.
+
+		[MADELINE left normal]
+		On sera toutes les deux bien plus heureuses.
+
+		[BADELINE right worried]
+		Tu es si...
+
+		[BADELINE right sad]
+		si...
+
+		[BADELINE right freakA pop]
+		{silent_trigger 0 Tentacles Appear}
+		... si stupide !
+
+		[BADELINE right freakB pop]
+		{silent_trigger 0 Tentacles Appear More}
+		Tu crois pouvoir {~}m’abandonner{/~} comme ça ?
+		{silent_trigger 0 Tentacles Appear moooore}
+		Tu crois pouvoir rejeter{n}toute responsabilité sur moi ?
+		{silent_trigger 0 Tentacles Appear EVEN MORE}
+		Tu te crois {~}supérieure{/~} à moi !?
+
+		[BADELINE right freakC pop]
+		{silent_trigger 1 Tentacles grab Madeline}
+		{!}{*}RÉPONDS-MOI !{/*}{/!}
+
+		[MADELINE left panic]
+		Calme-toi, s’il te plaît...
+		
+		{trigger 4 start circling the player}
+		[BADELINE right freakC_cont]
+		{!}{*}Me calmer !?{/*}{/!}
+
+		[MADELINE left determinedclosed]
+		Respire, {+MADELINE}.
+		Utilise la plume.
+
+		{trigger 2 Feather minigame}
+
+		[BADELINE right freakBAlt]
+		Tu va penser {~}à une plume{/~} pour m’arrêter ?
+
+		{trigger 3 Destroy feather minigame}
+
+		[BADELINE right freakBAlt]
+		Tu ne m’es pas {*}supérieure.{/*}
+		Et tu ne peux {*}pas{/*} gravir cette {+MOUNTAIN}.
+
+		[BADELINE right freakCAlt pop]
+		Il est temps de l’accepter.
+
+	CH6_THEO_WATCHOUT=
+		[THEO left worried]
+		{+MADELINE}, que se passe-t-il !?
+
+	CH6_REFLECT_AFTER=
+		[MADELINE left sad]
+		J’étais si proche.
+
+		[MADELINE left panic]
+		C’est fini maintenant.
+		Pourquoi ne me laisse-t-elle pas tranquille ?
+
+		[MADELINE left angry]
+		Je la {*}déteste{/*}.
+		...
+
+		[MADELINE left distracted]
+		...
+		Mais c’est une {+PART_OF_ME}.
+		Je n’arriverai jamais à me débarrasser d’elle.
+
+		[MADELINE left sad]
+		Et elle avait raison.
+		Je n’ai pas réussi à gravir la {+MOUNTAIN}.
+
+	CH6_OLDLADY=
+		[GRANNY right normal]
+		Ah ! Rebonjour.
+
+		[MADELINE left upset]
+		Évidemment, vous êtes là.
+
+		{trigger 0 Zoom in}
+
+		[GRANNY right mock]
+		Tu renonces, à ce que je vois.
+		
+		[MADELINE left upset]
+		Non, je suis tombée.
+		C’est terminé.
+
+		[GRANNY right normal]
+		C’est probablement mieux comme ça.
+		La {+MOUNTAIN} n’y va pas de main morte.
+
+		[MADELINE left upset]
+		Oui, j’ai compris. 
+		Je n’ai pas été assez forte pour{n}gravir votre stupide {+MOUNTAIN}.
+
+		[MADELINE left distracted]
+		Vous pouvez à nouveau rire de moi si vous voulez.
+
+		{trigger 1 Start laughing}
+		
+		[MADELINE left upset]
+		Je ne voulais pas vraiment dire rire...
+
+		{trigger 2 Stop laughing}
+		
+		[GRANNY right normal]
+		Il faut parfois savoir quand jeter l’éponge.
+		Tu survivras.
+
+		{trigger 3 Maddy walks right}
+		
+		[MADELINE left angry]
+		Vous savez quoi ?
+		J’ai eu beaucoup de temps pour réfléchir,{n}en sortant de cette grotte...	
+		Et c’est du passé pour {*}moi.{/*}
+
+		{trigger 4 Maddy walks left}
+
+		[MADELINE left upset flip]
+		Cette {0.4}{+PART_OF_ME}{0.4} avait{n}raison, je ne peux pas le faire.
+
+		[MADELINE left panic flip]
+		Je vais juste... rentrer chez moi, à ma triste vie,{n}et {.4}rester malheureuse pour toujours.
+
+		{trigger 5 Wait a bit}
+		
+		[GRANNY right normal]
+		Il est clair que tu n’en as pas assez.
+
+		{trigger 6 Maddy turns right}
+		
+		[MADELINE left upset]
+		Taisez-vous, je sais.
+
+		[MADELINE left distracted]
+		Je ne veux pas abandonner...
+		Mais peu importent tous mes efforts, elle{n}sabote le moindre de mes pas.
+		
+		[GRANNY right normal]
+		Beaucoup d’enfants sont venus ici pour gravir{n}cette {+mountain}, et ils ont tous abandonné.
+		Dommage que tu sois tombée, je commençais à croire que tu allais y arriver.
+
+		[MADELINE left sad]
+		Qu’ai-je donc de si spécial ?
+
+		[GRANNY right normal]
+		Je n’ai jamais rencontré une personne{n}aussi en colère contre elle-même.
+
+		{trigger 1 Start lauging}
+
+		[GRANNY right laugh]
+		Honnêtement, je pensais que tu atteindrais{n}le sommet rien que pour te contrarier toi-même.
+
+		[MADELINE left upset]
+		Eh bien, merci !
+
+		{trigger 2 Stop laughing}
+
+		[GRANNY right normal]
+		Cette fille dont tu parles, on dirait{n}qu’elle a une emprise sur toi.
+		Parle-lui.
+		Essaie de découvrir pourquoi elle a si peur.
+		
+		[MADELINE left sad]
+		Vous pensez qu’elle a... peur ?
+
+		[MADELINE left distracted]
+		Je n’avais jamais vu les choses sous cet angle.
+		
+		[GRANNY right normal]
+		Cesse de perdre ton temps et le mien et {~}demande-lui.{/~}
+		Qu’as-tu à perdre ?
+
+	CH6_OLDLADY_B=
+		[MADELINE left sad]
+		Je ne sais pas comment la trouver...
+
+		[GRANNY right normal]
+		Elle est une {+PART_OF_YOU}, n’est-ce pas ?
+		Si tu la recherches, elle ne sera pas longue à trouver.
+
+		[MADELINE left upset]
+		... Alors, vous savez pour le pouvoir de la {+MOUNTAIN}.
+
+		[GRANNY right normal]
+		Bien sûr que je sais, je vis ici.
+		J’ai essayé de te prévenir.
+
+		[MADELINE left upset]
+		Vous devriez améliorer votre communication.
+
+		[GRANNY right normal]
+		Entrevoir la vérité est une bonne chose.
+		Même si la plupart des gens{n}n’acceptent pas ce qu’ils voient.
+		Il n’y a pas de honte à retourner{n}à ta voiture et t’en aller.
+		Un jour, tu seras prête,{n}et alors tu reviendras.
+
+		[MADELINE left distracted]
+		...
+		Non.
+
+		[MADELINE left sad]
+		Je vais éclaircir tout ça.
+		J’arrête de fuir.
+
+		[GRANNY right normal]
+		Je m’en doutais.
+		Bonne chance.
+
+	CH6_OLDLADY_C=
+		[MADELINE left sad]
+		Comment pouvez-vous supporter de vivre ici ?
+		Ce n’est pas difficile d’être confrontée{n}à tout ceci en permanence ?
+
+		[GRANNY right normal]
+		C’est vrai, on ne s’habitue jamais vraiment.
+		Mais ça me maintient en forme.
+		C’est ce qui me plaît.
+
+		[MADELINE left sad]
+		Mais la {+MOUNTAIN} est tellement... conflictuelle.
+
+		[GRANNY right normal]
+		C’est vrai, elle ne tourne pas autour du pot.
+		Le {+CELESTE_MOUNTAIN} est un lieu de cure, ma chère.
+		La première étape du soin{n}consiste à se confronter au problème.
+		Ce n’est jamais facile.
+
+		[MADELINE left upset]
+		Ne m’en parlez pas.
+
+	CH6_BOSS_START=
+		[BADELINE right angry flip]
+		C’est moi que tu cherches ?
+		Je croyais que tu en avais fini avec moi.
+
+		[MADELINE left sad]
+		C’était une erreur.
+		Je suis désolée.
+
+		[BADELINE right scoff flip]
+		Tu crois avoir réussi à {~}tout comprendre.{/~}
+
+		[BADELINE right angry flip]
+		Tu crois que tu n’as plus besoin de moi.
+		
+		[MADELINE left upset]
+		J’ai dit que j’étais désolée.
+
+		[MADELINE left sad]
+		Il faut qu’on dépasse tout ça.
+
+		{trigger 0 Badeline floats, zooms in}
+
+		[BADELINE right yell]
+		Tu espères que je vais te croire ?
+
+		[MADELINE left angry]
+		Tu as aussi des choses à te reprocher.
+		...
+
+		[MADELINE left determinedclosed]
+		Mais je sais que tu as peur.
+		
+		{trigger 1 Maddy steps forward}
+		
+		[MADELINE left sad]
+		Écoute, on est au fond du trou.
+		Se disputer ne sert à rien.
+
+		[BADELINE right scoff]
+		Je peux continuer de creuser.
+
+		[BADELINE right angry]
+		Je pourrais nous faire tomber{n}jusqu’au centre de la terre.
+
+		[MADELINE left sad]
+		Ça servirait à quoi ?
+
+		[MADELINE left together]
+		{s 4}Sortons d’ici {.6}[MADELINE left togetherZoom]ensemble.
+		
+		[BADELINE right yell]
+		Si tu m’approches, tu le regretteras.
+
+	CH6_BOSS_TIRED_A=
+		[BADELINE right angry]
+		Je t’ai fait une faveur.
+
+	CH6_BOSS_TIRED_B=
+		[BADELINE right yell]
+		Tu n’es pas une {*}alpiniste.{/*}
+
+	CH6_BOSS_TIRED_C=
+		[BADELINE right yell]
+		{*}J’essaie juste de t’aider !{/*}
+
+	CH6_BOSS_MIDDLE=
+		[BADELINE right yell]
+		Rien de tout ça ne serait {*}arrivé{/*}{n}si tu m’avais {*}écoutée !{/*}
+
+	CH6_BOSS_ENDING=
+		[BADELINE right sigh flip]
+		Très bien.
+		Tu as gagné.
+
+		{silent_trigger 0 Music starts}
+
+		[BADELINE right worried flip]
+		J’imagine que tu n’as pas besoin de moi, après tout.
+
+		[BADELINE right worriedAlt flip]
+		Si tu veux que je parte, je vais essayer.
+		
+		[MADELINE left distracted]
+		Ce n’est pas ce que je veux.
+		J’ai plus que jamais besoin de ton aide.
+
+		[MADELINE left sad]
+		S’il te plaît. Travaillons ensemble.
+
+		[BADELINE right worried flip]
+		Travailler ensemble ?
+
+		[BADELINE right worriedAlt flip]
+		Tu veux rire, n’est-ce pas ?
+
+		{trigger 1 Madeline puts hand on Badeline}
+
+		[MADELINE left sad]
+		Il n’y a pas de mal à avoir peur.
+
+		{trigger 2 Badeline calms down}
+
+		[BADELINE right worried flip]
+		...
+
+	CH6_ENDING=
+		[MADELINE left surprised]
+		Comment a-t-on fait ça ?
+
+		[MADELINE left normal]
+		Si on arrive à grimper ainsi,{n}on atteindra peut-être le sommet !
+		
+		[BADELINE right worriedAlt]
+		Tu veux toujours gravir la {+MOUNTAIN} ?
+
+		[BADELINE right worried]
+		Pourquoi on retournerait là-haut ?
+
+		{trigger 0 Old Lady enters right}
+
+		[GRANNY right normal]
+		C’est bien de vous voir vous entendre.
+
+		[MADELINE left sad]
+		Eh, merci de m’avoir expliqué des choses.
+
+		[GRANNY right normal]
+		N’en parlons plus.
+		Je suis contente de pouvoir{n}être utile de temps en temps.
+
+		{portrait none}
+		{*}{+MADELINE} !!!{/*}
+
+		{trigger 1 Theo enters left}
+		
+		[THEO left worried]
+		{+MADELINE} ! Tu vas bien !
+
+		[THEO left wtf]
+		J’ai accouru pour t’aider, mais on dirait que tu t’en tires toute seule.
+		
+		[MADELINE right normal]
+		Merci, {+THEO}.
+
+		[MADELINE right distracted]
+		Honnêtement, cette chute m’a peut-être servie.
+		
+		{trigger 8 theo stops being tired}
+		[THEO left wtf]
+		C’est la {+PART_OF_YOU} dont tu parlais ?
+
+		[THEO left excited]
+		Elle a l’air d’une adorable {+MADELINE} gothique !
+
+		[BADELINE right angry]
+		Salut.
+
+		[MADELINE right sad]
+		Tu avais raison, {+THEO}.
+		Je n’ai pas à avoir peur d’elle.
+
+		[MADELINE right normal]
+		Si on travaille ensemble, je{n}crois qu’on peut réussir l’ascension.
+
+		[THEO left excited]
+		C’est trop cool !
+
+		[BADELINE right angry]
+		Attends, {0.4}{*}non{/*}.
+
+		[BADELINE right worried]
+		... Je ne suis pas d’accord.
+
+		{trigger 2 Madeline turns to the right}
+
+		[BADELINE right worriedAlt]
+		Tu as dit qu’on devait d’abord discuter.
+
+		[MADELINE left sad]
+		Tu as raison.
+		Je comprends que tu aies peur.
+		
+		[MADELINE left distracted]
+		Mais on sait toutes les deux que{n}c’est quelque chose qu’on veut faire.
+
+		[MADELINE left normal]
+		On doit essayer une dernière fois.
+
+		{trigger 7 Theo raises fist}
+
+		[THEO left yolo]
+		Ouais ! Vous pouvez !
+		
+		[BADELINE right worried]
+		Je ne sais pas...
+
+		[BADELINE right worriedAlt]
+		On était si proches et puis on est... euh, tombées...
+
+		[BADELINE right worried]
+		La {+MOUNTAIN} nous a déchirées.
+
+		[MADELINE left upset]
+		Oui, c’est ce qui s’est passé.
+
+		[MADELINE left sad]
+		Mais je dois croire que nous pouvons surmonter ça.
+		Je dois croire que nous en sommes capables.
+
+		{trigger 5 Wait a bit}
+
+		[GRANNY right normal]
+		Ce n’est pas une mauvaise idée.
+
+		{trigger 3 badeline turns right}
+
+		[GRANNY right normal]
+		Mais attention, ça restera difficile.
+		Cependant, il est incroyable que vous soyez allées{n}aussi loin, alors que vous n’avez pas cessé de vous battre.
+		Je pense que vous pouvez y arriver si vous coopérez.
+
+		[BADELINE right worried flip]
+		...
+
+		{trigger 4 badeline turns left}
+
+		[BADELINE right worriedAlt]
+		OK. 
+
+		[BADELINE right worried]
+		Je vais essayer.
+
+		{trigger 5 Wait a bit}
+
+		[THEO left normal]
+		Je peux être utile ?
+
+		{trigger 6 Madeline turns to the left}
+
+		[MADELINE right distracted]
+		Tu as déjà beaucoup fait pour moi.
+
+		[THEO left wtf]
+		Laisse-moi au moins porter ton sac.
+
+		[MADELINE right normal]
+		Bonne idée.
+
+		[MADELINE right determined]
+		{>> 0.2}Ça ne prendra pas longtemps.{>>}
+
+# *** Chapter 07 ***
+
+	CH7_HEIGHT_START=Altitude de départ
+	CH7_HEIGHT_0={X} M
+ 	CH7_HEIGHT_1={X} M
+	CH7_HEIGHT_2={X} M
+	CH7_HEIGHT_3={X} M
+	CH7_HEIGHT_4={X} M
+	CH7_HEIGHT_5={X} M
+
+	# Mountain Base -> Forsaken City
+	CH7_ASCEND_0=
+		[MADELINE left normal]
+		On va y arriver.
+
+		[BADELINE right upset]
+		Si tu le dis...
+
+		[MADELINE left determined]
+		Cette montagne ne nous résistera pas.
+
+		[BADELINE right worried]
+		Tu vas nous porter la poisse.
+
+	# Forsaken City -> Old Site
+	CH7_ASCEND_1=
+		[MADELINE left normal]
+		Comment te sens-tu ?
+
+		[BADELINE right upset]
+		Tout va bien.
+
+		[BADELINE right worried]
+		J’attends juste {0.4}le premier problème.
+
+		[MADELINE left sad]
+		Peu importe ce qui se passe,{n}je serai à tes côtés.
+
+		[BADELINE right worried]
+		Tu sais ce qui me fait le plus peur ?
+		
+		[BADELINE right upset]
+		C’est que je commence à te croire.
+
+	# Old Site -> Celestial Resort
+	CH7_ASCEND_2=
+		[BADELINE right normal]
+		C’était du bon travail ça.
+
+		[MADELINE left surprised]
+		Regardez-moi ça !
+
+		[MADELINE left normal]
+		{+ST_BAD}Mlle Positivisme{+END_BAD} en personne.
+
+		[MADELINE left determined]
+		Tu es d’un grand soutien.
+
+		[BADELINE right angry]
+		Ne force pas ta chance.
+		
+	# Celestial Resort -> Cliffside
+	CH7_ASCEND_3=
+		[MADELINE left distracted]
+		J’espère que {+MROSHIRO} va bien.
+
+		[BADELINE right angry]
+		Pourquoi ? Il t’a traitée comme une moins que rien.
+
+		[MADELINE left sad]
+		Oui, mais je m’inquiète quand même pour lui.
+		
+		[MADELINE left upset]
+		Et tu n’avais pas à être aussi cassante avec lui.
+
+		[BADELINE right angry]
+		Si tu veux.
+
+		[MADELINE left sad]
+		Je ne plaisante pas. Tu es bien trop agressive.
+
+		[BADELINE right angry]
+		Et {~}toi{/~} tu gaspilles ton énergie pour les mauvaises{n}personnes qui finissent par te blesser.
+
+		[MADELINE left distracted]
+		{+MROSHIRO} n’est pas une mauvaise personne...
+
+		[BADELINE right yell]
+		Il s’est transformé en {*}monstre !{/*}
+		Il a essayé de te {*}blesser{/*} !
+
+		[BADELINE right worriedAlt]
+		Et maintenant tu prends sa défense ?
+
+		[MADELINE left distracted]
+		Je ne prends pas sa défense...
+
+		[MADELINE left sad]
+		Je suis avec toi. Moi aussi, il m’a énervée.
+		Je serais peut-être encore dans cet hôtel{n}si tu n’avais pas forcé les choses.
+
+		[MADELINE left distracted]
+		... Mais j’espère quand même qu’il va bien.
+
+		[BADELINE right worried]
+		...
+
+		[BADELINE right worriedAlt]
+		OK...
+		... Je suis désolée...
+
+		[BADELINE right worried]
+		... d’avoir été cassante avec {+MROSHIRO}.
+
+		[MADELINE left distracted]
+		Merci. 
+		
+		[MADELINE left sad]
+		N’en parlons plus.
+		
+	# Cliffside -> Temple
+	CH7_ASCEND_4=
+		[MADELINE left surprised]
+		Ce n’est pas passé loin.
+
+		[BADELINE right worried]
+		Ouais, je n’étais pas sûre qu’on y arrive.
+
+		[MADELINE left distracted]
+		Tu avais peut-être raison.
+
+		[MADELINE left sad]
+		Peut-être que {~}c’est{/~} trop dangereux.
+
+		[BADELINE right worried]
+		...
+
+		[BADELINE right angry]
+		{*}Non.{/*}
+		J’avais tort.
+		On peut gravir cette {+MOUNTAIN}.
+
+		[BADELINE right normal]
+		Je suis avec toi...
+
+		[BADELINE right worried]
+		... et...
+
+		[BADELINE right worriedAlt]
+		... Je crois en toi.
+
+		[MADELINE left sad]
+		Ça veut dire beaucoup pour moi.
+		
+	# Temple -> Summit
+	CH7_ASCEND_5=
+		[MADELINE left determined]
+		Ça y est, la dernière ligne droite.
+
+		[MADELINE left normal]
+		On est si proches. On va y arriver !
+
+		[BADELINE right worriedAlt]
+		Ouais...
+
+		[BADELINE right worried]
+		...
+
+		[MADELINE left sad]
+		Qu’est-ce qui ne va pas ?
+
+		[BADELINE right worried]
+		... Je suis juste...
+		...
+
+		[BADELINE right worriedAlt]
+		... Je suis désolée. 
+		Je te ralentissais.
+
+		[BADELINE right worried]
+		Je dois apprendre à te faire confiance.
+
+		[MADELINE left distracted]
+		Ce n’est pas ta faute.
+		J’ai essayé de t’abandonner.
+		Et, honnêtement, j’ai essayé de{n}t’abandonner toute ma vie.
+
+		[MADELINE left sad]
+		Je suis désolée.
+		Si seulement j’avais tenté de te comprendre plus tôt.
+		J’étais trop fière, ou entêtée, ou {*}je ne sais quoi.{/*}
+
+		[BADELINE right worriedAlt]
+		On a perdu tant de temps et d’énergie.
+
+		[BADELINE right worried]
+		...
+
+		[BADELINE right worriedAlt]
+		Au moins, on finit par en parler.
+
+		[MADELINE left sad]
+		Ouais...
+
+		[MADELINE left normal]
+		Je suis heureuse que la {+MOUNTAIN} t’ait fait ressortir.
+		Je crois qu’on va s’en tirer.
+		Si on gravit cette {+MOUNTAIN} ensemble,{n}on pourra tout faire.
+		
+		[BADELINE right worried]
+		Et si on n’y arrive pas ?
+
+		[MADELINE left normal]
+		Ça ne me dérangerait pas.
+
+		[BADELINE right worriedAlt]
+		Vraiment ?
+
+		[MADELINE left sad]
+		Bien sûr.
+		
+		[MADELINE left normal]
+		Je suis déjà heureuse qu’on essaie.
+
+		[MADELINE left sad]
+		J’avais vraiment besoin de le faire.
+		
+		[BADELINE right upset]
+		Je commence à comprendre pourquoi.
+
+		[BADELINE right normal]
+		Finissons-en.
+
+	CH7_ENDING=
+		[BADELINE left normal]
+		On a réussi.
+		Je n’arrive pas à le croire !
+
+		[MADELINE right surprised flip]
+		Waouh ! C’est tellement beau !
+		
+		[MADELINE right normal flip]
+		Regarde tout le chemin parcouru !
+
+		{trigger 1 Madeline sits down}
+
+		[BADELINE left normal]
+		Je suis heureuse de pouvoir voir ça avant de...
+
+		[BADELINE left worriedAlt]
+		Enfin, avant de...
+
+		[MADELINE right distracted flip]
+		Oh, c’est vrai.
+
+		[MADELINE right sad flip]
+		Quand on quittera la {+MOUNTAIN},{n}tu ne pourras plus me parler...
+		Enfin, plus de cette façon.
+
+		[BADELINE left worried]
+		Ouais.
+
+		[BADELINE left upset]
+		Je sais qu’il va falloir qu’on rentre à la maison.
+		Mais j’ai peur de perdre ce corps.
+
+		{trigger 2 Badeline moves beside Maddy as camera begins panning right}
+
+		[MADELINE left sad]
+		Mais tu existeras toujours.
+		Tu étais une {+PART_OF_ME} avant qu’on ne vienne ici.
+
+		[BADELINE left upset]
+		Ouais, je sais.
+		Mais tu seras la seule à pouvoir décider de m’écouter.
+
+		[BADELINE left worried]
+		... même si je ne peux plus te parler en personne.
+
+		[BADELINE left worriedAlt]
+		Je ne peux tout simplement... plus revenir à avant.
+		Avant la {+MOUNTAIN}.
+
+		[MADELINE right sad flip]
+		Ne t’inquiète pas, je ne peux plus revenir à ça non plus.
+		À partir de maintenant, je{n}veux vraiment qu’on collabore.
+
+		[BADELINE left upset]
+		Je crois en toi.
+
+		[BADELINE left worriedAlt]
+		... mais je suis quand même nerveuse.
+
+		{trigger 0 Wait a bit}
+		
+		[BADELINE left upset]
+		Alors... et maintenant ?
+
+		[MADELINE right distracted flip]
+		...
+
+		[MADELINE right normal flip]
+		Essayons juste d’en profiter un peu.
+
+	CH7_BSIDE_ASCEND=
+		[BADELINE left freakA]
+		C'est génial !
+
+		[MADELINE right surprised]
+		J'arrive pas à croire qu'on ait réussi !
+
+		[BADELINE left freakA]
+		Rien ne peut nous arrêter !
+
+		[MADELINE right upset]
+		Tu vas finir par me faire peur.
+
+	CH7_CSIDE_OLDLADY=
+		[GRANNY right normal]
+		Difficile de croire que c'est terminé, n'est-ce pas ?
+
+		[GRANNY right laugh]
+		C'est marrant comme on s'habitue à se battre.
+
+		[GRANNY right normal]
+		Promets-moi que tu feras attention à toi, d'accord ?
+
+	CH7_CSIDE_OLDLADY_B=
+		[GRANNY right normal]
+		Alors ?
+		Qu'est-ce que tu attends ?
+
+# *** Epilogue ***
+
+	EP_CABIN=
+		[GRANNY right normal]
+		Contente de te revoir.
+
+		[THEO right excited]
+		{+MADELINE}!
+		As-tu atteint le sommet ?
+		
+		{trigger 0 Badeline emerges}
+
+		[MADELINE left normal]
+		Oui, on a réussi.
+		C’était incroyable.
+
+		[GRANNY right normal]
+		Magnifique, n’est-ce pas ?
+
+		[BADELINE left upset]
+		Je pensais que ça ne vaudrait pas le coup...
+
+		[BADELINE left normal]
+		Mais je me trompais complètement.
+
+		[THEO right thinking]
+		J’aurais dû te passer mon téléphone{n}pour que tu prennes {~}le selfie ultime.{/~}
+
+		{trigger 1 Fade out, hear knock on door, fade in and Oshiro enters}
+
+		[OSHIRO left normal]
+		Bonsoir, tout le monde.
+
+		[BADELINE right angry]
+		Qu’est-ce que {~}vous{/~} faites ici ?
+
+		[OSHIRO left normal]
+		Un petit oiseau m’a dit qu’il y avait une fête.
+
+		[OSHIRO left sidehappy]
+		{+thought}RSVP-par-oiseau, positivement magique !{+endthought}
+
+		[OSHIRO left drama]
+		Mais si je ne suis pas le bienvenu, je peux partir.
+
+		[MADELINE right sad]
+		S’il vous plaît, restez {+MROSHIRO}.
+
+		[MADELINE right normal]
+		Je suis contente de vous voir.
+
+		{trigger 2 Oshiro settles in}
+
+		[GRANNY left normal]
+		Vous savez, c’est la première fois que je vous{n}vois en dehors de votre hôtel, {+OSHIRO}.
+		Je suis contente que vous soyez venu.
+		{+MADELINE} nous a préparé une tarte avec{n}toutes les fraises qu’elle a ramassées.
+
+		[OSHIRO left normal]
+		Oh, c’est merveilleux, {+MS_MADELINE}.
+
+		[THEO right normal]
+		Je n’ai pas mangé de {# F94A4A}tarte aux fraises{#} depuis mon enfance.
+
+		[THEO right excited]
+		Ça va être génial !
+
+		[BADELINE right scoff]
+		Ne soyez pas trop enthousiastes,{n}elle n’est pas très douée en pâtisserie.
+
+		{trigger 3 Maddy Turns}
+
+		[MADELINE left normal]
+		Tu prétendais aussi que je n’étais pas une alpiniste.
+
+		[BADELINE right worried]
+		Exact.
+
+		{trigger 3 Maddy Turns}
+
+		[MADELINE right sad]
+		Je ne sais pas si je serai à{n}la hauteur des attentes, {+THEO}.
+
+		[MADELINE right normal]
+		Mais j’ai fait de mon mieux.
+
+	EP_PIE_START=
+		[MADELINE right normal]
+		Alors ?
+		Elle est comment ?
+
+	EP_PIE_DISAPPOINTED=
+		[THEO left wtf]
+		Je crois que, techniquement, il s’agit d’une tarte...
+
+		[OSHIRO left worried]
+		C’est une plaisanterie, {+MS_MADELINE} ?
+
+		[GRANNY left normal]
+		Normalement, dans une tarte aux fraises{n}il y a des fraises, ma chère.
+
+	EP_PIE_GROSSED_OUT=
+		[THEO left wtf]
+		{+MADELINE}, c’est vraiment gentil d’avoir cuisiné pour nous...
+		Mais je ne crois pas pouvoir manger ça.
+
+		[GRANNY left normal]
+		C’est l’intention qui compte.
+
+		[BADELINE left angry]
+		Vous ne savez pas apprécier les bonnes choses.
+		Je vais tout manger toute seule.
+
+		[MADELINE right sad]
+		Tu n’es pas obligée de faire ça.
+
+		[BADELINE left worried]
+		Ouais... c’était une menace en l’air.
+
+	EP_PIE_OKAY=
+		[OSHIRO left normal]
+		Ce qui compte c’est que vous{n}ayez fait de votre mieux, {+MS_MADELINE}.
+
+		[BADELINE left angry]
+		Qui a invité ce type ?
+
+		[THEO left thinking]
+		Allez, c’est très bon.
+
+		[GRANNY left normal]
+		J’ai mangé bien pire.
+
+		[THEO left normal]
+		Merci pour la tarte, {+MADELINE}.
+
+	EP_PIE_REALLY_GOOD=
+		[GRANNY left normal]
+		Je suis impressionnée !
+		J’ai sûrement trouvé mon maître en matière de pâtisserie.
+
+		[BADELINE left normal]
+		Pas mal.
+
+		[THEO left excited]
+		Nom de Dieu !
+
+		[THEO left normal]
+		C’est trop bon.
+
+		[OSHIRO left normal]
+		{+MS_MADELINE}, êtes-vous disponible pour{n}préparer notre banquet de réouverture ?
+		
+		[THEO left excited]
+		Je peux en ramener une part chez moi pour {+ALEX} ?
+		Elle va mourir en goûtant ça.
+		
+	EP_PIE_AMAZING=
+		[THEO left wtf]
+		{+MADELINE}.
+
+		[THEO left excited]
+		Je n’ai jamais rien mangé d’aussi bon !
+
+		[MADELINE right sad]
+		Allez, sois honnête.
+
+		[GRANNY left normal]
+		Il a raison, ma chère.
+		C’est délicieux.
+
+		[OSHIRO left normal]
+		C’est vraiment une pure merveille, {+MS_MADELINE}.
+
+		[OSHIRO left worried]
+		{~}Une symphonie pour les papilles !{/~}
+
+		[BADELINE left scoff]
+		On peut dire que j’y suis un{n}peu pour quelque chose aussi ?
+
+		[MADELINE right normal]
+		Waouh, merci à vous !
+		J’y ai vraiment mis tout mon cœur.
+		
+# *** Appendix ***
+
+	APP_INTRO=
+		Environ un an plus tard...
+
+	APP_OLDLADY_A=
+		[GRANNY right normal]
+		Eh, salut gamine !
+		Je suis contente de te revoir.
+		
+		{trigger 0}
+		
+		[GRANNY right normal flip]
+		C’est la grotte dont je t’ai parlée{n}au téléphone.
+		
+		{silent_trigger 1}
+		Suis-moi.
+
+	APP_OLDLADY_B=
+		[MADELINE left sad]
+		C’est quoi cet endroit ?
+
+		[GRANNY right normal]
+		Ce passage mène au cœur de la {+MOUNTAIN}.
+		Tu as dit vouloir revenir pour{n}explorer plus profondément...
+
+		{trigger 0 start laughing}
+
+		[GRANNY right laugh]
+		On ne fait pas plus profond que ça !
+
+		{trigger 1 stop laughing}
+
+		[GRANNY right normal]
+		Mais fais attention.
+		Quand on approche à ce point du cœur de la {+MOUNTAIN}, son pouvoir commence à t’affecter différemment.
+
+		[MADELINE left sad]
+		Ouais, je l’ai déjà remarqué un petit peu...
+
+		[GRANNY right normal]
+		Bonne chance, là-dedans.
+
+	APP_OLDLADY_C=
+		[GRANNY right normal]
+		Où est l’autre {+PART_OF_YOU} ?
+
+		[MADELINE left sad]
+		Je ne sais pas... J’aurais cru{n}qu’elle se serait déjà manifestée.
+
+		[MADELINE left distracted]
+		Peut-être que j’ai changé et qu’elle{n}n’est plus une {+PART_OF_ME}.
+
+		[GRANNY right normal]
+		Ou alors vous avez peut-être grandi ensemble.
+		La {+MOUNTAIN} a peut-être plus{n}de mal à vous séparer.
+		Je pourrais parier qu’elle est toujours{n}en toi, d’une façon ou d’une autre.
+
+		[MADELINE left normal]
+		Je préfère cette théorie.
+
+		[MADELINE left distracted]
+		Pourtant, j’aimerais bien pouvoir lui parler.
+
+	APP_OLDLADY_D=
+		[GRANNY right normal]
+		Tu es restée en contact avec {+THEO} ?
+
+		[MADELINE left normal]
+		Oui, il est venu à Vancouver cet été.
+		On a passé du bon temps ensemble.
+
+		[GRANNY right normal]
+		Et qu’est-ce qu’il devient maintenant ?
+
+		[MADELINE left normal]
+		Il est retourné en Californie, dans sa famille.
+		Il veut rester près de sa sœur jusqu’à{n}ce qu’elle obtienne son diplôme de droit.
+
+		[MADELINE left sad]
+		Ça a l’air assez difficile, mais il{n}veut être là pour l’aider.
+
+		[GRANNY right normal]
+		C’est un jeune homme très bien.
+
+	APP_OLDLADY_E=
+		[MADELINE left normal]
+		Ça faisait longtemps. Comment allez-vous ?
+
+		[GRANNY right normal]
+		Oh, toujours le même vieux train-train.
+
+		{trigger 0 start laughing}
+
+		[GRANNY right laugh]
+		Et dans mon cas, il est très vieux.
+
+		{trigger 1 end laughing}
+
+		[GRANNY right normal]
+		Je ne rajeunis pas, ça c’est sûr.
+		Certains jours, le simple fait de{n}rester en vie absorbe toute mon énergie.
+		Mais la {+MOUNTAIN} me maintient en vie.
+		
+		[GRANNY right mock]
+		Je ne suis pas prête d’abandonner face au fantôme.
+
+		[MADELINE left normal]
+		Je n’en attendais pas moins de vous.
+
+		[MADELINE left sad]
+		Prenez soin de vous.
+
+	APP_OLDLADY_LOCKED=
+		[MADELINE left sad]
+		Cette porte ne bougera pas d’un pouce.
+		Il y a une autre façon d’entrer ?
+
+		[GRANNY right normal]
+		J’ai peur que non, ma chère.
+		
+		[GRANNY right mock]
+		Tu crois que la {+MOUNTAIN} va te{n}faciliter les choses maintenant ?
+
+		[GRANNY right normal]
+		Je crois qu’elle pense que tu n’es pas encore prête.
+
+		[MADELINE left sad]
+		OK, le {+CELESTE_MOUNTAIN} est sans{n}doute {~}étrange et magique.{/~}
+
+		[MADELINE left upset]
+		Mais maintenant, vous me dites{n}qu’il peut {~}« penser »{/~} aussi ?
+
+		[GRANNY right normal]
+		Il ne pense pas comme toi ou moi.
+		C’est plus... comme une rivière{n}qui pense à rejoindre la mer.
+		Tu peux trouver ça fou si tu veux.
+
+		[MADELINE left upset]
+		Je me garderai bien de douter de vous.
+
+		[MADELINE left sad]
+		Comment le convaincre que je suis prête ?
+
+		[GRANNY right normal]
+		Si je le savais !
+		Je remarcherais dans mes pas,{n}en faisant vraiment attention.
+		Le {+CELESTE_MOUNTAIN} doit avoir plus à t’enseigner.
+
+	APP_ENDING=
+		... Ça y est ?
+		C’est tout ce qu’il y avait dans le cœur ?
+		C’est tellement vide... et immense...
+		Et pourtant un peu nostalgique.
+		Et apaisé.
+
+# Crystal Hearts
+
+	POEM_FC=	Machines inutiles
+	POEM_FCR=	Qui coupent l’horizon
+
+	POEM_OS=	Résurrections
+	POEM_OSR=	Lune noire qui se lève
+
+	POEM_CR=	Éparse et perdue
+	POEM_CRR=	Bon karma
+
+	POEM_CS=	Œil du cyclone
+	POEM_CSR=	Plume d’or
+
+	POEM_T=		Silencieuse et tombante
+	POEM_TR=	Magie du miroir
+
+	POEM_TF=	Lourde et fragile
+	POEM_TFR=	Centre de la terre
+
+	POEM_TS=	Lever de soleil rose
+	POEM_TSR=	Arrêter de courir
+
+	POEM_MC=	Cœur de la montagne
+	POEM_MCR=	Et prendre congé
+
+# File Menu
+	FILE_VARIANT_OFF=Mode Variante : NON
+	FILE_VARIANT_ON=Mode Variante : OUI
+
+# Chapter Titles
+	AREA_10=Adieu
+
+# Checkpoints
+	CHECKPOINT_9_0=Solo
+	CHECKPOINT_9_1=Source d'alimentation
+	CHECKPOINT_9_2=En mémoire
+	CHECKPOINT_9_3=Épreuve Horizon
+	CHECKPOINT_9_4=Détermination
+	CHECKPOINT_9_5=Obstination
+	CHECKPOINT_9_6=Réconciliation
+	CHECKPOINT_9_7=Adieu
+
+# Postcards
+	POSTCARD_VARIANTS=
+		Waouh, tu as réussi !{n}{n}Les{# 9B3FB5}variantes{#} sont maintenant disponibles dans le menu Choix de fichier.
+
+
+# Stats
+	STATS_TITLE=Stats Steam mondiales
+	STAT_BERRIES=Fraises
+	STAT_DEATHS=Morts
+	STAT_DASHES=Sprints
+	STAT_GOLDBERRIES=Baies en or
+	STAT_PICO_BERRIES=Fraises PICO-8
+	STAT_PICO_DEATHS=Morts PICO-8
+	STAT_PICO_COMPLETES=Parties terminées PICO-8
+
+# Game Paused
+	MENU_PAUSE_VARIANT=Variantes
+	MENU_RETURN_TITLE=RETOUR À LA CARTE ?
+	MENU_RETURN_CONTINUE=Oui
+	MENU_RETURN_CANCEL=Annuler
+	MENU_RETURN_INFO=
+		Retourner à la carte sauvegardera ta progression,{n}
+		mais tu devras repartir au dernier point de contrôle.
+
+	MENU_RESTART_TITLE=REDÉMARRER LE CHAPITRE ?
+	MENU_RESTART_CONTINUE=Oui
+	MENU_RESTART_CANCEL=Annuler
+
+# Assist UI
+	MENU_ASSIST_SUBTITLE=Assistances
+
+# Variant UI
+	MENU_VARIANT_TITLE=VARIANTES
+	MENU_VARIANT_SUBTITLE=Variantes
+	MENU_VARIANT_MIRROR=Mode Miroir
+	MENU_VARIANT_360DASHING=Sprint à 360°
+	MENU_ASSIST_DASH_ASSIST=Dash Assist
+	MENU_VARIANT_INVISMOTION=Mouvement invisible
+	MENU_VARIANT_PLAYASBADELINE=Autre soi
+	MENU_VARIANT_NOGRABBING=Sans prise
+	MENU_VARIANT_LOWFRICTION=Friction faible
+	MENU_VARIANT_SUPERDASHING=Super sprint
+	MENU_VARIANT_HICCUPS=Hoquets
+
+# Names
+	GRANNY={# 66ea3a}Grand-mère{#}
+	PART_OF_HER={# 66ea3a}{~}Partie d'elle{/~}{#}
+	PART_OF_GRANNY={# 66ea3a}{~}Partie de grand-mère{/~}{#}
+
+# Chapter 09
+	CH9_GRAVESTONE=
+		[MADELINE left sad]
+		{+GRANNY}...
+		[MADELINE left sadder]
+		Je peux pas croire que tu sois morte, vieille chouette.
+		
+		[MADELINE left distracted]
+		Bon,{0.2} j'imagine que je peux.
+		
+		[MADELINE left sadder]
+		Tu avais l'air de dire au revoir{n}dans la dernière lettre que tu m'as envoyée.
+		
+		{silent_trigger 0 Step Forward}
+		
+		[MADELINE left sadder]
+		Ce n'est pas juste. J'ai besoin de toi.
+		
+		[MADELINE left angry]
+		Tu ne m'as préparée à rien de tout ça.
+		
+		{trigger 1 Badeline Appears}
+		
+		[BADELINE left scoff]
+		Qu'est-ce que tu veux qu'elle fasse ? Qu'elle s'excuse ?
+		
+		[BADELINE left upset]
+		Elle est morte.
+		
+		[BADELINE left angry]
+		Et tu n'es même pas allée son enterrement.
+		
+		{trigger 2 Sit Down}
+		
+		[MADELINE left distracted]
+		Je sais, c'est juste que... je ne pouvais pas.
+		
+		[MADELINE left sadder]
+		Je suis tombée.
+		
+		[MADELINE left sadder]
+		Je te demande pardon, {+GRANNY}.
+		
+		[BADELINE left angry]
+		Un {~}pardon{/~} ça ne la ramènera pas.
+		
+		[MADELINE left sadder]
+		Tu as raison.
+		
+		[MADELINE left sad]
+		Venir ici était égoïste de ma part.
+
+	CH9_FLYING_TO_THE_MOON=
+		[BADELINE right concerned]
+		Où est-ce qu'on va, {+MADELINE} ?
+		
+		[MADELINE left sad]
+		Il faut suivre cet oiseau.
+		C'est une {+PART_OF_GRANNY}, tout comme tu es une {+PART_OF_ME}.
+		
+		[BADELINE right worried]
+		Je croyais que c'était juste son animal de compagnie...
+		
+		[MADELINE left distracted]
+		Ça {~}doit{/~} être davantage.
+		
+		[MADELINE left sad]
+		Cet oiseau n'arrêtait pas de me suivre{n}sur la {+MOUNTAIN}, exactement comme faisait {+GRANNY}.
+		
+		[BADELINE right concerned]
+		{+MADELINE}... Ça m'ennuie de te le dire, mais...
+		
+		[BADELINE right worriedAlt]
+		Tu es en plein déni.
+		
+		[BADELINE right worried]
+		Ce n'est qu'un oiseau.
+		
+		[MADELINE left upset]
+		Tais-toi et aide-moi, pour une fois. D'accord ?
+
+	CH9_LANDING=
+		[BADELINE left worried]
+		Euh... on est vraiment très haut.
+		
+		{trigger 0 Badeline turns}
+		
+		[BADELINE left worriedAlt flip]
+		La montagne a l'air d'une taupinière vue d'ici.
+		
+		{trigger 0 Badeline turns}
+		
+		[BADELINE left worried]
+		On devrait vraiment rentrer.
+		
+		[MADELINE right upset]
+		Ce n'est pas le moment d'en discuter.
+		
+		[BADELINE left concerned]
+		Comment fais-tu pour respirer ici ?
+		
+		[MADELINE right sad]
+		{+GRANNY} veut qu'on la suive.
+		
+		[MADELINE right distracted]
+		On ne peut pas l'abandonner encore une fois.
+		
+		[BADELINE left angryAlt]
+		{~}... C'est un oiseau,{/~} {+MADELINE}.
+		
+		[BADELINE left angry]
+		{+GRANNY} est morte.
+		
+		[MADELINE right angry]
+		Tu crois {*}vraiment{/*} que c'est un oiseau normal ?
+		
+		[MADELINE right sad]
+		C'est une {+PART_OF_HER}, et elle est toujours ici.
+		
+		[MADELINE right distracted]
+		Il y a peut-être moyen de la faire revenir.
+		
+		[MADELINE right sad]
+		Je dois tenter... quelque chose.
+		
+		[BADELINE left angryAlt]
+		...
+		Je ne peux rien faire pour toi.
+		
+		[MADELINE right angry]
+		Alors {*}va-t'en !{/*}
+		
+		{trigger 1 Badeline Vanishes}
+		
+		[MADELINE left determined]
+		Ne t'inquiète pas, {+GRANNY}.
+		Je ne te perdrai pas.
+
+	CH9_FAKE_HEART=
+		[MADELINE left distracted]
+		Attends, non...
+		
+		[MADELINE left sad]
+		Ça ne peut pas finir ainsi.
+
+	CH9_KEEP_GOING=
+		[MADELINE left sadder]
+		{+GRANNY} est toujours présente par ici.
+		
+		{trigger 0 Step Forward}
+		
+		[MADELINE left determined]
+		Ce qui veut dire que je dois continuer.
+
+	CH9_MISS_THE_BIRD=
+		[MADELINE left angry]
+		{~}Eh !{/~}
+		Tu ne veux pas que je t'aide ?
+		
+		[MADELINE left sadder]
+		... Tu ne veux pas me revoir, {+GRANNY} ?
+		
+		{trigger 0 stand up, face left }
+		
+		[MADELINE left sad flip]
+		Je ne comprends pas.
+		
+		[MADELINE left distracted flip]
+		Me mets-tu à l'épreuve ?
+		As-tu simplement peur d'appeler à l'aide ?
+		
+		[MADELINE left sadder flip]
+		La {+PART_OF_ME} avait peut-être raison.{n}Peut-être que ce {~}n'est{/~} qu'un oiseau.
+		...
+		
+		{trigger 1 take a step left}
+		
+		[MADELINE left sad flip]
+		À moins que...
+		
+		{trigger 2 take a step right}
+		
+		[MADELINE left surprised]
+		L'oiseau ne veut pas que je sauve {+GRANNY}.
+		
+		{trigger 3 black hole flickers }
+		
+		[MADELINE left sadder]
+		Il essaie de m'en empêcher, comme la {+PART_OF_ME}.
+		Je suis seule ici.
+		
+		{trigger 4 black hole flickers more, tiles to crack into the sci-fi one}
+		
+		[MADELINE left angry]
+		Bon, on n'a pas besoin de leur aide, pas vrai {+GRANNY} ?
+		
+		[MADELINE left together]
+		Ne t'inquiète pas, je ne t'abandonnerai pas !
+		Je vais attraper cet imbécile d'oiseau et je te libérerai.
+
+	CH9_HELPING_HAND=
+		[MADELINE left upset]
+		Je n'ai pas demandé ton aide.
+		
+		[BADELINE right angryAlt]
+		Je sais, mais allez {+MADELINE}...
+		Réfléchis un peu.
+		
+		[BADELINE right angry]
+		C'est quoi ton but ultime ?
+		
+		{trigger 0 Madeline faces away}
+		
+		[MADELINE left determined flip]
+		Tout ce qui compte, c'est trouver {+GRANNY}.
+		Ensuite, je pourrai peut-être la ramener chez elle...
+		
+		[MADELINE left sadder flip]
+		Même si le monde entier est contre moi.
+		
+		[BADELINE right worriedAlt]
+		...
+		
+		[BADELINE right worried]
+		Tu n'as pas peur de te perdre par ici ?
+		
+		[MADELINE left angry flip]
+		Je me débrouillerai.
+		
+		[BADELINE right worriedAlt]
+		...
+		
+		[BADELINE right worried]
+		Écoute, {+MADELINE}...
+		
+		[BADELINE right worriedAlt]
+		On est dans {~}l'espace{/~} en train de chasser un {~}oiseau mystérieux{/~}.
+		
+		[BADELINE right upset]
+		Rien n'est réel.
+		
+		[BADELINE right concerned]
+		Tu es en train de rêver.
+		
+		[MADELINE left sadder flip]
+		...
+		
+		[BADELINE right concerned]
+		... Elle est morte.
+		
+		[BADELINE right upset]
+		Il est temps de te réveiller maintenant.
+		
+		[MADELINE left sadder flip]
+		Mais si on se réveille, on ne reverra plus jamais {+GRANNY}...
+		
+		{trigger 1 Madeline faces towards badeline}
+		
+		[MADELINE left angry]
+		J'arrive pas à croire que tu te contentes de la savoir disparue pour toujours !
+		Tu es toujours aussi {*}égoïste{/*}.
+		
+		[BADELINE right angry]
+		...
+		
+		[BADELINE right angryAlt]
+		Pour commencer, c'est un {~}oiseau{/~}.
+		Rien ne nous {~}dit{/~} que c'est elle.
+		
+		[BADELINE right yell]
+		Et {*}ensuite{/*}...
+		...
+		
+		[BADELINE right sigh]
+		... il faut qu'on fasse marche arrière.
+		
+		{trigger 2 Madeline steps towards badeline}
+		
+		[MADELINE left angry]
+		Non, c'est {!}{*}toi{/*}{/!} qui vas faire marche arrière.
+		{*}Moi j'y vais.{/*}
+		
+		[MADELINE left sad]
+		Avec ou sans toi.
+		J'en ai marre que tu m'empêches d'avancer.
+		
+		[MADELINE left sadder]
+		{+GRANNY} a besoin de moi.
+		
+		[BADELINE right simple_sigh]
+		OK.
+		Bonne chance.
+
+	CH9_CATCH_THE_BIRD=
+		[MADELINE left surprised]
+		Je t'ai eu ! Pour finir !
+		
+		[MADELINE left angry]
+		Et maintenant, où est {+GRANNY} !?
+		
+		{trigger 0 bird looks hurt}
+		
+		[MADELINE left angry]
+		...
+		
+		[MADELINE left surprised]
+		Oh non.
+		Ça va ?
+		
+		{trigger 1 bird squaks}
+		
+		[MADELINE left sad]
+		Je suis désolée, je ne te voulais pas de mal.
+		
+		{trigger 2 approach bird, it moves away}
+		
+		[MADELINE left sad]
+		Attends ! S'il te plaît, ne pars pas !
+		
+		{trigger 3 bird flys out of the camera}
+		
+		[MADELINE left sadder]
+		Dis-moi au moins si...
+		Tu es une {+PART_OF_GRANNY}, c'est ça ?
+		Bon, alors puisque tu dois partir...
+		
+		[MADELINE left sad]
+		Emmène-moi avec toi.
+		
+		{trigger 4 badeline appears}
+		
+		[BADELINE right yell]
+		{+MADELINE}, arrête !
+		
+		[BADELINE right concerned]
+		Tu ne peux pas partir avec elle.
+		
+		[MADELINE left angry]
+		Tais-toi !
+		Tu n'as pas réussi à me faire abandonner sur la {+MOUNTAIN}.
+		Et tu ne pourras pas me faire abandonner avec {+GRANNY}.
+		
+		[MADELINE left sadder]
+		{*}Va-t'en.{/*}
+		
+		[BADELINE right concerned]
+		...
+		
+		[BADELINE right worried]
+		Je ne te force pas.
+		
+		[BADELINE right concerned]
+		Je te demande.
+		
+		{trigger 5 Wait a beat}
+		
+		[BADELINE right worriedAlt]
+		{+GRANNY} me manque aussi.
+		Elle signifiait beaucoup pour nous deux.
+		
+		[MADELINE left sad]
+		Alors comment peux-tu l'abandonner si facilement ?
+		
+		[BADELINE right worriedAlt]
+		Ce n'est {~}pas{/~} facile.
+		
+		[BADELINE right worried]
+		Je nous ai peut-être engagées là-dedans trop rapidement...
+		
+		[BADELINE right concerned]
+		Mais ce n'est pas sain non plus.
+		Je tiens simplement à ce qu'on survive à tout ça.
+		
+		{trigger 6 Madeline sits}
+		
+		[MADELINE left sadder flip]
+		...
+		Je sais qu'elle est morte.
+		Et que tout ceci n'est qu'un rêve.
+		Attraper cet oiseau ne la ramènera pas.
+		
+		{trigger 7 badeline hugs madeline}
+		
+		[BADELINE left concerned]
+		Je suis tellement désolée, {+MADELINE}.
+		
+		[BADELINE left concerned]
+		Réveillons-nous et affrontons ça ensemble.
+		
+		[MADELINE right sadder]
+		...
+		
+		[MADELINE right distracted]
+		Non.
+		
+		[MADELINE right sad]
+		Pas tout de suite.
+		
+		{trigger 8 stand up}
+		
+		[MADELINE right sad]
+		Je dois d'abord rétablir la situation.
+		
+		[BADELINE left upset]
+		Que veux-tu dire ?
+		
+		[MADELINE right sad]
+		L'oiseau, il est enfermé ici à cause de moi.
+		
+		{trigger 9 shift camera over to the bird}
+		
+		[MADELINE right sad flip]
+		On doit d'abord l'aider à s'enfuir avant de partir.
+		{+GRANNY} ne voudrait qu'il reste enfermé comme ça.
+		
+		[BADELINE left concerned]
+		Tu as raison.
+		
+		[BADELINE left normal]
+		Allons-y.
+		
+		[BADELINE left upset]
+		Mais dès qu'on aura terminé,{n}il faudra qu'on se réveille.
+		
+		[BADELINE left worried]
+		Cet endroit est si {*}bizarre{/*}.{n}Je veux rentrer à la maison.
+
+	CH9_LAST_ROOM=
+		[BADELINE right normal]
+		Ça y est ! On est presque sorti.
+		
+		[MADELINE left determined]
+		Faisons-le pour {+GRANNY}.
+
+	CH9_LAST_ROOM_ALT=
+		[BADELINE right concerned]
+		Ça va, {+MADELINE} ?
+		
+		[MADELINE left sad]
+		On y est presque, mais ça paraît impossible...
+		
+		[BADELINE right upset]
+		Allez, encore quelques essais !
+		
+		[BADELINE right normal]
+		On peut y arriver.
+
+	CH9_LAST_BOOST=
+		[BADELINE right normal]
+		Dis-lui au revoir de ma part.
+
+	CH9_FAREWELL=
+		[MADELINE left normal]
+		{+GRANNY} !
+		
+		[GRANNY right normal]
+		Salut, gamine.
+		
+		[MADELINE left normal]
+		Je suis tellement heureuse de vous voir.
+		Je ne savais plus quoi faire sans vous.
+		
+		[MADELINE left sad]
+		...
+		Mais vous n'êtes pas réelle...
+		
+		[MADELINE left sadder]
+		Tout ça n'est qu'un rêve.
+		
+		[GRANNY right normal]
+		Et alors ?
+		Ça ne t'a pas empêchée de venir jusqu'ici.
+		Tu as fini par me trouver et {~}maintenant{/~}{n}tu t'inquiètes que ce ne soit qu'un rêve ?
+		
+		[GRANNY right mock]
+		Cesse de te trouver des excuses et dis ce que tu as à dire.
+		
+		[MADELINE left sad]
+		...
+		
+		[MADELINE left distracted]
+		Je suis désolée de ne pas être venue à votre enterrement.
+		
+		[MADELINE left sadder]
+		Je n'ai pas pu... j'avais tout arrêté.
+		
+		{silent_trigger 0 laugh}
+		
+		[GRANNY right laugh]
+		Ah, j'ai déjà entendu ça.
+		
+		[MADELINE left upset]
+		...
+		
+		{silent_trigger 1 stop laughing}
+		
+		[GRANNY right normal]
+		Qu'est-ce que ça peut me faire de savoir qui est venu ou pas venu ?
+		
+		{silent_trigger 0 laugh}
+		
+		[GRANNY right laugh]
+		Je suis morte !
+		
+		{silent_trigger 1 stop laughing}
+		
+		[GRANNY right mock]
+		Les enterrements c'est pour tous les minables{n}qui doivent vivre sans moi.
+		
+		{trigger 2 take a step forward}
+		
+		[MADELINE left normal]
+		Merci d'avoir veillé sur moi sur la {+MOUNTAIN}.
+		
+		[MADELINE left distracted]
+		Vous m'avez beaucoup aidée et...
+		
+		[MADELINE left sadder]
+		Vous me manquez beaucoup.
+		
+		{trigger 3 granny fades away}
+		
+		[MADELINE left sadder]
+		Je suis censée faire quoi maintenant ?
+		Continuer, comme si rien ne s'était passé ?
+		
+		{silent_trigger 4 fade to white}
+		
+		[MADELINE left panic]
+		Comme si vous n'étiez pas... partie pour toujours ?
+
+	CH9_END_CINEMATIC=
+		{anchor bottom}
+		
+		[WEBCAM_THEO right excited]
+		Ah, la voilà !
+		
+		[WEBCAM_THEO right normal]
+		Ça faisait longtemps, {# F94A4A}petite fraise{#}.
+		
+		[MADELINE left sad]
+		Salut, {+THEO}.
+		
+		[WEBCAM_THEO right normal]
+		Une éternité !
+		
+		[WEBCAM_THEO right thinking]
+		Tu as disparu des radars !{n}Qu'est-ce qu'il t'est arrivé ?
+		
+		[MADELINE left sad]
+		Oui, désolée de n'avoir pas répondu à tes messages...
+		
+		[MADELINE left distracted]
+		... ou à tes appels...
+		...
+		... ou à tes courriels.
+		
+		[MADELINE left sad]
+		J'ai un peu déprimé à la mort de {+GRANNY}.
+		
+		[MADELINE left distracted]
+		Et je n'ai pas osé te recontacter.
+		Je pensais que tu étais fâché{n}que j'aie disparu comme ça.
+		
+		[MADELINE left sad]
+		L'effet boule de neige...
+		
+		[WEBCAM_THEO right thinking]
+		Oui, oui, je te connais.
+		
+		[WEBCAM_THEO right normal]
+		J'imagine que l'enterrement a dû{n}beaucoup t'inquiéter, mais c'est pas grave.
+		
+		[WEBCAM_THEO right thinking]
+		La prochaine fois, dis-moi {~}au moins{/~} que t'es encore en vie.
+		
+		[WEBCAM_THEO right normal]
+		Tu vas mieux ?
+		
+		[MADELINE left sad]
+		Ouais...
+		
+		[MADELINE left distracted]
+		Je finis par en voir le bout.
+		
+		[MADELINE left sad]
+		La première fois que j'ai rencontré {+GRANNY},{n}j'ai cru qu'elle était folle.
+		
+		[MADELINE left distracted]
+		Mais j'ai appris à la connaître...
+		
+		[MADELINE left upset]
+		... et j'ai trouvé qu'elle était méchante.
+		
+		[MADELINE left sad]
+		Mais elle savait ce que j'avais besoin d'entendre,{n}et elle m'a vraiment aidée.
+		
+		[MADELINE left sadder]
+		Elle me manque beaucoup.
+		
+		[WEBCAM_THEO right normal]
+		Oui, à moi aussi.
+		
+		[WEBCAM_THEO right thinking]
+		Je croyais vraiment qu'elle vivrait pour toujours.
+		
+		[WEBCAM_THEO right excited]
+		Oh ! Ça me rappelle que{n}je dois te montrer quelque chose.
+		
+		[MADELINE left normal]
+		Ah ?
+		
+		[WEBCAM_THEO right excited]
+		Tu te souviens que je t'ai dit que mon grand-père était allé{n}sur le {+CELESTE_MOUNTAIN} quand il était jeune ?
+		
+		[WEBCAM_THEO right normal]
+		Eh bien, je parcourais des{n}vieilles affaires à lui avec {+ALEX}...
+		Et regarde la photo que j'ai trouvée.
+		
+		{trigger 0 Shows the photo of Theo's grandpa with Granny at Celeste Mountain.}
+		
+		[MADELINE left surprised]
+		C'est {+GRANNY} !? Avec ton grand-père ?
+		
+		[MADELINE left normal]
+		{+THEO}, c'est incroyable !
+		On dirait qu'ils étaient amis.
+		
+		[WEBCAM_THEO right excited]
+		Exactement comme nous !
+		
+		[WEBCAM_THEO right thinking]
+		C'est vraiment nul qu'ils soient morts.
+		
+		[WEBCAM_THEO right normal]
+		Mais c'est cool de savoir qu'on a{n}partagé la {+MOUNTAIN} avec eux.
+		
+		[MADELINE left normal]
+		Ouais...
+		
+		[MADELINE left peaceful]
+		{>> 0.3}C'{~}est{/~} cool.{>>}
+
+
+# Crystal Hearts
+	POEM_FW=Espace vide
+
+# Wavedash Tutorial
+	WAVEDASH_DESKTOP_MYPC=Ma montagne
+	WAVEDASH_DESKTOP_POWERPOINT=wavedash.ppt
+	WAVEDASH_DESKTOP_RECYCLEBIN=Corbeille
+	WAVEDASH_DESKTOP_STARTBUTTON=BaieOS
+	WAVEDASH_PAGE1_TITLE=Le wavedash et toi
+	WAVEDASH_PAGE1_SUBTITLE=Une solution pratique pour attraper des oiseaux dans l'espace
+	WAVEDASH_PAGE2_TITLE=Cet|Oiseau||Va|Trop|Vite ?
+	WAVEDASH_PAGE2_LIST=
+		- Fait : les oiseaux sont durs à attraper{n}
+		- Waouh, il est rapide !{n}
+		- Et il vole{n}
+		- Et la {+PART_OF_YOU} n'aidera pas{n}
+		- (C'est la pire)
+
+	WAVEDASH_PAGE2_IMPOSSIBLE=IMPOSSIBLE ???
+	WAVEDASH_PAGE3_TITLE=Présentation du... wavedash !
+	WAVEDASH_PAGE3_INFO=
+		Avec le wavedash, tu peux sauter très loin{n}et récupérer ton sprint {~}en même temps !{/~}
+
+	WAVEDASH_PAGE3_EASY=C'est « facile » !
+	WAVEDASH_PAGE4_TITLE=Comment faire
+	WAVEDASH_PAGE4_LIST=
+		- Sauter{n}
+		- Sprinter en diagonale vers le sol{n}
+		- Immédiatement sauter à nouveau et continuer vers l'avant{n}
+		- {~}Tu as réussi !{/~}{n}
+		- (bien joué)
+
+	WAVEDASH_PAGE5_TITLE=De soucis au paradis ?
+	WAVEDASH_PAGE5_INFO1=
+		{#ff0000}Si tu ne récupères pas ton sprint c'est{#}{n}parce que tu démarres {~}trop bas près{/~} du sol.
+
+	WAVEDASH_PAGE5_INFO2=
+		{#ff0000}Si tu ne vas pas très loin,{#}{n}c'est parce que tu démarres {~}trop loin{/~} du sol.
+
+	WAVEDASH_PAGE6_TITLE=Joyeux wavedash !

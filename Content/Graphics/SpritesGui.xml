@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Sprites>
+  <heartgem0 path="collectables/heartgem/0/" start="idle">
+    <Center />
+    <Loop id="idle" path="spin" frames="0" />
+    <Loop id="spin" path="spin" frames="0*10,1-10" delay="0.08"/>
+    <Loop id="fastspin" path="spin"  frames="1-10" delay="0.08"/>
+  </heartgem0>
+
+  <heartgem1 path="collectables/heartgem/1/" start="idle">
+    <Center />
+    <Loop id="idle" path="spin" frames="0" />
+    <Loop id="spin" path="spin" frames="0*10,1-10" delay="0.08"/>
+    <Loop id="fastspin" path="spin" frames="1-10" delay="0.08"/>
+  </heartgem1>
+	
+  <heartgem2 path="collectables/heartgem/2/" start="idle">
+    <Center />
+    <Loop id="idle" path="spin" frames="0" />
+    <Loop id="spin" path="spin" frames="0*10,1-10" delay="0.08"/>
+    <Loop id="fastspin" path="spin" frames="1-10" delay="0.08"/>
+  </heartgem2>
+
+  <heartgem3 path="collectables/heartgem/3/FakeHeart" start="idle">
+    <Center />
+    <Loop id="idle" path="" frames="0" />
+    <Loop id="spin" path="" frames="0*10,1-10" delay="0.08"/>
+    <Loop id="fastspin" path="" frames="1-10" delay="0.08"/>
+    <Anim id="break" path="" frames="11-32" delay="0.07"/>
+  </heartgem3>
+
+  <save path="save/saveIcon" start="start">
+    <Center />
+
+    <Anim id="start" path="" frames="0-11" goto="idle" delay="0.04"/>
+    <Loop id="idle" path="" frames="11" delay="0.08"/>
+    <Anim id="end" path="" frames="11-20" delay="0.08"/>
+  </save>
+
+  <feather path="feather/" start="hover">
+    <Justify x="0.5" y="0"/>
+    <Position x="0" y="-128"/>
+    <Loop id="hover" path="feather" frames="0" delay="0.1"/>
+    <Loop id="flutter" path="feather" frames="0-3" delay="0.1"/> 
+  </feather>
+  
+
+</Sprites>
